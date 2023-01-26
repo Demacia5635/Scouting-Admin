@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { Button } from "./Button"
-import { Input } from "./Input"
+import { Button } from "../html/Button"
+import { Input } from "../html/Input"
 
 
 export const AddUser = () => {
