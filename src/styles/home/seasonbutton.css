@@ -1,0 +1,22 @@
+.seasonButton {
+    display: flex;
+    cursor: pointer;
+}
+
+.seasonButton p {
+    flex: 1;
+    position: absolute;
+}
+
+.seasonButton .number {
+    left: 0;
+}
+
+.seasonButton .line {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.seasonButton .name {
+    right: 0;
+}
