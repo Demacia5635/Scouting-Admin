@@ -1,6 +1,5 @@
-// create a home page component
 import { useEffect, useState } from 'react';
-import SeasonButton from '../components/html/SeasonButton';
+import SeasonButton from '../components/SeasonButton';
 import { SeasonButtonProps } from '../components/types/Season';
 import { getSeasons } from '../utils/firebase';
 

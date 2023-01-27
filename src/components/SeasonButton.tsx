@@ -1,5 +1,5 @@
 import '../../styles/home/seasonbutton.css'
-import { SeasonButtonProps } from '../types/Season'
+import { SeasonButtonProps } from './types/Season'
 
 function movedToSeasonEditor(props: SeasonButtonProps) {
   sessionStorage.setItem('seasonYear', props.year)
