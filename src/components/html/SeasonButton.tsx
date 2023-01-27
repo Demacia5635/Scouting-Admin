@@ -13,7 +13,7 @@ const SeasonButton = ({ seasonNumber, seasonName }: SeasonButtonProps) => {
     <div style={{ display: 'flex' }} key={seasonNumber} onClick={movedToSeasonEditor}>
       <p style={{ flex: 1, position: 'absolute', left: '0' }}>{seasonNumber}</p>
       <p style={{ flex: 1, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>——</p>
-      <p style={{ flex: 1, position: 'absolute', right: '0' }}>{seasonNumber}</p>
+      <p style={{ flex: 1, position: 'absolute', right: '0' }}>{seasonName}</p>
     </div>
   )
 }
