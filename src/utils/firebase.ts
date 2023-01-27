@@ -12,8 +12,13 @@ const firebaseConfig = {
 };
 
 export const firebase = initializeApp(firebaseConfig);
-export const firestorm = getFirestore(firebase);
+export const firestore = getFirestore(firebase);
 
 async function updateData(collectionName: any, docName: string, data: any) {
-    await setDoc(doc(firestorm, collectionName, docName), data);
+    await setDoc(doc(firestore, collectionName, docName), data);
+}
+
+export async function getSeasons(): Promise<{ year: string, name: string }[]> {
+    const seasons = await getDocs(collection(firestore, 'seasons'));
+    return seasons.docs.map((doc) => { return { year: doc.id, name: doc.get('name') } });
 }

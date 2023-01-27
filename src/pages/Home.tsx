@@ -1,36 +1,28 @@
 // create a home page component
-import { collection, doc, getDoc } from 'firebase/firestore/lite';
-import React from 'react';
-import { firebase, firestore } from '../utils/firebase';
-
-function GetSeasonsList(){
-    let Seasons: Array<HTMLDivElement>;
-    let i:number;
-    i=0;
-    let isfalied:boolean
-    isfalied = false
-    while(!isfalied)
-    {
-        try {
-            const getfieldvalue = async () => {
-                let docsnap = await getDoc(doc(firestore,"seasons",(2023+i).toString()))
-                return (docsnap.get("name"))
-                
-            }
-
-        } catch (error) {
-            isfalied = true
-        }
-
-    }
-
-}
-
+import { useEffect, useState } from 'react';
+import SeasonButton from '../components/html/SeasonButton';
+import { SeasonButtonProps } from '../components/types/Season';
+import { getSeasons } from '../utils/firebase';
 
 export const Home = () => {
+    const [seasons, setSeasons] = useState<SeasonButtonProps[]>([]);
+
+    useEffect(() => {
+        async function updateSeasons() {
+            const seasons = await getSeasons();
+            setSeasons(seasons);
+        }
+        updateSeasons();
+    }, []);
+
+
+    const seasonsComponents = seasons.map((season) => {
+        return <SeasonButton name={season.name} year={season.year} />
+    });
+
     return (
         <div>
-            <h1>Home Page</h1>
+            {seasonsComponents}
         </div>
     );
 };
