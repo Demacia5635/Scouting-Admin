@@ -1,22 +1,22 @@
 .seasonButton {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
     cursor: pointer;
 }
 
 .seasonButton p {
-    flex: 1;
-    position: absolute;
+    display: flex;
 }
 
 .seasonButton .number {
-    left: 0;
+    justify-content: flex-start;
 }
 
 .seasonButton .line {
-    left: 50%;
-    transform: translateX(-50%);
+    justify-content: center;
 }
 
 .seasonButton .name {
-    right: 0;
+    justify-content: flex-end;
 }
