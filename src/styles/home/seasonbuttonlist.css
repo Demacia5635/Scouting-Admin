@@ -1,0 +1,31 @@
+.seasonbuttonlist {
+    padding-left: 15%;
+    padding-right: 15%;
+    padding-top: 22%;
+    background-color: rgb(68, 8, 80);
+}
+
+.seasonbuttonlist .title {
+    justify-content: center;
+    font-size: 500%;
+    text-underline-position: auto;
+}
+
+.seasonbuttonlist .plusbutton {
+    margin-right: 100%;
+    margin-bottom: 0%;
+    background-color: rgba(0, 0, 0, 0.801);
+    -webkit-text-fill-color: azure;
+    border: 3px solid rgba(197, 189, 189, 0.699);
+    font-size: 250%;
+    cursor: pointer;
+    padding-left: 2%;
+    padding-right: 4%;
+
+}
+
+.plusbutton:hover {
+
+    background-color: rgba(224, 214, 224, 0.836);
+    -webkit-text-fill-color: black;
+}
