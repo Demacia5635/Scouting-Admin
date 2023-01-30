@@ -1,12 +1,9 @@
 import { Outlet, Navigate } from "react-router-dom";
-
-function checkSelectedSeason() {
-    return sessionStorage.getItem("seasonYear") && sessionStorage.getItem("seasonName");
-}
+import { isSeasonSaved } from "../utils/season-handler";
 
 export const SeasonRoutes = () => {
     return (
-        checkSelectedSeason() ? (
+        isSeasonSaved() ? (
             <Outlet />
         ) : (
             <Navigate to="/" />

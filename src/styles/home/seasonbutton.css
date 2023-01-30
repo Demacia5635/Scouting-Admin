@@ -5,30 +5,43 @@
     font-size: 150%;
     padding-top: 0.5%;
     padding-bottom: 0.5%;
-    background-color: rgba(0, 0, 0, 0.801);
-    -webkit-text-fill-color: azure;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    color: azure;
     justify-content: space-between;
     cursor: pointer;
+    transition: 0.25s;
 }
 
 .seasonButton:hover {
-    background-color: rgba(224, 214, 224, 0.836);
-    -webkit-text-fill-color: black;
-
-}
-
-.seasonButton p {
-    display: flex;
+    background-color: rgba(0, 0, 0, 0.65);
+    transition: 0.25s;
 }
 
 .seasonButton .number {
-    justify-content: flex-start;
+    margin-left: 2%;
+    text-align: left;
 }
 
-.seasonButton .line {
-    justify-content: center;
+.seasonButton tr .line {
+    color: rgb(195, 102, 214);
 }
 
 .seasonButton .name {
-    justify-content: flex-end;
+    margin-right: 2%;
+    width: fit-content;
+    text-align: right;
+}
+
+.seasonButton .space {
+    width: 15px;
+}
+
+.seasonButton table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.seasonButton table tr {
+    height: 60px;
 }

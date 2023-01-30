@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-import SeasonButton from '../components/html/SeasonButton';
-import '../styles/home/seasonbuttonlist.css'
+import SeasonButton from '../components/SeasonButton';
 import { SeasonButtonProps } from '../components/types/Season';
 import { getSeasons } from '../utils/firebase';
-import { movedToSeasonEditor } from '../utils/movetopages';
+import { moveToSeasonEditor, resetSeason } from '../utils/season-handler';
+import '../styles/home/seasonbuttonlist.css'
 
 export const Home = () => {
     const [seasons, setSeasons] = useState<SeasonButtonProps[]>([]);
 
     useEffect(() => {
+        resetSeason();
         async function updateSeasons() {
             const seasons = await getSeasons();
             setSeasons(seasons);
@@ -24,8 +25,8 @@ export const Home = () => {
 
     return (
         <div className='seasonbuttonlist'>
-            <h1 className='title'>Seasons</h1>
-            <p onClick={() => movedToSeasonEditor} className='plusbutton'>+</p>
+            <h1 className='title'>Select Season</h1>
+            <p onClick={() => moveToSeasonEditor} className='plusbutton'>+</p>
             {seasonsComponents}
         </div>
     );
