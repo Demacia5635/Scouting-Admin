@@ -24,8 +24,7 @@ body {
     cursor: pointer;
     padding-left: 2%;
     padding-right: 4%;
-
-}
+    }
 
 .plusbutton:hover {
     background-color: rgba(224, 214, 224, 0.836);
