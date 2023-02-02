@@ -1,9 +1,15 @@
 type ButtonProps = {
-    handleClick: (event2: React.MouseEvent<HTMLButtonElement>, id: number) => void
+    handleClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
 } & React.ComponentProps<'button'>
 
 export const Button = ({ handleClick, children, ...props }: ButtonProps) => {
+    const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        if (handleClick) handleClick(event)
+    }
+
     return (
-        <button onClick={event => handleClick(event, 1)}>{children}</button>
+        <button onClick={onClick} {...props}>
+            {children}
+        </button>
     )
 }

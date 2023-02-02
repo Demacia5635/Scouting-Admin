@@ -1,7 +1,7 @@
 import { useState } from "react"
 
 type InputProps = {
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 } & React.ComponentProps<'input'>
 
 export const Input = ({ value, placeholder, onChange, ...props }: InputProps) => {
@@ -10,7 +10,7 @@ export const Input = ({ value, placeholder, onChange, ...props }: InputProps) =>
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(event.target.value)
-        onChange(event)
+        if (onChange) onChange(event)
     }
 
     return (
