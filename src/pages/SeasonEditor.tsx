@@ -1,11 +1,32 @@
+import { ReactElement, useEffect, useState } from "react";
 import { Button } from "../components/html/Button";
 import { Input } from "../components/html/Input";
 import { ItemParamPopup } from "../components/popups/ItemParamPopup";
 import "../styles/editor/seasoneditor.css";
+import { getAllParams } from "../utils/firebase";
+import { ParamItem } from "../utils/params/ParamItem";
 import { getSelectedSeason } from "../utils/season-handler";
 
 export const SeasonEditor = () => {
     const { year, name } = getSelectedSeason();
+    const [params, setParams] = useState<(ReactElement | undefined)[]>([]);
+
+    useEffect(() => {
+        async function updateParams() {
+            const paramsModes = await getAllParams(year);
+            const paramsList = paramsModes.map((mode) => {
+                if (mode == null) return <></>;
+                for (const param in mode) {
+                    const data = mode[param];
+                    const paramItem = new ParamItem(data.name, data.type, data.color, data.step, data.min, data.max, data.defaultValue)
+                    return <ItemParamPopup param={paramItem} />;
+                }
+            }).filter((param) => param != null);
+            setParams(paramsList);
+        }
+        updateParams();
+    }, []);
+
 
     return (
         <div>
@@ -47,11 +68,15 @@ export const SeasonEditor = () => {
                     </tr>
                     <tr>
                         <td>
-                            <Button>Autonomous</Button>
                         </td>
                     </tr>
                 </tbody>
             </table>
+            <div className="params-list">
+                <Button>Add Param</Button>
+                <Button>Add Param</Button>
+                {params}
+            </div>
         </div >
     );
 };

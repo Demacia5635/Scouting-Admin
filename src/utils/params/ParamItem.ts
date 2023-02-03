@@ -1,6 +1,7 @@
 export class ParamItem {
     constructor(
         public name: string,
+        public displayName: string,
         public type: ParamType,
         public color: string,
         public step?: number,
@@ -13,7 +14,7 @@ export class ParamItem {
 export const paramItemConverter = {
     toFirestore: (item: ParamItem) => {
         return {
-            name: item.name,
+            displayName: item.displayName,
             type: item.type,
             color: item.color,
             min: item.min,
@@ -25,7 +26,7 @@ export const paramItemConverter = {
 
     fromFirestore: (snapshot: any) => {
         const data = snapshot.data();
-        return new ParamItem(data.name, data.type, data.color, data.min, data.max, data.step, data.defaultValue);
+        return new ParamItem(data.id, data.displayName, data.type, data.color, data.min, data.max, data.step, data.defaultValue);
     }
 };
 
@@ -40,6 +41,13 @@ export enum SpecialVisibility {
     STEP = 'step',
     MIN = 'min',
     MAX = 'max',
+}
+
+export enum DataParamsModes {
+    AUTONOMOUS = 'autonomous',
+    TELEOP = 'teleop',
+    ENDGAME = 'endgame',
+    SUMMARY = 'summary'
 }
 
 export const paramTypeSelectOptions = [
@@ -64,7 +72,8 @@ export function typeVisibility(type: SpecialVisibility, paramType: ParamType | u
 }
 
 export function createParamFromDocument(document: Document) {
-    const title = document.querySelector('.param-title input') as HTMLInputElement;
+    const name = document.querySelector('.param-name input') as HTMLInputElement;
+    const displayName = document.querySelector('.param-display-name input') as HTMLInputElement;
     const type = document.querySelector('.param-type select') as HTMLSelectElement;
     const color = document.querySelector('.param-color input') as HTMLInputElement;
     const step = document.querySelector('.param-step input') as HTMLInputElement;
@@ -72,7 +81,8 @@ export function createParamFromDocument(document: Document) {
     const maxValue = document.querySelector('.param-max-value input') as HTMLInputElement;
     const defaultValue = document.querySelector('.param-default-value input') as HTMLInputElement;
     return new ParamItem(
-        title.value,
+        name.value,
+        displayName.value,
         type.value as ParamType,
         color.value,
         step.value ? parseFloat(step.value) : undefined,

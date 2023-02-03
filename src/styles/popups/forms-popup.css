@@ -12,12 +12,12 @@
     font-size: 18px;
 }
 
-button[type="button"] {
-    float: right;
-    background-color: lightgray;
-    color: black;
-    border: none;
-    border-radius: 5px;
+.open {
+    position: absolute;
+    width: auto;
+    height: auto;
+    border: 1px solid black;
+    border-radius: 10px;
     cursor: pointer;
 }
 

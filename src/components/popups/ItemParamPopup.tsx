@@ -31,15 +31,23 @@ export const ItemParamPopup = ({ param }: ItemParamPopupProps) => {
 
     return (
         <div>
-            <button type="button" onClick={openPopup}>Open Form</button>
+            <button className="open" onClick={openPopup}>{param?.name}</button>
             <div className="form" style={{ display: show }}>
                 <table className="form-table">
-                    <tr className="param-title">
+                    <tr className="param-name">
                         <th>
-                            Title
+                            Name
                         </th>
                         <th>
-                            <Input value={param?.color}></Input>
+                            <Input value={param?.name}></Input>
+                        </th>
+                    </tr>
+                    <tr className="param-display-name">
+                        <th>
+                            Display Name
+                        </th>
+                        <th>
+                            <Input value={param?.displayName}></Input>
                         </th>
                     </tr>
                     <tr className="param-type">

@@ -57,3 +57,10 @@ td {
 .search-bar i {
     font-size: 18px;
 }
+
+.params-list {
+    margin: 10px;
+    font-size: 18px;
+    text-align: left;
+    padding: 10px;
+}
