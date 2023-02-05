@@ -1,6 +1,6 @@
+import { Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import '../styles/navbar.css'
-import { Button } from './html/Button';
+import '../styles/navbar.css';
 
 export const NavBar = () => {
 
@@ -8,10 +8,19 @@ export const NavBar = () => {
 
     return (
         <div className="navbar">
-            <Button handleClick={() => navigate('/')}>Home</Button>
-            <Button handleClick={() => navigate('/editor')}>Season Editor</Button>
-            <Button handleClick={() => navigate('/scouters')}>Scouters Manager</Button>
-            <Button handleClick={() => navigate('/timetable')}>Timetable Manager</Button>
+            <Button size='large' type='primary' onClick={() => navigate('/')}>
+                Home
+            </Button>
+            <Button size='large' type='primary' onClick={() => navigate('/editor')}>
+                Season Editor
+            </Button>
+            <Button size='large' type='primary' onClick={() => navigate('/scouters')}>
+                Scouters Manager
+            </Button>
+            <Button size='large' type='primary' onClick={() => navigate('/timetable')}>
+
+                Timetable Manager
+            </Button>
         </div>
     );
 };
