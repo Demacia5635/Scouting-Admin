@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, getDoc, setDoc, doc } from 'firebase/firestore/lite';
+import { collection, doc, getDoc, getDocs, getFirestore } from 'firebase/firestore/lite';
 import { DataParamsModes } from "./params/ParamItem";
 
 const firebaseConfig = {
@@ -15,16 +15,13 @@ const firebaseConfig = {
 export const firebase = initializeApp(firebaseConfig);
 export const firestore = getFirestore(firebase);
 
-async function updateData(collectionName: any, docName: string, data: any) {
-    await setDoc(doc(firestore, collectionName, docName), data);
-}
-
 export async function getSeasons(): Promise<{ year: string, name: string }[]> {
     const seasons = await getDocs(collection(firestore, 'seasons'));
     return seasons.docs.map((doc) => { return { year: doc.id, name: doc.get('name') } });
 }
 
 export async function getAllParams(seasonYear: string) {
+    console.log(`Loading data for ${seasonYear}`)
     return [
         await getParams(DataParamsModes.AUTONOMOUS, seasonYear),
         await getParams(DataParamsModes.TELEOP, seasonYear),

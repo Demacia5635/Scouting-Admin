@@ -12,16 +12,31 @@
     font-size: 18px;
 }
 
-.open {
-    position: absolute;
-    width: auto;
-    height: auto;
-    border: 1px solid black;
-    border-radius: 10px;
-    cursor: pointer;
+.ant-form {
+    margin-top: 10px;
 }
 
-.form button.save {
+.open {
+    width: auto;
+    height: auto;
+}
+
+.open .edit-button {
+    margin-left: 10px;
+
+}
+
+.search-bar {
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-bar input {
+    width: 400px;
+    margin-top: 10px;
+}
+
+/* .form button.save {
     display: block;
     margin: 20px auto;
     padding: 10px 20px;
@@ -30,16 +45,66 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+} */
+
+.form .buttons {
+    margin-top: 30px;
 }
 
-.form-table tr th:first-child {
+.form button.cancel {
+    float: left;
+    background-color: red;
+    border-radius: 20px;
+}
+
+.form button.cancel:hover {
+    background-color: #e63b3b;
+}
+
+.form button.save {
+    float: right;
+    background-color: #0ad114;
+    border-radius: 20px;
+}
+
+.form button.save:hover {
+    background-color: #27ee31;
+}
+
+.form input, .form .type-select, .form .ant-input-number {
     text-align: left;
+    width: 200px;
 }
 
-.form-table tr th {
-    padding: 2px 10px;
+.form .ant-form-item {
+    margin-bottom: 10px;
 }
 
-.form-table .param-type select {
-    width: 100%;
+.form .ant-form-item-label {
+    text-align: left;
+    height: fit-content;
+    font-weight: bold;
+}
+
+.form .color-picker-button {
+    width: 30px;
+    height: 30px;
+    background-color: aqua;
+    cursor: pointer;
+}
+
+.form .color-picker-input {
+    width: 170px;
+}
+
+.form .ant-form-item-control {
+    text-align: right;
+}
+
+.form .color-picker {
+    margin-top: 20px;
+}
+
+.params-list .popup {
+    padding-bottom: 20px;
 }

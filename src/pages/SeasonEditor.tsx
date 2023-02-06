@@ -1,32 +1,52 @@
+import { Button, Input } from "antd";
+import { DocumentData } from "firebase/firestore/lite";
 import { ReactElement, useEffect, useState } from "react";
-import { Button } from "../components/html/Button";
-import { Input } from "../components/html/Input";
 import { ItemParamPopup } from "../components/popups/ItemParamPopup";
 import "../styles/editor/seasoneditor.css";
 import { getAllParams } from "../utils/firebase";
-import { ParamItem } from "../utils/params/ParamItem";
+import { dataOrder, DataParamsModes, ParamItem } from "../utils/params/ParamItem";
 import { getSelectedSeason } from "../utils/season-handler";
 
 export const SeasonEditor = () => {
     const { year, name } = getSelectedSeason();
-    const [params, setParams] = useState<(ReactElement | undefined)[]>([]);
+    const [allParams, setAllParams] = useState<(DocumentData | undefined)[]>([]);
+    const [params, setParams] = useState<(ReactElement | null | undefined)[]>([]);
+    const [selectedParams, setSelectedParams] = useState<(ReactElement | null | undefined)[]>([]);
+    const [mode, setMode] = useState(DataParamsModes.AUTONOMOUS);
+    const [loadingData, setLoadingData] = useState(true);
+    const [showLoading, setShowLoading] = useState('block');
 
     useEffect(() => {
         async function updateParams() {
-            const paramsModes = await getAllParams(year);
-            const paramsList = paramsModes.map((mode) => {
-                if (mode == null) return <></>;
-                for (const param in mode) {
-                    const data = mode[param];
-                    const paramItem = new ParamItem(data.name, data.type, data.color, data.step, data.min, data.max, data.defaultValue)
-                    return <ItemParamPopup param={paramItem} />;
-                }
-            }).filter((param) => param != null);
-            setParams(paramsList);
+            let param: DocumentData = allParams[dataOrder(mode)]!;
+            let list = []
+            for (const data in param) {
+                const paramData = param[data]
+                const paramItem = new ParamItem(data, paramData.displayName, paramData.type, paramData.color, paramData.step, paramData.min, paramData.max, paramData.defaultValue);
+                list.push(<ItemParamPopup param={paramItem}></ItemParamPopup>);
+            }
+            list = list.filter((param) => param != null);
+            if (list.length === 0) {
+                setLoadingData(false);
+                setShowLoading('block');
+            } else {
+                setLoadingData(false);
+                setShowLoading('none');
+            }
+            setParams(list);
+            setSelectedParams(list);
         }
         updateParams();
-    }, []);
+    }, [mode, allParams]);
 
+    useEffect(() => {
+        async function loadParams() {
+            setLoadingData(true);
+            const allParams = await getAllParams(year);
+            setAllParams(allParams);
+        }
+        loadParams();
+    }, []);
 
     return (
         <div>
@@ -36,22 +56,21 @@ export const SeasonEditor = () => {
             </link>
 
             <h1>Season: {year} {name}</h1>
-            <ItemParamPopup />
 
             <table className="params-table">
                 <thead>
                     <tr>
                         <th>
-                            <Button>Autonomous</Button>
+                            <Button onClick={() => setMode(DataParamsModes.AUTONOMOUS)}>Autonomous</Button>
                         </th>
                         <th>
-                            <Button>Teleop</Button>
+                            <Button onClick={() => setMode(DataParamsModes.TELEOP)}>Teleop</Button>
                         </th>
                         <th>
-                            <Button>End Game</Button>
+                            <Button onClick={() => setMode(DataParamsModes.ENDGAME)}>End Game</Button>
                         </th>
                         <th>
-                            <Button>Summary</Button>
+                            <Button onClick={() => setMode(DataParamsModes.SUMMARY)}>Summary</Button>
                         </th>
                     </tr>
                 </thead>
@@ -61,7 +80,19 @@ export const SeasonEditor = () => {
                             <i className="fa fa-search"></i>
                             <Input placeholder="Search..." onChange={
                                 (event) => {
-                                    console.log(event.target.value);
+                                    const value = event.target.value;
+                                    if (value === "") {
+                                        setSelectedParams(params);
+                                    } else {
+                                        const filteredParams = params.filter((param) => {
+                                            if (param != null) {
+                                                const paramItem = param.props.param;
+                                                return paramItem.displayName.toLowerCase().includes(value.toLowerCase());
+                                            }
+                                            return false;
+                                        });
+                                        setSelectedParams(filteredParams);
+                                    }
                                 }
                             }></Input>
                         </td>
@@ -73,9 +104,8 @@ export const SeasonEditor = () => {
                 </tbody>
             </table>
             <div className="params-list">
-                <Button>Add Param</Button>
-                <Button>Add Param</Button>
-                {params}
+                <h2 className="no-data" style={{ display: showLoading }}>{loadingData ? "Loading Data..." : "No Data"}</h2>
+                {selectedParams}
             </div>
         </div >
     );

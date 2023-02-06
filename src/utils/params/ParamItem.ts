@@ -9,6 +9,17 @@ export class ParamItem {
         public max?: number,
         public defaultValue?: number | string | boolean,
     ) { }
+
+    update(item: ParamItem) {
+        this.name = item.name;
+        this.displayName = item.displayName;
+        this.type = item.type;
+        this.color = item.color;
+        this.step = item.step;
+        this.min = item.min;
+        this.max = item.max;
+        this.defaultValue = item.defaultValue;
+    }
 }
 
 export const paramItemConverter = {
@@ -50,6 +61,21 @@ export enum DataParamsModes {
     SUMMARY = 'summary'
 }
 
+export function dataOrder(mode: DataParamsModes) {
+    switch (mode) {
+        case DataParamsModes.AUTONOMOUS:
+            return 0;
+        case DataParamsModes.TELEOP:
+            return 1;
+        case DataParamsModes.ENDGAME:
+            return 2;
+        case DataParamsModes.SUMMARY:
+            return 3;
+        default:
+            return 0;
+    }
+}
+
 export const paramTypeSelectOptions = [
     { value: ParamType.TEXT, label: 'Text' },
     { value: ParamType.SLIDER, label: 'Slider' },
@@ -74,7 +100,7 @@ export function typeVisibility(type: SpecialVisibility, paramType: ParamType | u
 export function createParamFromDocument(document: Document) {
     const name = document.querySelector('.param-name input') as HTMLInputElement;
     const displayName = document.querySelector('.param-display-name input') as HTMLInputElement;
-    const type = document.querySelector('.param-type select') as HTMLSelectElement;
+    const type = document.querySelector('.param-type .ant-select-selection-item') as HTMLSelectElement;
     const color = document.querySelector('.param-color input') as HTMLInputElement;
     const step = document.querySelector('.param-step input') as HTMLInputElement;
     const minValue = document.querySelector('.param-min-value input') as HTMLInputElement;
