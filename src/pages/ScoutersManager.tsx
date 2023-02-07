@@ -2,9 +2,10 @@ import { Select } from "antd";
 import { Option } from "antd/es/mentions";
 import { useEffect, useState } from "react";
 import { Fields } from "../components/types/Fields";
-import { getfieldvalue, updateData, } from "../utils/firebase";
+import { getFieldValue, try1, updateData, } from "../utils/firebase";
 import "../utils/firebase"
 import { resetSeason } from "../utils/season-handler";
+import ScoutersTable from "../components/ScoutersTable";
 
 
 
@@ -14,7 +15,7 @@ export const ScoutersManager = () => {
     const [teams, setTeams] = useState<Array<Fields>>([]);
 
     async function name() {
-        const teams = await getfieldvalue("seasons/2019/teams", "name")
+        const teams = await getFieldValue("seasons/2019/teams", "name")
         setTeams(teams)
 
 
@@ -30,7 +31,7 @@ export const ScoutersManager = () => {
     return (
         <div>
             <h1 onClick={() => {
-                updateData("users/jhony", { nsb: "hello" })
+                console.log(try1())
             }}>Scouters Manager</h1>
             <Select
                 defaultValue={{ value: 'demacia', label: '5635' }}
@@ -38,7 +39,7 @@ export const ScoutersManager = () => {
                 {optionslist}
 
             </Select>
-
+            <ScoutersTable />
         </div>
     );
 }
