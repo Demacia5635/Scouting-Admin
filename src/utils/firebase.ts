@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, getDoc, setDoc, doc } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, getDoc, setDoc, doc, deleteField, updateDoc } from 'firebase/firestore/lite';
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -13,15 +13,11 @@ const firebaseConfig = {
 
 export const firebase = initializeApp(firebaseConfig);
 export const firestore = getFirestore(firebase);
-const try1 =
 
-    async function updateData(collectionName: any, docName: string, data: any) {
-        await setDoc(doc(firestore, collectionName, docName), data);
-    }
-async function tryinf() {
-    const wtf = await getDoc(doc(firestore, "asd"))
-    wtf.get("asd")
+export function updateData(docPath: string, data: any) {
+    setDoc(doc(firestore, docPath), data, { merge: true });
 }
+
 
 
 export async function getSeasons(): Promise<{ year: string, name: string }[]> {
@@ -32,4 +28,5 @@ export async function getfieldvalue(collectionName: any, fieldid: string): Promi
     const seasons = await getDocs(collection(firestore, collectionName));
     return seasons.docs.map((doc) => { return { fieldid: doc.id, fieldlvalue: doc.get(fieldid) } });
 }
+
 

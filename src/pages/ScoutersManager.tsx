@@ -2,7 +2,8 @@ import { Select } from "antd";
 import { Option } from "antd/es/mentions";
 import { useEffect, useState } from "react";
 import { Fields } from "../components/types/Fields";
-import { getfieldvalue, getSeasons } from "../utils/firebase";
+import { getfieldvalue, updateData, } from "../utils/firebase";
+import "../utils/firebase"
 import { resetSeason } from "../utils/season-handler";
 
 
@@ -28,7 +29,9 @@ export const ScoutersManager = () => {
     }, []);
     return (
         <div>
-            <h1>Scouters Manager</h1>
+            <h1 onClick={() => {
+                updateData("users/jhony", { nsb: "hello" })
+            }}>Scouters Manager</h1>
             <Select
                 defaultValue={{ value: 'demacia', label: '5635' }}
             >
