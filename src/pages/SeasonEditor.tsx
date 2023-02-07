@@ -6,6 +6,7 @@ import "../styles/editor/seasoneditor.css";
 import { getAllParams } from "../utils/firebase";
 import { dataOrder, DataParamsModes, ParamItem } from "../utils/params/ParamItem";
 import { getSelectedSeason } from "../utils/season-handler";
+import { v4 as uuidv4 } from 'uuid';
 
 export const SeasonEditor = () => {
     const { year, name } = getSelectedSeason();
@@ -17,13 +18,21 @@ export const SeasonEditor = () => {
     const [showLoading, setShowLoading] = useState('block');
 
     useEffect(() => {
+        function updateActiveButton(activeId: string) {
+            const buttons = document.getElementsByClassName('active');
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+            }
+            const button = document.getElementsByClassName(activeId)[0];
+            button.classList.add('active');
+        }
+
         async function updateParams() {
             let param: DocumentData = allParams[dataOrder(mode)]!;
             let list = []
             for (const data in param) {
-                const paramData = param[data]
-                const paramItem = new ParamItem(data, paramData.displayName, paramData.type, paramData.color, paramData.step, paramData.min, paramData.max, paramData.defaultValue);
-                list.push(<ItemParamPopup param={paramItem}></ItemParamPopup>);
+                const paramItem = param[data] as ParamItem;
+                list.push(<ItemParamPopup key={uuidv4()} param={paramItem}></ItemParamPopup>);
             }
             list = list.filter((param) => param != null);
             if (list.length === 0) {
@@ -37,6 +46,21 @@ export const SeasonEditor = () => {
             setSelectedParams(list);
         }
         updateParams();
+
+        switch (mode) {
+            case DataParamsModes.AUTONOMOUS:
+                updateActiveButton('autonomous-button');
+                break;
+            case DataParamsModes.TELEOP:
+                updateActiveButton('teleop-button');
+                break;
+            case DataParamsModes.ENDGAME:
+                updateActiveButton('endgame-button');
+                break;
+            case DataParamsModes.SUMMARY:
+                updateActiveButton('summary-button');
+                break;
+        }
     }, [mode, allParams]);
 
     useEffect(() => {
@@ -61,16 +85,16 @@ export const SeasonEditor = () => {
                 <thead>
                     <tr>
                         <th>
-                            <Button onClick={() => setMode(DataParamsModes.AUTONOMOUS)}>Autonomous</Button>
+                            <Button className="autonomous-button" onClick={() => setMode(DataParamsModes.AUTONOMOUS)}>Autonomous</Button>
                         </th>
                         <th>
-                            <Button onClick={() => setMode(DataParamsModes.TELEOP)}>Teleop</Button>
+                            <Button className="teleop-button" onClick={() => setMode(DataParamsModes.TELEOP)}>Teleop</Button>
                         </th>
                         <th>
-                            <Button onClick={() => setMode(DataParamsModes.ENDGAME)}>End Game</Button>
+                            <Button className="endgame-button" onClick={() => setMode(DataParamsModes.ENDGAME)}>End Game</Button>
                         </th>
                         <th>
-                            <Button onClick={() => setMode(DataParamsModes.SUMMARY)}>Summary</Button>
+                            <Button className="summary-button" onClick={() => setMode(DataParamsModes.SUMMARY)}>Summary</Button>
                         </th>
                     </tr>
                 </thead>
@@ -106,6 +130,7 @@ export const SeasonEditor = () => {
             <div className="params-list">
                 <h2 className="no-data" style={{ display: showLoading }}>{loadingData ? "Loading Data..." : "No Data"}</h2>
                 {selectedParams}
+                <ItemParamPopup></ItemParamPopup>
             </div>
         </div >
     );

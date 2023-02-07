@@ -33,6 +33,7 @@ td {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 5px;
+    transition: all 0.3s ease;
 }
 
 /* Search bar: */
@@ -64,4 +65,9 @@ td {
     text-align: left;
     padding: 10px;
     
+}
+
+button.active {
+    background: rgb(127, 0, 227) !important;
+    transition: all 0.3s ease;
 }

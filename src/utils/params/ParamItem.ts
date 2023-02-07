@@ -1,25 +1,12 @@
-export class ParamItem {
-    constructor(
-        public name: string,
-        public displayName: string,
-        public type: ParamType,
-        public color: string,
-        public step?: number,
-        public min?: number,
-        public max?: number,
-        public defaultValue?: number | string | boolean,
-    ) { }
-
-    update(item: ParamItem) {
-        this.name = item.name;
-        this.displayName = item.displayName;
-        this.type = item.type;
-        this.color = item.color;
-        this.step = item.step;
-        this.min = item.min;
-        this.max = item.max;
-        this.defaultValue = item.defaultValue;
-    }
+export interface ParamItem {
+    name: string;
+    displayName: string;
+    type: ParamType;
+    color: string;
+    step?: number;
+    min?: number;
+    max?: number;
+    defaultValue?: number | string | boolean
 }
 
 export const paramItemConverter = {
@@ -35,9 +22,8 @@ export const paramItemConverter = {
         };
     },
 
-    fromFirestore: (snapshot: any) => {
-        const data = snapshot.data();
-        return new ParamItem(data.id, data.displayName, data.type, data.color, data.min, data.max, data.step, data.defaultValue);
+    fromFirestore: (snapshot: any): ParamItem => {
+        return snapshot.data();
     }
 };
 
@@ -97,23 +83,23 @@ export function typeVisibility(type: SpecialVisibility, paramType: ParamType | u
     }
 }
 
-export function createParamFromDocument(document: Document) {
-    const name = document.querySelector('.param-name input') as HTMLInputElement;
-    const displayName = document.querySelector('.param-display-name input') as HTMLInputElement;
-    const type = document.querySelector('.param-type .ant-select-selection-item') as HTMLSelectElement;
-    const color = document.querySelector('.param-color input') as HTMLInputElement;
-    const step = document.querySelector('.param-step input') as HTMLInputElement;
-    const minValue = document.querySelector('.param-min-value input') as HTMLInputElement;
-    const maxValue = document.querySelector('.param-max-value input') as HTMLInputElement;
-    const defaultValue = document.querySelector('.param-default-value input') as HTMLInputElement;
-    return new ParamItem(
-        name.value,
-        displayName.value,
-        type.value as ParamType,
-        color.value,
-        step.value ? parseFloat(step.value) : undefined,
-        minValue.value ? parseFloat(minValue.value) : undefined,
-        maxValue.value ? parseFloat(maxValue.value) : undefined,
-        defaultValue.value ? parseFloat(defaultValue.value) : undefined
-    );
+export function createParamFromDocument(document: Document): ParamItem {
+    const name = (document.querySelector('.param-name input') as HTMLInputElement).value;
+    const displayName = (document.querySelector('.param-display-name input') as HTMLInputElement).value;
+    const type = (document.querySelector('.param-type .ant-select-selection-item') as HTMLSelectElement).value;
+    const color = (document.querySelector('.param-color input') as HTMLInputElement).value;
+    const step = (document.querySelector('.param-step input') as HTMLInputElement).value;
+    const minValue = (document.querySelector('.param-min-value input') as HTMLInputElement).value;
+    const maxValue = (document.querySelector('.param-max-value input') as HTMLInputElement).value;
+    const defaultValue = (document.querySelector('.param-default-value input') as HTMLInputElement).value;
+    return {
+        name,
+        displayName,
+        type: type as ParamType,
+        color,
+        step: step ? parseFloat(step) : undefined,
+        min: minValue ? parseFloat(minValue) : undefined,
+        max: maxValue ? parseFloat(maxValue) : undefined,
+        defaultValue: defaultValue ? parseFloat(defaultValue) : undefined
+    }
 }
