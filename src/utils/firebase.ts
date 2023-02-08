@@ -37,6 +37,7 @@ export async function getscouters(collectionName: any): Promise<{ key: string, f
     let i = 0;
     return seasons.docs.map((doc) => {
         i++
+        console.log("" + i)
         return { key: i + "", firstname: doc.get("firstname"), lastname: doc.get("lastname") }
     });
 }
