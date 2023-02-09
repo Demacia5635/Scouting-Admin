@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Divider, Radio, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { async } from '@firebase/util';
 import { getscouters } from '../utils/firebase';
 import { currentteam } from './types/CurrentTeam';
+import { FileUploader } from './FileUploader';
 
 
 
@@ -59,18 +60,26 @@ const rowSelection = {
 
 const ScoutersTable = ({ currenteamnum, currentteamname }: currentteam) => {
     const [selectionType, setSelectionType] = useState<'checkbox' | 'radio'>('checkbox');
-    const [data, setdata] = useState<DataType[]>()
-    async function setscouters() {
-        const scouters = await getscouters("seasons/2019/teams/" + currenteamnum + "/scouters")
-        setdata(scouters)
-    }
-    setscouters();
+    const [data, setdata] = useState<DataType[]>();
+
+
+    useEffect(() => {
+        async function setscouters() {
+            const scouters = await getscouters("seasons/2019/teams/" + currenteamnum + "/scouters")
+            console.log("now activated")
+            setdata(scouters)
+
+        }
+        setscouters();
+
+    }, [currenteamnum, currentteamname, data?.length]);
+
     return (
         <div>
 
             <h1>{currentteamname}s scouters </h1>
             <Divider />
-
+            <FileUploader scouterDocPath={"seasons/2019/teams/" + currenteamnum + "/scouters" + data?.length} />
             <Table
                 rowSelection={{
                     type: "checkbox",

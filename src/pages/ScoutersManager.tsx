@@ -15,14 +15,8 @@ import { FileUploader } from "../components/FileUploader";
 
 export const ScoutersManager = () => {
     const [teams, setTeams] = useState<Array<Fields>>([]);
-    const [currentteam, setteam] = useState<currentteam>({ currenteamnum: "5635", currentteamname: "demacia" })
-    // async function name() {
-    //     const teams = await getFieldValue("seasons/2019/teams", "name")
-    //     setTeams(teams)
+    const [currentTeam, setCurrentTeam] = useState<currentteam>({ currenteamnum: "5635", currentteamname: "demacia" })
 
-
-    // }
-    // name()
     const handleChange = (value: { value: string; label: React.ReactNode }) => {
         console.log(value); // { value: "lucy", key: "lucy", label: "Lucy (101)" }
     };
@@ -31,23 +25,28 @@ export const ScoutersManager = () => {
     })
     useEffect(() => {
         resetSeason();
+        async function name() {
+            const teams = await getFieldValue("seasons/2019/teams", "name")
+            setTeams(teams)
+
+
+        }
+        name()
     }, []);
     return (
         <div>
             <h1>Scouters Manager</h1>
-            <FileUploader />
-            {/* <Select
+            <Select
                 onChange={(optin: { value: string; label: string }) => {
-                    const wtf = optin.value
-                    const stam: currentteam = { currenteamnum: optin.label, currentteamname: optin.value }
-
+                    const teamChosen: currentteam = { currenteamnum: optin.label, currentteamname: optin.value }
+                    setCurrentTeam(teamChosen)
                 }}
                 defaultValue={{ value: 'demacia', label: '5635' }}
             >
                 {optionslist}
 
             </Select>
-            <ScoutersTable currenteamnum={currentteam.currenteamnum} currentteamname={currentteam.currenteamnum} /> */}
+            <ScoutersTable currenteamnum={currentTeam.currenteamnum} currentteamname={currentTeam.currenteamnum} />
         </div>
     );
 }
