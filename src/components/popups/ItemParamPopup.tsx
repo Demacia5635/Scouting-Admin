@@ -12,6 +12,7 @@ type ItemParamPopupProps = {
 }
 
 export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => {
+    const [form] = Form.useForm<ParamItem>();
     const [buttonTitle, setButtonTitle] = useState(param ? param.displayName : 'Add New Param');
     const [show, setShow] = useState('none');
     const [backdropDisplay, setBackdropDisplay] = useState('none');
@@ -35,8 +36,6 @@ export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => 
     }, [show]);
 
     const openPopup = () => {
-        // if (!paramItem) resetParam();
-
         setShow('block');
         setBackdropDisplay('block');
     }
@@ -69,6 +68,14 @@ export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => 
         });
     }
 
+    const onSave = (values: ParamItem) => {
+        setParamItem(values);
+        setButtonTitle(values.displayName);
+        closePopup();
+    }
+
+    const onFail
+
 
     return (
         <div className="popup">
@@ -77,14 +84,14 @@ export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => 
                 <EditFilled className="edit-button" onClick={openPopup}></EditFilled>
             </div>
             <div className="form" style={{ display: show }}>
-                <Form style={{ display: show , width: '350px'}}>
-                    <Form.Item className="param-name" label="Name">
+                <Form form={form} style={{ display: show , width: '350px'}} onFinish={(values) => {onSave(values)}}>
+                    <Form.Item required className="param-name" label="Name" name="name">
                         <Input defaultValue={paramItem?.name}></Input>
                     </Form.Item>
-                    <Form.Item className="param-display-name" label="Display Name">
+                    <Form.Item className="param-display-name" label="Display Name" name="displayName">
                         <Input defaultValue={paramItem?.displayName}></Input>
                     </Form.Item>
-                    <Form.Item className="param-type" label="Type">
+                    <Form.Item className="param-type" label="Type" name="type">
                         <Select className="type-select" defaultValue={paramItem?.type} maxTagCount={1} placeholder="Select param type" id="param-type-list" options={paramTypeSelectOptions} onChange={
                             (value) => {
                                 const stepRow = document.querySelector('.param-step');
@@ -97,7 +104,7 @@ export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => 
                             }
                         }></Select>
                     </Form.Item>
-                    <Form.Item className="param-color" label="Color">
+                    <Form.Item className="param-color" label="Color" name="color">
                         <Input className="color-picker-input" style={{ backgroundColor: paramItem?.color, color: getOpositeColor(paramItem?.color!) }} value={paramItem?.color}
                             onChange={(e) => {
                                 if (e.target.value.length > 7) e.target.value = e.target.value.slice(0, 7);
@@ -112,21 +119,21 @@ export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => 
                             }
                         } style={{ display: colorPicker ? 'inline-flex' : 'none' }} />
                     </Form.Item>
-                    <Form.Item className="param-step" label="Step" style={{ display: typeVisibility(SpecialVisibility.STEP, param?.type) }}>
+                    <Form.Item className="param-step" label="Step" style={{ display: typeVisibility(SpecialVisibility.STEP, param?.type) }} name="step">
                         <InputNumber min={0} defaultValue={paramItem?.step}></InputNumber>
                     </Form.Item>
-                    <Form.Item className="param-min-value" label="Min Value" style={{ display: typeVisibility(SpecialVisibility.MIN, param?.type) }}>
+                    <Form.Item className="param-min-value" label="Min Value" style={{ display: typeVisibility(SpecialVisibility.MIN, param?.type) }} name="min">
                         <InputNumber min={0} defaultValue={paramItem?.min}></InputNumber>
                     </Form.Item>
-                    <Form.Item className="param-max-value" label="Max Value" style={{ display: typeVisibility(SpecialVisibility.MAX, param?.type) }}>
+                    <Form.Item className="param-max-value" label="Max Value" style={{ display: typeVisibility(SpecialVisibility.MAX, param?.type) }} name="max">
                         <InputNumber min={0} defaultValue={paramItem?.max}></InputNumber>
                     </Form.Item>
-                    <Form.Item className="param-default-value" label="Default Value">
+                    <Form.Item className="param-default-value" label="Default Value" name="defaultValue">
                         <Input defaultValue={paramItem?.defaultValue?.toString()}></Input>
                     </Form.Item>
                     <Form.Item className="buttons">
                         <Button className="cancel" type="primary" onClick={() => closePopup(false)}>Cancel</Button>
-                        <Button className="save" type="primary" onClick={saveParam}>Save</Button>
+                        <Button className="save" htmlType="submit" type="primary">Save</Button>
                     </Form.Item>
                 </Form>
             </div>
