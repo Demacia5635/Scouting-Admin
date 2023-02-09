@@ -31,12 +31,13 @@ export const ScoutersManager = () => {
 
 
         }
-        name()
+        // name()
     }, []);
     return (
         <div>
             <h1>Scouters Manager</h1>
-            <Select
+            <FileUploader scouterDocPath='' />
+            {/* <Select
                 onChange={(optin: { value: string; label: string }) => {
                     const teamChosen: currentteam = { currenteamnum: optin.label, currentteamname: optin.value }
                     setCurrentTeam(teamChosen)
@@ -46,7 +47,7 @@ export const ScoutersManager = () => {
                 {optionslist}
 
             </Select>
-            <ScoutersTable currenteamnum={currentTeam.currenteamnum} currentteamname={currentTeam.currenteamnum} />
+            <ScoutersTable currenteamnum={currentTeam.currenteamnum} currentteamname={currentTeam.currenteamnum} /> */}
         </div>
     );
 }

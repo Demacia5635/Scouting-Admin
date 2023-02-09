@@ -55,37 +55,40 @@ export const FileUploader = ({ scouterDocPath }: numberOfScouters) => {
                     showIcon
                 />
             </Modal>
+            {!isFirsttime && (
+                <Upload
+                    accept=".xlsx, .xls"
+                    listType="text"
+                    maxCount={1}
+                    beforeUpload={file => {
+                        // return new Promise((resolve, reject) => {
 
-            <Upload
-                accept=".xlsx, .xls"
-                listType="text"
-                maxCount={1}
-                beforeUpload={file => {
-                    // return new Promise((resolve, reject) => {
-
-                    console.log("started")
-                    const filereader = new FileReader();
-                    filereader.onload = (e) => {
-                        const bufferarray = e.target?.result;
-                        const wb = read(bufferarray, { type: "buffer" })
-                        console.log("read file")
-                        const ws = wb.Sheets[wb.SheetNames[0]]
-                        const data = utils.sheet_to_json<names>(ws)
-                        data.map((dat) => {
-                            updateData(scouterDocPath, { firstname: dat.scoutersnames, lastname: dat.scouterslastname })
-                        })
+                        console.log("started")
+                        const filereader = new FileReader();
+                        filereader.onload = (e) => {
+                            const bufferarray = e.target?.result;
+                            const wb = read(bufferarray, { type: "buffer" })
+                            console.log("read file")
+                            const ws = wb.Sheets[wb.SheetNames[0]]
+                            const data = utils.sheet_to_json<names>(ws)
+                            data.map((dat) => {
+                                updateData(scouterDocPath, { firstname: dat.scoutersnames, lastname: dat.scouterslastname })
+                            })
+                        }
+                        filereader.readAsArrayBuffer(file)
+                        return false;
                     }
-                    filereader.readAsArrayBuffer(file)
-                    return false;
-                }
 
-                    // const testcell:CellObject = ws['B1']
+                        // const testcell:CellObject = ws['B1']
 
-                }
-            >
+                    }
+                >
 
-                <Button onClick={showModal} icon={<UploadOutlined />}>Upload</Button>
-            </Upload>
+                    <Button onClick={showModal} icon={<UploadOutlined />}>Upload</Button>
+                </Upload>)}
+            {isFirsttime && (
+                <Button onClick={showModal} icon={<UploadOutlined />}>Upload</Button>)}
+
         </div>
 
     )
