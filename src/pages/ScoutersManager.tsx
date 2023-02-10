@@ -1,15 +1,12 @@
 import { Select } from "antd";
 import { Option } from "antd/es/mentions";
-import { useEffect, useState, createContext } from "react";
-import { Fields } from "../components/types/Fields";
-import { getFieldValue, try1, updateData, } from "../utils/firebase";
-import "../utils/firebase"
-import { resetSeason } from "../utils/season-handler";
+import { useEffect, useState } from "react";
 import ScoutersTable from "../components/ScoutersTable";
-import { currentteam } from "../components/types/CurrentTeam";
-import { FileUploader } from "../components/FileUploader";
-import { create } from "domain";
-import { render } from "@testing-library/react";
+import { Fields } from "../components/types/Fields";
+import "../utils/firebase";
+import { getFieldValue } from "../utils/firebase";
+import { resetSeason } from "../utils/season-handler";
+import {v4 as uuid} from 'uuid'
 
 
 

@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, getDoc, setDoc, doc, deleteField, updateDoc, deleteDoc } from 'firebase/firestore/lite';
+import {v4 as uuid} from 'uuid'
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,

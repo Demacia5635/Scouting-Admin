@@ -2,6 +2,8 @@ import { PlusSquareOutlined } from "@ant-design/icons"
 import { Button, Form, Input, Modal } from "antd"
 import { useState } from "react"
 import { deleteDocument, updateData } from "../utils/firebase"
+import {v4 as uuid} from 'uuid'
+
 type item = {
     firstname: string
     lastname: string
@@ -39,7 +41,7 @@ const NewScouterForm = ({ docPathToAdd, updateNumberOfScouts, numOfScouters, cho
         if (numOfScouters != undefined) {
             newNumOfScouters += numOfScouters
         }
-        updateData(docPathToAdd + "scouter" + newNumOfScouters, { firstname: values.firstname, lastname: values.lastname })
+        updateData(docPathToAdd + "scouter" + uuid(), { firstname: values.firstname, lastname: values.lastname })
         chosenScouters.map(async (scouter) => {
             await deleteDocument(docPathToAdd + scouter)
         })
