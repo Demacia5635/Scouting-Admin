@@ -11,13 +11,13 @@ import { deleteDoc } from 'firebase/firestore/lite';
 import NewScouterForm from './NewScouterForm';
 
 
-interface DataType {
+interface ScouterDataType {
     key: React.Key;
     firstname: string;
     lastname: string;
 }
 
-const columns: ColumnsType<DataType> = [
+const columns: ColumnsType<ScouterDataType> = [
     {
         title: 'FirstName',
         dataIndex: 'firstname',
@@ -33,7 +33,7 @@ const columns: ColumnsType<DataType> = [
 
 
 const ScoutersTable = ({ currenteamnum }: currentteam) => {
-    const [data, setdata] = useState<DataType[]>();
+    const [data, setdata] = useState<ScouterDataType[]>();
     const [scoutersNum, setscoutersNum] = useState<number>(0)
     const [selcetdScouters, setSelelcetdScouters] = useState<string[]>([])
     console.log(currenteamnum + " numrecived")
@@ -41,7 +41,7 @@ const ScoutersTable = ({ currenteamnum }: currentteam) => {
         setscoutersNum(num)
     }
     const rowSelection = {
-        onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
+        onChange: (selectedRowKeys: React.Key[], selectedRows: ScouterDataType[]) => {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
             let selectedString: Array<string> = []
             selectedRowKeys.map((selectedRowKey) => {

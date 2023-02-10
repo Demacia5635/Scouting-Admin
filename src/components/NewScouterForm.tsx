@@ -2,13 +2,13 @@ import { PlusSquareOutlined } from "@ant-design/icons"
 import { Button, Form, Input, Modal } from "antd"
 import { useState } from "react"
 import { deleteDocument, updateData } from "../utils/firebase"
-import {v4 as uuid} from 'uuid'
+import { v4 as uuid } from 'uuid'
 
-type item = {
+type Item = {
     firstname: string
     lastname: string
 }
-type docProps = {
+type DocProps = {
     docPathToAdd: string
     updateNumberOfScouts: (num: number) => void
     numOfScouters: number
@@ -21,7 +21,7 @@ const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
 };
 
-const NewScouterForm = ({ docPathToAdd, updateNumberOfScouts, numOfScouters, chosenScouters }: docProps) => {
+const NewScouterForm = ({ docPathToAdd, updateNumberOfScouts, numOfScouters, chosenScouters }: DocProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
@@ -32,19 +32,19 @@ const NewScouterForm = ({ docPathToAdd, updateNumberOfScouts, numOfScouters, cho
         setIsModalOpen(false);
     };
 
-    const onFinish = (values: item) => {
+    const onFinish = (values: Item) => {
         let newNumOfScouters = numOfScouters + 1;
         updateData(docPathToAdd + "scouter" + uuid(), { firstname: values.firstname, lastname: values.lastname })
-        
+
         chosenScouters.map(async (scouter) => {
             await deleteDocument(docPathToAdd + scouter)
         })
-        
+
         newNumOfScouters -= chosenScouters.length
         updateNumberOfScouts(newNumOfScouters)
         setIsModalOpen(false);
     };
-    
+
     return (
         <>
             <Button onClick={showModal} icon={<PlusSquareOutlined />}></Button>
