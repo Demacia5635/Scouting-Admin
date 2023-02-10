@@ -15,18 +15,7 @@ body {
 
 .seasonbuttonlist .plusbutton {
     margin-right: 100%;
-    margin-bottom: 0%;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: azure;
-    border: 3px solid rgba(197, 189, 189, 0.699);
-    border-radius: 20px;
-    font-size: 250%;
+    margin-bottom: 10px;
     cursor: pointer;
-    padding-left: 2%;
-    padding-right: 4%;
-    }
-
-.plusbutton:hover {
-    background-color: rgba(224, 214, 224, 0.836);
-    color: black;
+    size: 1px;
 }

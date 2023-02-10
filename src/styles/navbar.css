@@ -11,18 +11,8 @@
 
 .navbar button {
     font-family: 'Roboto-Regular', sans-serif;
-    color: blueviolet;
-    border: none;
-    background-color: #4CAF50;
-    padding: 10px 20px;
-    text-align: center;
-    display: inline-block;
-    margin: 4px 2px;
-    font-size: 25px;
+    width: 200px;
     border-radius: 20px;
-    cursor: pointer;
-    text-decoration: none;
-    font-weight: bold;
 }
 
 .navbar a:hover {
