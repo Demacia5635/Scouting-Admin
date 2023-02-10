@@ -11,7 +11,7 @@ type numberOfScouters = {
     scouterDocPath: string
     numOfScouters: number
     scoutersToBeDeleted: string[]
-    updateNumberOfScouts: (num: number | undefined) => void
+    updateNumberOfScouts: (num: number) => void
 }
 
 
