@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Divider, Radio, Table } from 'antd';
+import { Button, Divider, Radio, Space, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { async } from '@firebase/util';
-import { getscouters } from '../utils/firebase';
+import { deleteDocument, getscouters } from '../utils/firebase';
 import { currentteam } from './types/CurrentTeam';
 import { FileUploader } from './FileUploader';
-
+import { Console } from 'console';
+import { DeleteOutlined, PlusSquareOutlined } from '@ant-design/icons';
+import { deleteDoc } from 'firebase/firestore/lite';
+import NewScouterForm from './NewScouterForm';
 
 
 interface DataType {
@@ -51,35 +54,59 @@ const columns: ColumnsType<DataType> = [
 // ];
 
 // rowSelection object indicates the need for row selection
-const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    },
 
-};
 
-const ScoutersTable = ({ currenteamnum, currentteamname }: currentteam) => {
-    const [selectionType, setSelectionType] = useState<'checkbox' | 'radio'>('checkbox');
+const ScoutersTable = ({ currenteamnum }: currentteam) => {
     const [data, setdata] = useState<DataType[]>();
+    const [scoutersNum, setscoutersNum] = useState<number | undefined>()
+    const [selcetdScouters, setSelelcetdScouters] = useState<string[]>([])
+    console.log(currenteamnum + " numrecived")
+    const updateScoutersNum = (num: number | undefined) => {
+        setscoutersNum(num)
+    }
+    const rowSelection = {
+        onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
+            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            let selectedString: Array<string> = []
+            selectedRowKeys.map((selectedRowKey) => {
+                selectedString.push(selectedRowKey + "")
+            })
+            setSelelcetdScouters(selectedString)
+            console.log('selected keys', selcetdScouters)
+        },
 
-
+    };
     useEffect(() => {
         async function setscouters() {
             const scouters = await getscouters("seasons/2019/teams/" + currenteamnum + "/scouters")
-            console.log("now activated")
             setdata(scouters)
 
+            console.log("setting length")
+            setscoutersNum(data?.length)
         }
         setscouters();
 
-    }, [currenteamnum, currentteamname, data?.length]);
+    }, [currenteamnum, scoutersNum]);
 
     return (
         <div>
 
-            <h1>{currentteamname}s scouters </h1>
+
             <Divider />
-            <FileUploader scouterDocPath={"seasons/2019/teams/" + currenteamnum + "/scouters" + data?.length} />
+            <Space>
+                <NewScouterForm docPathToAdd={"seasons/2019/teams/" + currenteamnum + "/scouters/"} updateNumberOfScouts={updateScoutersNum}
+                    numOfScouters={currenteamnum} />
+                <FileUploader scouterDocPath={"seasons/2019/teams/" + currenteamnum + "/scouters/"} numOfScouters={scoutersNum} updateNumberOfScouts={updateScoutersNum} scoutersToBeDeleted={selcetdScouters} />
+                <Button icon={<DeleteOutlined />} onClick={() => {
+
+                    selcetdScouters.map((selcetedScouter) => {
+                        deleteDocument("seasons/2019/teams/" + currenteamnum + "/scouters/" + selcetedScouter)
+                    })
+                    if (scoutersNum != undefined) {
+                        setscoutersNum(scoutersNum - selcetdScouters.length)
+                    }
+
+                }}></Button></Space>
             <Table
                 rowSelection={{
                     type: "checkbox",
