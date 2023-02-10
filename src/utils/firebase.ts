@@ -18,8 +18,8 @@ export const firestore = getFirestore(firebase);
 export function updateData(docPath: string, data: any) {
     setDoc(doc(firestore, docPath), data);
 }
-export function deleteDocument(docPath: string) {
-    deleteDoc(doc(firestore, docPath))
+export async function deleteDocument(docPath: string) {
+    await deleteDoc(doc(firestore, docPath))
 }
 
 
