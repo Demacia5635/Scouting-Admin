@@ -16,15 +16,15 @@ type numberOfScouters = {
 
 
 export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScouts, scoutersToBeDeleted }: numberOfScouters) => {
-    const [isFirsttime, setfirsttime] = useState(false);
+    const [isFirstTime, setFirstTime] = useState(false);
     const [isModelOpened, setIsModalOpen] = useState(false)
     useEffect(() => {
-        setfirsttime(true)
+        setFirstTime(true)
     }, [])
 
     const showModal = () => {
-        setIsModalOpen(isFirsttime);
-        setfirsttime(false)
+        setIsModalOpen(isFirstTime);
+        setFirstTime(false)
     };
 
     const handleOk = () => {
@@ -34,7 +34,7 @@ export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScou
     const handleCancel = () => {
         setIsModalOpen(false);
     };
-    interface names {
+    interface Names {
         scoutersnames: string;
         scouterslastname: string;
     }
@@ -58,22 +58,20 @@ export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScou
                     showIcon
                 />
             </Modal>
-            {!isFirsttime && (
+            {!isFirstTime && (
                 <Upload
                     accept=".xlsx, .xls"
                     listType="text"
                     maxCount={1}
                     beforeUpload={file => {
-                        // return new Promise((resolve, reject) => {
-
                         console.log("started")
-                        const filereader = new FileReader();
-                        filereader.onload = (e) => {
-                            const bufferarray = e.target?.result;
-                            const wb = read(bufferarray, { type: "buffer" })
+                        const fileReader = new FileReader();
+                        fileReader.onload = (e) => {
+                            const bufferArray = e.target?.result;
+                            const workBook = read(bufferArray, { type: "buffer" })
                             console.log("read file")
-                            const ws = wb.Sheets[wb.SheetNames[0]]
-                            const data = utils.sheet_to_json<names>(ws)
+                            const workSheet = workBook.Sheets[workBook.SheetNames[0]]
+                            const data = utils.sheet_to_json<Names>(workSheet)
                             let i = 0;
                             if (numOfScouters != undefined) {
                                 i = numOfScouters;
@@ -90,7 +88,7 @@ export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScou
                             i -= scoutersToBeDeleted.length
                             updateNumberOfScouts((i - 1))
                         }
-                        filereader.readAsArrayBuffer(file)
+                        fileReader.readAsArrayBuffer(file)
                         return false;
                     }
 
@@ -98,10 +96,9 @@ export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScou
 
                     }
                 >
-
                     <Button onClick={showModal} icon={<UploadOutlined />}>Upload</Button>
                 </Upload>)}
-            {isFirsttime && (
+            {isFirstTime && (
                 <Button onClick={showModal} icon={<UploadOutlined />}>Upload</Button>)}
 
         </div>

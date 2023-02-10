@@ -72,14 +72,14 @@ const ScoutersTable = ({ currenteamnum }: currentteam) => {
                     numOfScouters={currenteamnum} chosenScouters={selcetdScouters} />
                 <FileUploader scouterDocPath={"seasons/2019/teams/" + currenteamnum + "/scouters/"} numOfScouters={scoutersNum} updateNumberOfScouts={updateScoutersNum} scoutersToBeDeleted={selcetdScouters} />
                 <Button icon={<DeleteOutlined />} onClick={() => {
-
                     selcetdScouters.map((selcetedScouter) => {
                         deleteDocument("seasons/2019/teams/" + currenteamnum + "/scouters/" + selcetedScouter)
                     })
                     setscoutersNum(scoutersNum - selcetdScouters.length)
-
-                }}></Button></Space>
-                <Table
+                }}>
+                </Button>
+            </Space>
+            <Table
                 rowSelection={{
                     type: 'checkbox',
                     ...rowSelection,
@@ -91,7 +91,7 @@ const ScoutersTable = ({ currenteamnum }: currentteam) => {
                 }
                 columns={columns}
                 dataSource={data}
-                />
+            />
         </div>
     );
 };

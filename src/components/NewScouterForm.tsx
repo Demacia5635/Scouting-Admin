@@ -28,13 +28,9 @@ const NewScouterForm = ({ docPathToAdd, updateNumberOfScouts, numOfScouters, cho
         setIsModalOpen(true);
     };
 
-
-
     const handleCancel = () => {
         setIsModalOpen(false);
     };
-
-
 
     const onFinish = (values: item) => {
         let newNumOfScouters = numOfScouters + 1;
