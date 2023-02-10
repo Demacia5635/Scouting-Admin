@@ -25,3 +25,4 @@ yarn.lock
 .env
 .env
 .env
+package-lock.json
