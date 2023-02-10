@@ -14,7 +14,6 @@ type numberOfScouters = {
     updateNumberOfScouts: (num: number | undefined) => void
 }
 
-const handleonchange = (e: InputEvent) => { }
 
 export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScouts, scoutersToBeDeleted }: numberOfScouters) => {
     const [isFirsttime, setfirsttime] = useState(false);
