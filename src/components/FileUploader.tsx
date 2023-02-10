@@ -40,7 +40,7 @@ export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScou
     }
     const descriptionElement = (
         <code>
-            please upload an exel file (.xslx) in the following format:
+            Please upload an exel file (.xslx) in the following format:
             <br />
             name the first row of the collum you want to put your scouters first and middel names: scoutersnames
             <br />
