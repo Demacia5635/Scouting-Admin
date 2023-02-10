@@ -95,7 +95,7 @@ const ScoutersTable = ({ currenteamnum }: currentteam) => {
             <Divider />
             <Space>
                 <NewScouterForm docPathToAdd={"seasons/2019/teams/" + currenteamnum + "/scouters/"} updateNumberOfScouts={updateScoutersNum}
-                    numOfScouters={currenteamnum} />
+                    numOfScouters={currenteamnum} chosenScouters={selcetdScouters} />
                 <FileUploader scouterDocPath={"seasons/2019/teams/" + currenteamnum + "/scouters/"} numOfScouters={scoutersNum} updateNumberOfScouts={updateScoutersNum} scoutersToBeDeleted={selcetdScouters} />
                 <Button icon={<DeleteOutlined />} onClick={() => {
 
