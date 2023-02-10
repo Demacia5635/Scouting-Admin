@@ -11,7 +11,7 @@ type item = {
 type docProps = {
     docPathToAdd: string
     updateNumberOfScouts: (num: number) => void
-    numOfScouters: number | undefined
+    numOfScouters: number
     chosenScouters: string[]
 
 
