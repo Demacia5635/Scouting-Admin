@@ -37,26 +37,25 @@ const NewScouterForm = ({ docPathToAdd, updateNumberOfScouts, numOfScouters, cho
 
 
     const onFinish = (values: item) => {
-        let newNumOfScouters = 1;
-        if (numOfScouters != undefined) {
-            newNumOfScouters += numOfScouters
-        }
+        let newNumOfScouters = numOfScouters + 1;
         updateData(docPathToAdd + "scouter" + uuid(), { firstname: values.firstname, lastname: values.lastname })
+        
         chosenScouters.map(async (scouter) => {
             await deleteDocument(docPathToAdd + scouter)
         })
+        
         newNumOfScouters -= chosenScouters.length
         updateNumberOfScouts(newNumOfScouters)
         setIsModalOpen(false);
     };
+    
     return (
         <>
             <Button onClick={showModal} icon={<PlusSquareOutlined />}></Button>
             <Modal
                 onCancel={handleCancel}
                 open={isModalOpen}
-                footer={[
-                ]}>
+                footer={[]}>
                 <Form
                     name="basic"
                     labelCol={{ span: 8 }}

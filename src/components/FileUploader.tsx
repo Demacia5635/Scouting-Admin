@@ -42,9 +42,9 @@ export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScou
         <code>
             Please upload an exel file (.xslx) in the following format:
             <br />
-            name the first row of the collum you want to put your scouters first and middel names: scoutersnames
+            First column (will include the scouters first name) title: "scoutersnames"
             <br />
-            name the first row of the collum you want to put your scouters last names: scouterslastname
+            Second column (will include the scouters last name) title: "scouterslastname"
 
         </code>
     )

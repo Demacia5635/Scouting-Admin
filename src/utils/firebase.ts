@@ -15,8 +15,8 @@ const firebaseConfig = {
 export const firebase = initializeApp(firebaseConfig);
 export const firestore = getFirestore(firebase);
 
-export function updateData(docPath: string, data: any) {
-    setDoc(doc(firestore, docPath), data);
+export async function updateData(docPath: string, data: any) {
+    await setDoc(doc(firestore, docPath), data);
 }
 export async function deleteDocument(docPath: string) {
     await deleteDoc(doc(firestore, docPath))

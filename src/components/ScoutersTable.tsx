@@ -30,38 +30,14 @@ const columns: ColumnsType<DataType> = [
 
 ];
 
-// const data: DataType[] = [
-//     {
-//         key: '1',
-//         firstname: 'John',
-//         lastname: "Brown",
-//     },
-//     {
-//         key: '2',
-//         firstname: 'Jim',
-//         lastname: "Green",
-//     },
-//     {
-//         key: '3',
-//         firstname: 'Joe Black',
-//         lastname: "Black",
-//     },
-//     {
-//         key: '4',
-//         firstname: 'Disabled User',
-//         lastname: 'Sydney No. 1 Lake Park',
-//     },
-// ];
-
-// rowSelection object indicates the need for row selection
 
 
 const ScoutersTable = ({ currenteamnum }: currentteam) => {
     const [data, setdata] = useState<DataType[]>();
-    const [scoutersNum, setscoutersNum] = useState<number | undefined>()
+    const [scoutersNum, setscoutersNum] = useState<number>(0)
     const [selcetdScouters, setSelelcetdScouters] = useState<string[]>([])
     console.log(currenteamnum + " numrecived")
-    const updateScoutersNum = (num: number | undefined) => {
+    const updateScoutersNum = (num: number) => {
         setscoutersNum(num)
     }
     const rowSelection = {
@@ -82,7 +58,7 @@ const ScoutersTable = ({ currenteamnum }: currentteam) => {
             setdata(scouters)
 
             console.log("setting length")
-            setscoutersNum(data?.length)
+            setscoutersNum(data?.length || 0)
         }
         setscouters();
 
@@ -102,16 +78,14 @@ const ScoutersTable = ({ currenteamnum }: currentteam) => {
                     selcetdScouters.map((selcetedScouter) => {
                         deleteDocument("seasons/2019/teams/" + currenteamnum + "/scouters/" + selcetedScouter)
                     })
-                    if (scoutersNum != undefined) {
-                        setscoutersNum(scoutersNum - selcetdScouters.length)
-                    }
+                    setscoutersNum(scoutersNum - selcetdScouters.length)
 
                 }}></Button></Space>
-            <Table
-                rowSelection={{
-                    type: "checkbox",
-                    ...rowSelection,
-                }}
+                pagination={
+                    {
+                        pageSize: 10
+                    }
+                }
                 columns={columns}
                 dataSource={data}
             />
