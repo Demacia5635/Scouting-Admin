@@ -5,6 +5,7 @@ import { resolve } from "path"
 import { useEffect, useState } from "react"
 import { CellObject, read, utils } from "xlsx"
 import { deleteDocument, updateData } from "../utils/firebase"
+import {v4 as uuid} from 'uuid'
 
 type numberOfScouters = {
     scouterDocPath: string
@@ -79,8 +80,7 @@ export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScou
                                 i = numOfScouters;
                             }
                             data.map(async (dat) => {
-                                i++
-                                await updateData(scouterDocPath + "scouter" + i, { firstname: dat.scoutersnames, lastname: dat.scouterslastname })
+                                await updateData(scouterDocPath + "scouter" + uuid(), { firstname: dat.scoutersnames, lastname: dat.scouterslastname })
                             })
 
                             scoutersToBeDeleted.map(async (scouter) => {
