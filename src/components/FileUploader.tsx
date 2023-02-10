@@ -9,7 +9,7 @@ import {v4 as uuid} from 'uuid'
 
 type numberOfScouters = {
     scouterDocPath: string
-    numOfScouters: number | undefined
+    numOfScouters: number
     scoutersToBeDeleted: string[]
     updateNumberOfScouts: (num: number | undefined) => void
 }
