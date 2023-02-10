@@ -4,15 +4,18 @@ import { rejects } from "assert"
 import { resolve } from "path"
 import { useEffect, useState } from "react"
 import { CellObject, read, utils } from "xlsx"
-import { updateData } from "../utils/firebase"
+import { deleteDocument, updateData } from "../utils/firebase"
 
 type numberOfScouters = {
     scouterDocPath: string
+    numOfScouters: number | undefined
+    scoutersToBeDeleted: string[]
+    updateNumberOfScouts: (num: number | undefined) => void
 }
 
 const handleonchange = (e: InputEvent) => { }
 
-export const FileUploader = ({ scouterDocPath }: numberOfScouters) => {
+export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScouts, scoutersToBeDeleted }: numberOfScouters) => {
     const [isFirsttime, setfirsttime] = useState(false);
     const [isModelOpened, setIsModalOpen] = useState(false)
     useEffect(() => {
@@ -71,9 +74,22 @@ export const FileUploader = ({ scouterDocPath }: numberOfScouters) => {
                             console.log("read file")
                             const ws = wb.Sheets[wb.SheetNames[0]]
                             const data = utils.sheet_to_json<names>(ws)
-                            data.map((dat) => {
-                                updateData(scouterDocPath, { firstname: dat.scoutersnames, lastname: dat.scouterslastname })
+                            let i = 0;
+                            if (numOfScouters != undefined) {
+                                i = numOfScouters;
+                            }
+                            data.map(async (dat) => {
+                                i++
+                                await updateData(scouterDocPath + "scouter" + i, { firstname: dat.scoutersnames, lastname: dat.scouterslastname })
                             })
+
+                            scoutersToBeDeleted.map(async (scouter) => {
+                                console.log("scouter: " + scouter)
+                                console.log("scouter path: " + scouterDocPath)
+                                await deleteDocument(scouterDocPath + scouter)
+                            })
+                            i -= scoutersToBeDeleted.length
+                            updateNumberOfScouts((i - 1))
                         }
                         filereader.readAsArrayBuffer(file)
                         return false;
