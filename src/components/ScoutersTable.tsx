@@ -66,8 +66,6 @@ const ScoutersTable = ({ currenteamnum }: currentteam) => {
 
     return (
         <div>
-
-
             <Divider />
             <Space>
                 <NewScouterForm docPathToAdd={"seasons/2019/teams/" + currenteamnum + "/scouters/"} updateNumberOfScouts={updateScoutersNum}
@@ -81,6 +79,11 @@ const ScoutersTable = ({ currenteamnum }: currentteam) => {
                     setscoutersNum(scoutersNum - selcetdScouters.length)
 
                 }}></Button></Space>
+                <Table
+                rowSelection={{
+                    type: 'checkbox',
+                    ...rowSelection,
+                }}
                 pagination={
                     {
                         pageSize: 10
@@ -88,7 +91,7 @@ const ScoutersTable = ({ currenteamnum }: currentteam) => {
                 }
                 columns={columns}
                 dataSource={data}
-            />
+                />
         </div>
     );
 };
