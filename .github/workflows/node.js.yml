@@ -38,6 +38,6 @@ jobs:
         CI: false
 
     - name: Test
-      run: yarn test --if-present
+      run: yarn test
       env:
         CI: false
