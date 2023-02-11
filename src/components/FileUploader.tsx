@@ -18,6 +18,7 @@ type numberOfScouters = {
 export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScouts, scoutersToBeDeleted }: numberOfScouters) => {
     const [isFirstTime, setFirstTime] = useState(false);
     const [isModelOpened, setIsModalOpen] = useState(false)
+    
     useEffect(() => {
         setFirstTime(true)
     }, [])
@@ -34,10 +35,12 @@ export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScou
     const handleCancel = () => {
         setIsModalOpen(false);
     };
+    
     interface Names {
         scoutersnames: string;
         scouterslastname: string;
     }
+    
     const descriptionElement = (
         <code>
             Please upload an exel file (.xslx) in the following format:
@@ -45,9 +48,9 @@ export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScou
             First column (will include the scouters first name) title: "scoutersnames"
             <br />
             Second column (will include the scouters last name) title: "scouterslastname"
-
         </code>
     )
+    
     return (
         <div>
 
@@ -92,7 +95,6 @@ export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScou
                         return false;
                     }
 
-                        // const testcell:CellObject = ws['B1']
 
                     }
                 >

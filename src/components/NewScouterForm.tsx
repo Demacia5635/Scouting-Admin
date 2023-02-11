@@ -13,8 +13,6 @@ type DocProps = {
     updateNumberOfScouts: (num: number) => void
     numOfScouters: number
     chosenScouters: string[]
-
-
 }
 
 const onFinishFailed = (errorInfo: any) => {

@@ -21,13 +21,6 @@ export async function deleteDocument(docPath: string) {
     await deleteDoc(doc(firestore, docPath))
 }
 
-
-export async function try1(): Promise<{ data: string }> {
-    const a = await getDoc(doc(firestore, "path"))
-    return { data: a.data.toString() }
-
-}
-
 export async function getSeasons(): Promise<{ year: string, name: string }[]> {
     const seasons = await getDocs(collection(firestore, 'seasons'));
     return seasons.docs.map((doc) => { return { year: doc.id, name: doc.get('name') } });
@@ -36,6 +29,7 @@ export async function getFieldValue(collectionName: any, fieldid: string): Promi
     const seasons = await getDocs(collection(firestore, collectionName));
     return seasons.docs.map((doc) => { return { fieldid: doc.id, fieldlvalue: doc.get(fieldid) } });
 }
+
 export async function getscouters(collectionName: any): Promise<{ key: string, firstname: string, lastname: string }[]> {
     const seasons = await getDocs(collection(firestore, collectionName));
     return seasons.docs.map((doc) => {
