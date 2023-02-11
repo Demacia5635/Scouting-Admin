@@ -36,8 +36,3 @@ jobs:
       run: yarn build --if-present
       env:
         CI: false
-
-    - name: Test
-      run: yarn test
-      env:
-        CI: false

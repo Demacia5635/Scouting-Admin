@@ -23,7 +23,7 @@ export const Home = () => {
 
 
     const seasonsComponents = seasons.map((season) => {
-        return <SeasonButton name={season.name} year={season.year} />
+        return <SeasonButton key={season.year} name={season.name} year={season.year} />
     });
 
 
