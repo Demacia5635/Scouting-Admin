@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, getDoc, setDoc, doc } from 'firebase/firestore/lite';
+import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc } from 'firebase/firestore/lite';
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -14,11 +14,27 @@ const firebaseConfig = {
 export const firebase = initializeApp(firebaseConfig);
 export const firestore = getFirestore(firebase);
 
-async function updateData(collectionName: any, docName: string, data: any) {
-    await setDoc(doc(firestore, collectionName, docName), data);
+export async function updateData(docPath: string, data: any) {
+    await setDoc(doc(firestore, docPath), data);
+}
+export async function deleteDocument(docPath: string) {
+    await deleteDoc(doc(firestore, docPath))
 }
 
 export async function getSeasons(): Promise<{ year: string, name: string }[]> {
     const seasons = await getDocs(collection(firestore, 'seasons'));
     return seasons.docs.map((doc) => { return { year: doc.id, name: doc.get('name') } });
 }
+export async function getFieldValue(collectionName: any, fieldid: string): Promise<{ fieldid: string, fieldlvalue: string }[]> {
+    const seasons = await getDocs(collection(firestore, collectionName));
+    return seasons.docs.map((doc) => { return { fieldid: doc.id, fieldlvalue: doc.get(fieldid) } });
+}
+
+export async function getscouters(collectionName: any): Promise<{ key: string, firstname: string, lastname: string }[]> {
+    const seasons = await getDocs(collection(firestore, collectionName));
+    return seasons.docs.map((doc) => {
+        return { key: doc.id + "", firstname: doc.get("firstname"), lastname: doc.get("lastname") }
+    });
+}
+
+

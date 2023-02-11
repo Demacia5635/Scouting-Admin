@@ -1,0 +1,25 @@
+.dropdownmenu{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0%;
+    border: 3px solid rgba(0, 0, 0, 0.699);
+    margin-right: 85%;
+    margin-left:10%;
+    border-radius:20px;
+    text-align: start;
+    cursor: pointer;
+
+    
+}
+.dropdownmenu .mmenucomp{
+
+}
+.dropdownmenu .icon{
+    align-self: center;
+
+
+}
+.dropdownmenu .text{
+    margin: 0%;
+    margin-left: 5%;
+}
