@@ -1,4 +1,5 @@
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware')
+const { env } = require("process")
 
 module.exports = function (app) {
     app.use(
@@ -8,7 +9,8 @@ module.exports = function (app) {
             changeOrigin: true,
             pathRewrite: (path) => {
                 return path.replace("/frcapi", "/")
-            }
+            },
+            auth: `${env.REACT_APP_FRC_API_TOKEN}`
         })
     );
 };
