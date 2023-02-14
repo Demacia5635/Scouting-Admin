@@ -110,30 +110,15 @@ export const SeasonEditor = () => {
                     }></Input>
                 </Space>
             </Space>
-
-            <table className="params-table">
-                <thead>
-                    <tr>
-                        
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colSpan={4} className="">
-                            
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            
             <div className="params-list">
                 <h2 className="no-data" style={{ display: showLoading }}>{loadingData ? "Loading Data..." : "No Data"}</h2>
                 <Space direction="vertical">
                     {selectedParams}
-                    <ItemParamPopup></ItemParamPopup>
+                    <Button className="add-param-button" onClick={() => {
+                        setParams([...params, <ItemParamPopup key={uuidv4()} param={undefined}></ItemParamPopup>]);
+                        setSelectedParams([...selectedParams, <ItemParamPopup key={uuidv4()} param={undefined}></ItemParamPopup>]);
+                    }}>Add Param</Button>
                 </Space>
             </div>
         </div >
