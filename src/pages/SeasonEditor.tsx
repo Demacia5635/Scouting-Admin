@@ -82,44 +82,45 @@ export const SeasonEditor = () => {
 
             <h1>Season: {year} {name}</h1>
 
+            <Space direction="vertical" style={{marginTop: '20px', width: '100%', justifyContent: 'left'}}>
+                <Space className="params-mode-buttons">
+                    <Button className="autonomous-button mode-button" onClick={() => setMode(DataParamsModes.AUTONOMOUS)}>Autonomous</Button>
+                    <Button className="teleop-button mode-button" onClick={() => setMode(DataParamsModes.TELEOP)}>Teleop</Button>
+                    <Button className="endgame-button mode-button" onClick={() => setMode(DataParamsModes.ENDGAME)}>End Game</Button>
+                    <Button className="summary-button mode-button" onClick={() => setMode(DataParamsModes.SUMMARY)}>Summary</Button>
+                </Space>
+                <Space className="params-search-bar">
+                    <i className="fa fa-search"></i>
+                    <Input placeholder="Search..." onChange={
+                        (event) => {
+                            const value = event.target.value;
+                            if (value === "") {
+                                setSelectedParams(params);
+                            } else {
+                                const filteredParams = params.filter((param) => {
+                                    if (param != null) {
+                                        const paramItem = param.props.param;
+                                        return paramItem.displayName.toLowerCase().includes(value.toLowerCase());
+                                    }
+                                    return false;
+                                });
+                                setSelectedParams(filteredParams);
+                            }
+                        }
+                    }></Input>
+                </Space>
+            </Space>
+
             <table className="params-table">
                 <thead>
                     <tr>
-                        <th>
-                            <Button className="autonomous-button mode-button" onClick={() => setMode(DataParamsModes.AUTONOMOUS)}>Autonomous</Button>
-                        </th>
-                        <th>
-                            <Button className="teleop-button mode-button" onClick={() => setMode(DataParamsModes.TELEOP)}>Teleop</Button>
-                        </th>
-                        <th>
-                            <Button className="endgame-button mode-button" onClick={() => setMode(DataParamsModes.ENDGAME)}>End Game</Button>
-                        </th>
-                        <th>
-                            <Button className="summary-button mode-button" onClick={() => setMode(DataParamsModes.SUMMARY)}>Summary</Button>
-                        </th>
+                        
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colSpan={4} className="search-bar">
-                            <i className="fa fa-search"></i>
-                            <Input placeholder="Search..." onChange={
-                                (event) => {
-                                    const value = event.target.value;
-                                    if (value === "") {
-                                        setSelectedParams(params);
-                                    } else {
-                                        const filteredParams = params.filter((param) => {
-                                            if (param != null) {
-                                                const paramItem = param.props.param;
-                                                return paramItem.displayName.toLowerCase().includes(value.toLowerCase());
-                                            }
-                                            return false;
-                                        });
-                                        setSelectedParams(filteredParams);
-                                    }
-                                }
-                            }></Input>
+                        <td colSpan={4} className="">
+                            
                         </td>
                     </tr>
                     <tr>
