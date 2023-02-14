@@ -91,9 +91,9 @@ export const ItemParamPopup = ({ param, onSave: handleSave, mode}: ItemParamPopu
 
     return (
         <div className="popup">
-            <Space style={{}}>
+            <Space style={{cursor: 'pointer'}} onClick={openPopup}>
                 <Button style={{backgroundColor: buttonBackground, border: '0px'}}>{buttonTitle}</Button>
-                <EditFilled className="edit-button" onClick={openPopup}></EditFilled>
+                <EditFilled className="edit-button"></EditFilled>
             </Space>
             <Modal
                 title="Parameter"
