@@ -2,6 +2,7 @@ import { Button, Input, Space } from "antd";
 import { ReactElement, useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { ItemParamPopup } from "../components/popups/ItemParamPopup";
+import { UsersManager } from "../components/UsersManager";
 import "../styles/editor/seasoneditor.css";
 import { getAllParams, setParamInFirebase } from "../utils/firebase";
 import { dataOrder, DataParamsModes, ParamItem } from "../utils/params/ParamItem";
@@ -164,6 +165,7 @@ export const SeasonEditor = () => {
                 <Space direction="vertical">
                     {selectedParams}
                     {createParamElement(undefined, mode)}
+                    <UsersManager year={year} mode={mode} />
                 </Space>
             </div>
         </div >

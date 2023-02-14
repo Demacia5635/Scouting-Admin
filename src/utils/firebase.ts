@@ -20,7 +20,7 @@ export async function getSeasons(): Promise<{ year: string, name: string }[]> {
     return seasons.docs.map((doc) => { return { year: doc.id, name: doc.get('name') } });
 }
 
-export async function getAllParams(seasonYear: number) {
+export async function getAllParams(seasonYear: string) {
     console.log(`Loading data for ${seasonYear}`)
     return [
         await getParams(DataParamsModes.AUTONOMOUS, seasonYear),
@@ -30,8 +30,8 @@ export async function getAllParams(seasonYear: number) {
     ];
 }
 
-export async function getParams(mode: DataParamsModes, seasonYear: number) {
-    const dataParams = await getDoc(doc(firestore, 'seasons', seasonYear.toString(), 'data-params', mode));
+export async function getParams(mode: DataParamsModes, seasonYear: string) {
+    const dataParams = await getDoc(doc(firestore, 'seasons', seasonYear, 'data-params', mode));
     const data = dataParams.data() as ParamItem[];
     let params = []
     for (const param in data) {
@@ -42,6 +42,6 @@ export async function getParams(mode: DataParamsModes, seasonYear: number) {
     
 }
 
-export async function setParamInFirebase(param: ParamItem, mode: DataParamsModes, seasonYear: number) {
-    await updateDoc(doc(firestore, 'seasons', seasonYear.toString(), 'data-params', mode), { [param.name]: param});
+export async function setParamInFirebase(param: ParamItem, mode: DataParamsModes, seasonYear: string) {
+    await updateDoc(doc(firestore, 'seasons', seasonYear, 'data-params', mode), { [param.name]: param});
 }
