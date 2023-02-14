@@ -82,7 +82,7 @@ export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => 
     const onFail = (values: ParamItem, errorFields: {name: InternalNamePath, errors: string[];}[], outOfDate: boolean) => {
         
     }
-    
+
 
     return (
         <div className="popup">
@@ -96,6 +96,7 @@ export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => 
                 onCancel={() => closePopup(false)} cancelText="Cancel"
                 okText="Save" onOk={() => form.submit()}
                 className="form"
+                centered
                 width={500}
             >
                 <Form
