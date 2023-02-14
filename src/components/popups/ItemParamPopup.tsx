@@ -60,7 +60,6 @@ export const ItemParamPopup = ({ param, onSave: handleSave, mode}: ItemParamPopu
     }
 
     const resetParam = () => {
-        console.log('reset!')
         form.setFieldsValue({
             name: '',
             displayName: '',
