@@ -3,16 +3,17 @@ import { Button, Form, Input, InputNumber, Modal, Select, Space } from "antd";
 import { useEffect, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import { getOpositeColor } from "../../utils/colors";
-import { isSpecialRequired, ParamItem, ParamType, paramTypeSelectOptions, SpecialVisibility } from "../../utils/params/ParamItem";
+import { DataParamsModes, isSpecialRequired, ParamItem, ParamType, paramTypeSelectOptions, SpecialVisibility } from "../../utils/params/ParamItem";
 import "../../styles/popups/forms-popup.css";
 import { InternalNamePath } from "antd/es/form/interface";
 
-type ItemParamPopupProps = {
+export type ItemParamPopupProps = {
     param?: ParamItem;
-    handleChange?: (event?: any) => void;
+    onSave: (param: ParamItem, justCreated: boolean, mode: DataParamsModes) => void;
+    mode: DataParamsModes;
 }
 
-export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => {
+export const ItemParamPopup = ({ param, onSave: handleSave, mode}: ItemParamPopupProps) => {
     const [form] = Form.useForm<ParamItem>();
     const [buttonTitle, setButtonTitle] = useState(param ? param.displayName : 'Add New Param');
     const [buttonBackground, setButtonBackground] = useState(param ? param.color : '#FFFFFF');
@@ -47,7 +48,7 @@ export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => 
     }
 
     const closePopup = (save: boolean=true) => {
-        if (!save) {
+        if (!save && param) {
             form.setFieldsValue(oldParamItem!);
             setParamItem(oldParamItem);
             setStepRequired(isSpecialRequired(oldParamItem?.type, SpecialVisibility.STEP));
@@ -59,6 +60,7 @@ export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => 
     }
 
     const resetParam = () => {
+        console.log('reset!')
         form.setFieldsValue({
             name: '',
             displayName: '',
@@ -72,9 +74,13 @@ export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => 
     }
 
     const onSave = (values: ParamItem) => {
-        setParamItem(values);
-        setButtonTitle(values.displayName);
-        setButtonBackground(values.color);
+        if (param) {
+            setParamItem(values);
+            setButtonTitle(values.displayName);
+            setButtonBackground(values.color);
+        }
+
+        handleSave(values, param ? false : true, mode);
 
         closePopup();
     }
@@ -87,7 +93,7 @@ export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => 
     return (
         <div className="popup">
             <Space style={{}}>
-                <Button onChange={handleChange} style={{backgroundColor: buttonBackground, border: '0px'}}>{buttonTitle}</Button>
+                <Button style={{backgroundColor: buttonBackground, border: '0px'}}>{buttonTitle}</Button>
                 <EditFilled className="edit-button" onClick={openPopup}></EditFilled>
             </Space>
             <Modal

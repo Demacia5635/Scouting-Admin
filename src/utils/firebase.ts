@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { collection, doc, getDoc, getDocs, getFirestore } from 'firebase/firestore/lite';
-import { DataParamsModes } from "./params/ParamItem";
+import { DataParamsModes, ParamItem } from "./params/ParamItem";
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -32,5 +32,12 @@ export async function getAllParams(seasonYear: string) {
 
 export async function getParams(mode: DataParamsModes, seasonYear: string) {
     const dataParams = await getDoc(doc(firestore, 'seasons', seasonYear, 'data-params', mode));
-    return dataParams.data();
+    const data = dataParams.data() as ParamItem[];
+    let params = []
+    for (const param in data) {
+        params.push({ ...data[param], name: param });
+    }
+    params = params.filter((param) => param != null);
+    return params;
+    
 }

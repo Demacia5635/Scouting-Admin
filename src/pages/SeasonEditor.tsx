@@ -1,5 +1,4 @@
 import { Button, Input, Space } from "antd";
-import { DocumentData } from "firebase/firestore/lite";
 import { ReactElement, useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { ItemParamPopup } from "../components/popups/ItemParamPopup";
@@ -10,13 +9,62 @@ import { getSelectedSeason } from "../utils/season-handler";
 
 export const SeasonEditor = () => {
     const { year, name } = getSelectedSeason();
-    const [allParams, setAllParams] = useState<(DocumentData | undefined)[]>([]);
+
+    const [allParams, setAllParams] = useState<(ParamItem[])[]>([]);
     const [params, setParams] = useState<(ReactElement | null | undefined)[]>([]);
     const [selectedParams, setSelectedParams] = useState<(ReactElement | null | undefined)[]>([]);
+
     const [mode, setMode] = useState(DataParamsModes.AUTONOMOUS);
     const [loadingData, setLoadingData] = useState(true);
     const [showLoading, setShowLoading] = useState('block');
+    
+    const createParamElement = (param: ParamItem | undefined, mode: DataParamsModes) => {
+        if (param) {
+            return <ItemParamPopup key={uuidv4()} param={param} mode={mode} onSave={
+                (param: ParamItem, justCreated: boolean, mode: DataParamsModes) => {
+                    const index = dataOrder(mode);
+                    if (!justCreated) {
+                        setAllParams((prev) => {
+                            const newParams = prev[index];
+                            const paramIndex = newParams.findIndex((paramItem) => paramItem.name === param.name);
+                            newParams[paramIndex] = param;
+                            return prev;
+                        });
+                    }
+                }
+            }/>;
+        } else {
+            return <ItemParamPopup key={uuidv4()} mode={mode} onSave={
+                (param: ParamItem, justCreated: boolean, mode: DataParamsModes) => {
+                    const index = dataOrder(mode);
+                    if (justCreated) {
+                        setAllParams((prev) => {
+                            const newParams = prev[index];
+                            newParams.push(param);
+                            return prev;
+                        });
+                        updateParams();
+                    }
+                }
+            }/>;
+        }
+    }
 
+    const updateParams = () => {
+        const params = allParams[dataOrder(mode)];
+        const elementList = params ? params.map((param) => createParamElement(param, mode)) : [];
+
+        if (elementList && elementList.length === 0) {
+            setLoadingData(false);
+            setShowLoading('block');
+        } else {
+            setLoadingData(false);
+            setShowLoading('none');
+        }
+        setParams(elementList);
+        setSelectedParams(elementList);
+    }
+    
     useEffect(() => {
         function updateActiveButton(activeId: string) {
             const buttons = document.getElementsByClassName('active');
@@ -25,26 +73,6 @@ export const SeasonEditor = () => {
             }
             const button = document.getElementsByClassName(activeId)[0];
             button.classList.add('active');
-        }
-
-        async function updateParams() {
-            let param: DocumentData = allParams[dataOrder(mode)]!;
-            let list = []
-            for (const data in param) {
-                const paramItem = param[data] as ParamItem;
-                paramItem.name = data;
-                list.push(<ItemParamPopup key={uuidv4()} param={paramItem}></ItemParamPopup>);
-            }
-            list = list.filter((param) => param != null);
-            if (list.length === 0) {
-                setLoadingData(false);
-                setShowLoading('block');
-            } else {
-                setLoadingData(false);
-                setShowLoading('none');
-            }
-            setParams(list);
-            setSelectedParams(list);
         }
         updateParams();
 
@@ -62,7 +90,11 @@ export const SeasonEditor = () => {
                 updateActiveButton('summary-button');
                 break;
         }
-    }, [mode, allParams]);
+    }, [mode]);
+
+    useEffect(() => {
+        updateParams();
+    }, [allParams]);
 
     useEffect(() => {
         async function loadParams() {
@@ -110,15 +142,12 @@ export const SeasonEditor = () => {
                     }></Input>
                 </Space>
             </Space>
-            
+
             <div className="params-list">
                 <h2 className="no-data" style={{ display: showLoading }}>{loadingData ? "Loading Data..." : "No Data"}</h2>
                 <Space direction="vertical">
                     {selectedParams}
-                    <Button className="add-param-button" onClick={() => {
-                        setParams([...params, <ItemParamPopup key={uuidv4()} param={undefined}></ItemParamPopup>]);
-                        setSelectedParams([...selectedParams, <ItemParamPopup key={uuidv4()} param={undefined}></ItemParamPopup>]);
-                    }}>Add Param</Button>
+                    {createParamElement(undefined, mode)}
                 </Space>
             </div>
         </div >
