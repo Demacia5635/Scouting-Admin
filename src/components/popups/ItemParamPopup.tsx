@@ -86,7 +86,7 @@ export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => 
 
     return (
         <div className="popup">
-            <Space>
+            <Space style={{}}>
                 <Button onChange={handleChange} style={{backgroundColor: buttonBackground, border: '0px'}}>{buttonTitle}</Button>
                 <EditFilled className="edit-button" onClick={openPopup}></EditFilled>
             </Space>

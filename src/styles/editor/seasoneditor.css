@@ -9,19 +9,6 @@
 td {
     padding: 3px 10px;
 }
-
-.params-table th {
-    border-bottom: 1px solid black;
-    border-right: 1px solid black;
-    border-left: 1px solid black;
-}
-
-.params-table th:first-child,
-.params-table th:last-child {
-    border-left: none;
-    border-right: none;
-}
-
 .params-table th button {
     width: 100%;
     height: 100%;
@@ -70,11 +57,9 @@ td {
 }
 
 .params-list {
-    margin: 10px;
+    margin: 20px;
     font-size: 18px;
     text-align: left;
-    padding: 10px;
-    
 }
 
 .mode-button.active {

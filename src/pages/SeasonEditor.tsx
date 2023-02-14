@@ -1,4 +1,4 @@
-import { Button, Input } from "antd";
+import { Button, Input, Space } from "antd";
 import { DocumentData } from "firebase/firestore/lite";
 import { ReactElement, useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
@@ -130,8 +130,10 @@ export const SeasonEditor = () => {
             </table>
             <div className="params-list">
                 <h2 className="no-data" style={{ display: showLoading }}>{loadingData ? "Loading Data..." : "No Data"}</h2>
-                {selectedParams}
-                <ItemParamPopup></ItemParamPopup>
+                <Space direction="vertical">
+                    {selectedParams}
+                    <ItemParamPopup></ItemParamPopup>
+                </Space>
             </div>
         </div >
     );
