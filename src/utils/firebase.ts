@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { collection, doc, getDoc, getDocs, getFirestore } from 'firebase/firestore/lite';
+import { collection, doc, getDoc, getDocs, getFirestore, updateDoc } from 'firebase/firestore/lite';
 import { DataParamsModes, ParamItem } from "./params/ParamItem";
 
 const firebaseConfig = {
@@ -40,4 +40,8 @@ export async function getParams(mode: DataParamsModes, seasonYear: string) {
     params = params.filter((param) => param != null);
     return params;
     
+}
+
+export async function setParamInFirebase(param: ParamItem, mode: DataParamsModes, seasonYear: string) {
+    await updateDoc(doc(firestore, 'seasons', seasonYear, 'data-params', mode), { [param.name]: param});
 }
