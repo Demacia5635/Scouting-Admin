@@ -19,6 +19,7 @@ export const SeasonEditor = () => {
     const [showLoading, setShowLoading] = useState('block');
     
     const createParamElement = (param: ParamItem | undefined, mode: DataParamsModes) => {
+        if (mode === DataParamsModes.USERS) return <></>;
         if (param) {
             return <ItemParamPopup key={uuidv4()} param={param} mode={mode} onSave={
                 (param: ParamItem, justCreated: boolean, mode: DataParamsModes) => {
@@ -55,6 +56,13 @@ export const SeasonEditor = () => {
     }
 
     const updateParams = () => {
+        if (mode === DataParamsModes.USERS) {
+            setParams([]);
+            setSelectedParams([]);
+            setShowLoading('none');
+            setLoadingData(false);
+            return;
+        }
         const params = allParams[dataOrder(mode)];
         const elementList = params ? params.map((param) => createParamElement(param, mode)) : [];
 
@@ -93,6 +101,9 @@ export const SeasonEditor = () => {
             case DataParamsModes.SUMMARY:
                 updateActiveButton('summary-button');
                 break;
+            case DataParamsModes.USERS:
+                updateActiveButton('users-button');
+                break;
         }
     }, [mode]);
 
@@ -124,6 +135,7 @@ export const SeasonEditor = () => {
                     <Button className="teleop-button mode-button" onClick={() => setMode(DataParamsModes.TELEOP)}>Teleop</Button>
                     <Button className="endgame-button mode-button" onClick={() => setMode(DataParamsModes.ENDGAME)}>End Game</Button>
                     <Button className="summary-button mode-button" onClick={() => setMode(DataParamsModes.SUMMARY)}>Summary</Button>
+                    <Button className="users-button mode-button" onClick={() => setMode(DataParamsModes.USERS)}>Users</Button>
                 </Space>
                 <Space className="params-search-bar">
                     <i className="fa fa-search"></i>

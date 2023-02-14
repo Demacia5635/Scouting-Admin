@@ -7,7 +7,7 @@ export function moveToSeasonEditor(props: SeasonButtonProps, navigate: NavigateF
 }
 
 export function saveSeason(props: SeasonButtonProps) {
-    sessionStorage.setItem('seasonYear', props.year)
+    sessionStorage.setItem('seasonYear', props.year.toString())
     sessionStorage.setItem('seasonName', props.name)
 }
 
@@ -17,7 +17,7 @@ export function isSeasonSaved() {
 
 export function getSelectedSeason(): SeasonButtonProps {
     return {
-        year: sessionStorage.getItem("seasonYear")!,
+        year: sessionStorage.getItem("seasonYear")! as unknown as number,
         name: sessionStorage.getItem("seasonName")!,
     }
 }

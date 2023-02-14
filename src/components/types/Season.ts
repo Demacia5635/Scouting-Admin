@@ -1,5 +1,5 @@
 export type SeasonButtonProps = {
-    year: string;
+    year: number;
     name: string;
 }
 

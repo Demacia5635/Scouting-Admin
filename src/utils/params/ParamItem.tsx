@@ -44,7 +44,8 @@ export enum DataParamsModes {
     AUTONOMOUS = 'autonomous',
     TELEOP = 'teleop',
     ENDGAME = 'endgame',
-    SUMMARY = 'summary'
+    SUMMARY = 'summary',
+    USERS = 'users',
 }
 
 export function dataOrder(mode: DataParamsModes) {
