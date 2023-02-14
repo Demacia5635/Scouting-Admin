@@ -1,11 +1,11 @@
 import { BgColorsOutlined, EditFilled } from "@ant-design/icons";
 import { Button, Form, Input, InputNumber, Modal, Select, Space } from "antd";
+import { InternalNamePath } from "antd/es/form/interface";
 import { useEffect, useState } from "react";
 import { HexColorPicker } from "react-colorful";
+import "../../styles/popups/forms-popup.css";
 import { getOpositeColor } from "../../utils/colors";
 import { DataParamsModes, isSpecialRequired, ParamItem, ParamType, paramTypeSelectOptions, SpecialVisibility } from "../../utils/params/ParamItem";
-import "../../styles/popups/forms-popup.css";
-import { InternalNamePath } from "antd/es/form/interface";
 
 export type ItemParamPopupProps = {
     param?: ParamItem;

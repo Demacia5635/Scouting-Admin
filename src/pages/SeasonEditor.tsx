@@ -3,7 +3,7 @@ import { ReactElement, useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { ItemParamPopup } from "../components/popups/ItemParamPopup";
 import "../styles/editor/seasoneditor.css";
-import { getAllParams } from "../utils/firebase";
+import { getAllParams, setParamInFirebase } from "../utils/firebase";
 import { dataOrder, DataParamsModes, ParamItem } from "../utils/params/ParamItem";
 import { getSelectedSeason } from "../utils/season-handler";
 
@@ -31,6 +31,8 @@ export const SeasonEditor = () => {
                             return prev;
                         });
                     }
+
+                    setParamInFirebase(param, mode, year);
                 }
             }/>;
         } else {
@@ -45,6 +47,8 @@ export const SeasonEditor = () => {
                         });
                         updateParams();
                     }
+
+                    setParamInFirebase(param, mode, year);
                 }
             }/>;
         }
