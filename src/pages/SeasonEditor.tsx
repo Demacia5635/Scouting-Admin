@@ -82,7 +82,7 @@ export const SeasonEditor = () => {
 
             <h1>Season: {year} {name}</h1>
 
-            <Space direction="vertical" style={{marginTop: '20px', width: '100%', justifyContent: 'left'}}>
+            <Space direction="vertical" style={{marginTop: '20px'}}>
                 <Space className="params-mode-buttons">
                     <Button className="autonomous-button mode-button" onClick={() => setMode(DataParamsModes.AUTONOMOUS)}>Autonomous</Button>
                     <Button className="teleop-button mode-button" onClick={() => setMode(DataParamsModes.TELEOP)}>Teleop</Button>
