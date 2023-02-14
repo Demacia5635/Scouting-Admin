@@ -1,74 +1,5 @@
-.form {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
-    z-index: 2;
-    font-size: 18px;
-}
-
 .ant-form {
     margin-top: 10px;
-}
-
-.open {
-    width: auto;
-    height: auto;
-}
-
-.open .edit-button {
-    margin-left: 10px;
-
-}
-
-.search-bar {
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.search-bar input {
-    width: 400px;
-    margin-top: 10px;
-}
-
-/* .form button.save {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    background-color: blue;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-} */
-
-.form .buttons {
-    margin-top: 30px;
-}
-
-.form button.cancel {
-    float: left;
-    background-color: red;
-    border-radius: 20px;
-}
-
-.form button.cancel:hover {
-    background-color: #e63b3b;
-}
-
-.form button.save {
-    float: right;
-    background-color: #0ad114;
-    border-radius: 20px;
-}
-
-.form button.save:hover {
-    background-color: #27ee31;
 }
 
 .form input, .form .type-select, .form .ant-input-number {
@@ -87,24 +18,19 @@
 }
 
 .form .color-picker-button {
-    width: 30px;
-    height: 30px;
     background-color: aqua;
     cursor: pointer;
 }
 
 .form .color-picker-input {
-    width: 170px;
+    width: 160px;
 }
 
+/* Make the form items align to the right */
 .form .ant-form-item-control {
     text-align: right;
 }
 
 .form .color-picker {
     margin-top: 20px;
-}
-
-.params-list .popup {
-    padding-bottom: 20px;
 }

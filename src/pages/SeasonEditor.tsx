@@ -1,12 +1,12 @@
 import { Button, Input } from "antd";
 import { DocumentData } from "firebase/firestore/lite";
 import { ReactElement, useEffect, useState } from "react";
+import { v4 as uuidv4 } from 'uuid';
 import { ItemParamPopup } from "../components/popups/ItemParamPopup";
 import "../styles/editor/seasoneditor.css";
 import { getAllParams } from "../utils/firebase";
 import { dataOrder, DataParamsModes, ParamItem } from "../utils/params/ParamItem";
 import { getSelectedSeason } from "../utils/season-handler";
-import { v4 as uuidv4 } from 'uuid';
 
 export const SeasonEditor = () => {
     const { year, name } = getSelectedSeason();
@@ -32,6 +32,7 @@ export const SeasonEditor = () => {
             let list = []
             for (const data in param) {
                 const paramItem = param[data] as ParamItem;
+                paramItem.name = data;
                 list.push(<ItemParamPopup key={uuidv4()} param={paramItem}></ItemParamPopup>);
             }
             list = list.filter((param) => param != null);
@@ -85,16 +86,16 @@ export const SeasonEditor = () => {
                 <thead>
                     <tr>
                         <th>
-                            <Button className="autonomous-button" onClick={() => setMode(DataParamsModes.AUTONOMOUS)}>Autonomous</Button>
+                            <Button className="autonomous-button mode-button" onClick={() => setMode(DataParamsModes.AUTONOMOUS)}>Autonomous</Button>
                         </th>
                         <th>
-                            <Button className="teleop-button" onClick={() => setMode(DataParamsModes.TELEOP)}>Teleop</Button>
+                            <Button className="teleop-button mode-button" onClick={() => setMode(DataParamsModes.TELEOP)}>Teleop</Button>
                         </th>
                         <th>
-                            <Button className="endgame-button" onClick={() => setMode(DataParamsModes.ENDGAME)}>End Game</Button>
+                            <Button className="endgame-button mode-button" onClick={() => setMode(DataParamsModes.ENDGAME)}>End Game</Button>
                         </th>
                         <th>
-                            <Button className="summary-button" onClick={() => setMode(DataParamsModes.SUMMARY)}>Summary</Button>
+                            <Button className="summary-button mode-button" onClick={() => setMode(DataParamsModes.SUMMARY)}>Summary</Button>
                         </th>
                     </tr>
                 </thead>

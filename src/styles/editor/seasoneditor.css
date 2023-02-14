@@ -38,6 +38,16 @@ td {
 
 /* Search bar: */
 
+.search-bar {
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-bar input {
+    width: 400px;
+    margin-top: 10px;
+}
+
 .search-bar input[type="text"] {
     margin-left: 10px;
     background: transparent;
@@ -67,7 +77,7 @@ td {
     
 }
 
-button.active {
+.mode-button.active {
     background: rgb(127, 0, 227) !important;
     transition: all 0.3s ease;
 }

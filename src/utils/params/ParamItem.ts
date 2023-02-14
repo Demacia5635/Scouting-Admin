@@ -69,37 +69,16 @@ export const paramTypeSelectOptions = [
     { value: ParamType.NUMBER, label: 'Number' },
 ];
 
-export function typeVisibility(type: SpecialVisibility, paramType: ParamType | undefined) {
-    if (!paramType) return 'none'
-    switch (type) {
+export function isSpecialRequired(type: ParamType | undefined, inputType: SpecialVisibility): boolean {
+    if (!type) return false
+    switch (inputType) {
         case SpecialVisibility.STEP:
-            return paramType === ParamType.SLIDER ? '' : 'none'
+            return type === ParamType.SLIDER
         case SpecialVisibility.MIN:
-            return paramType === ParamType.SLIDER || paramType === ParamType.NUMBER ? '' : 'none'
+            return type === ParamType.SLIDER || type === ParamType.NUMBER
         case SpecialVisibility.MAX:
-            return paramType === ParamType.SLIDER || paramType === ParamType.NUMBER ? '' : 'none'
+            return type === ParamType.SLIDER || type === ParamType.NUMBER
         default:
-            return ''
-    }
-}
-
-export function createParamFromDocument(document: Document): ParamItem {
-    const name = (document.querySelector('.param-name input') as HTMLInputElement).value;
-    const displayName = (document.querySelector('.param-display-name input') as HTMLInputElement).value;
-    const type = (document.querySelector('.param-type .ant-select-selection-item') as HTMLSelectElement).value;
-    const color = (document.querySelector('.param-color input') as HTMLInputElement).value;
-    const step = (document.querySelector('.param-step input') as HTMLInputElement).value;
-    const minValue = (document.querySelector('.param-min-value input') as HTMLInputElement).value;
-    const maxValue = (document.querySelector('.param-max-value input') as HTMLInputElement).value;
-    const defaultValue = (document.querySelector('.param-default-value input') as HTMLInputElement).value;
-    return {
-        name,
-        displayName,
-        type: type as ParamType,
-        color,
-        step: step ? parseFloat(step) : undefined,
-        min: minValue ? parseFloat(minValue) : undefined,
-        max: maxValue ? parseFloat(maxValue) : undefined,
-        defaultValue: defaultValue ? parseFloat(defaultValue) : undefined
+            return false
     }
 }

@@ -1,10 +1,11 @@
 import { BgColorsOutlined, EditFilled } from "@ant-design/icons";
-import { Button, Form, Input, InputNumber, Select } from "antd";
+import { Button, Form, Input, InputNumber, Modal, Select, Space } from "antd";
 import { useEffect, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import { getOpositeColor } from "../../utils/colors";
-import { createParamFromDocument, ParamItem, ParamType, paramTypeSelectOptions, SpecialVisibility, typeVisibility } from "../../utils/params/ParamItem";
+import { isSpecialRequired, ParamItem, ParamType, paramTypeSelectOptions, SpecialVisibility } from "../../utils/params/ParamItem";
 import "../../styles/popups/forms-popup.css";
+import { InternalNamePath } from "antd/es/form/interface";
 
 type ItemParamPopupProps = {
     param?: ParamItem;
@@ -14,10 +15,15 @@ type ItemParamPopupProps = {
 export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => {
     const [form] = Form.useForm<ParamItem>();
     const [buttonTitle, setButtonTitle] = useState(param ? param.displayName : 'Add New Param');
-    const [show, setShow] = useState('none');
-    const [backdropDisplay, setBackdropDisplay] = useState('none');
+    const [buttonBackground, setButtonBackground] = useState(param ? param.color : '#FFFFFF');
+    const [show, setShow] = useState(false);
 
     const [paramItem, setParamItem] = useState<ParamItem | undefined>(param);
+    const [oldParamItem, setOldParamItem] = useState<ParamItem | undefined>(paramItem);
+    const [stepRequired, setStepRequired] = useState(paramItem?.type === ParamType.SLIDER);
+    const [minRequired, setMinRequired] = useState(paramItem?.type === ParamType.SLIDER || paramItem?.type === ParamType.NUMBER)
+    const [maxRequired, setMaxRequired] = useState(paramItem?.type === ParamType.SLIDER || paramItem?.type === ParamType.NUMBER)
+
 
     const [colorPicker, setColorPicker] = useState(false);
 
@@ -36,27 +42,24 @@ export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => 
     }, [show]);
 
     const openPopup = () => {
-        setShow('block');
-        setBackdropDisplay('block');
-    }
-
-    const saveParam = () => {
-        const newParam = createParamFromDocument(document);
-        setParamItem(newParam);
-        setButtonTitle(newParam.displayName);
-        closePopup();
+        setShow(true);
+        setOldParamItem(paramItem);
     }
 
     const closePopup = (save: boolean=true) => {
-        if (!save) resetParam();
-        else setParamItem({...paramItem!, displayName: ''});
+        if (!save) {
+            form.setFieldsValue(oldParamItem!);
+            setParamItem(oldParamItem);
+            setStepRequired(isSpecialRequired(oldParamItem?.type, SpecialVisibility.STEP));
+            setMinRequired(isSpecialRequired(oldParamItem?.type, SpecialVisibility.MIN));
+            setMaxRequired(isSpecialRequired(oldParamItem?.type, SpecialVisibility.MAX));
+        }
 
-        setShow('none');
-        setBackdropDisplay('none');
+        setShow(false);
     }
 
     const resetParam = () => {
-        setParamItem({
+        form.setFieldsValue({
             name: '',
             displayName: '',
             type: ParamType.TEXT,
@@ -71,84 +74,127 @@ export const ItemParamPopup = ({ param, handleChange }: ItemParamPopupProps) => 
     const onSave = (values: ParamItem) => {
         setParamItem(values);
         setButtonTitle(values.displayName);
+        setButtonBackground(values.color);
+
         closePopup();
     }
 
-    const onFail
-
+    const onFail = (values: ParamItem, errorFields: {name: InternalNamePath, errors: string[];}[], outOfDate: boolean) => {
+        
+    }
+    
 
     return (
         <div className="popup">
-            <div className="open" onClick={openPopup}>
-                <Button onChange={handleChange}>{buttonTitle}</Button>
+            <Space>
+                <Button onChange={handleChange} style={{backgroundColor: buttonBackground, border: '0px'}}>{buttonTitle}</Button>
                 <EditFilled className="edit-button" onClick={openPopup}></EditFilled>
-            </div>
-            <div className="form" style={{ display: show }}>
-                <Form form={form} style={{ display: show , width: '350px'}} onFinish={(values) => {onSave(values)}}>
-                    <Form.Item required className="param-name" label="Name" name="name">
-                        <Input defaultValue={paramItem?.name}></Input>
+            </Space>
+            <Modal
+                title="Parameter"
+                open={show}
+                onCancel={() => closePopup(false)} cancelText="Cancel"
+                okText="Save" onOk={() => form.submit()}
+                className="form"
+                width={500}
+            >
+                <Form
+                    form={form}
+                    onFinish={(values) => {onSave(values)}}
+                    onFinishFailed={({values, errorFields, outOfDate}) => {onFail(values, errorFields, outOfDate)}}
+                    layout={'horizontal'}
+                    initialValues={paramItem}
+                >
+                    <Form.Item
+                        rules={[{ required: true, message: 'Please enter the name'}]}
+                        className="param-name"
+                        label="Name" name="name"
+                    >
+                        <Input></Input>
                     </Form.Item>
-                    <Form.Item className="param-display-name" label="Display Name" name="displayName">
-                        <Input defaultValue={paramItem?.displayName}></Input>
+                    <Form.Item
+                        rules={[{ required: true, message: 'Please enter the display name'}]}
+                        className="param-display-name"
+                        label="Display Name" name="displayName"
+                    >
+                        <Input></Input>
                     </Form.Item>
-                    <Form.Item className="param-type" label="Type" name="type">
-                        <Select className="type-select" defaultValue={paramItem?.type} maxTagCount={1} placeholder="Select param type" id="param-type-list" options={paramTypeSelectOptions} onChange={
+                    <Form.Item
+                        rules={[{ required: true, message: 'Please select type'}]}
+                        className="param-type"
+                        label="Type" name="type"
+                    >
+                        <Select className="type-select" maxTagCount={1} placeholder="Select param type" id="param-type-list" options={paramTypeSelectOptions} onChange={
                             (value) => {
-                                const stepRow = document.querySelector('.param-step');
-                                const minValueRow = document.querySelector('.param-min-value');
-                                const maxValueRow = document.querySelector('.param-max-value');
-                                if (stepRow) stepRow.setAttribute('style', `display: ${typeVisibility(SpecialVisibility.STEP, value)}`);
-                                if (minValueRow) minValueRow.setAttribute('style', `display: ${typeVisibility(SpecialVisibility.MIN, value)}`);
-                                if (maxValueRow) maxValueRow.setAttribute('style', `display: ${typeVisibility(SpecialVisibility.MAX, value)}`);
-                                setParamItem({...paramItem!, type: value as ParamType});
+                                const newType = value as ParamType;
+                                setParamItem({...paramItem!, type: newType});
+                                setStepRequired(isSpecialRequired(newType, SpecialVisibility.STEP));
+                                setMinRequired(isSpecialRequired(newType, SpecialVisibility.MIN));
+                                setMaxRequired(isSpecialRequired(newType, SpecialVisibility.MAX));
                             }
                         }></Select>
                     </Form.Item>
-                    <Form.Item className="param-color" label="Color" name="color">
-                        <Input className="color-picker-input" style={{ backgroundColor: paramItem?.color, color: getOpositeColor(paramItem?.color!) }} value={paramItem?.color}
-                            onChange={(e) => {
-                                if (e.target.value.length > 7) e.target.value = e.target.value.slice(0, 7);
-                                if (e.target.value[0] !== '#') e.target.value = '#' + e.target.value;
-                                setParamItem({...paramItem!, color: e.target.value});
-                            }}
-                        ></Input>
-                        <Button className="color-picker-button" onClick={() => setColorPicker(!colorPicker)} icon={<BgColorsOutlined/>}></Button>
+                    <Form.Item
+                        rules={[
+                            { required: true, message: 'Please enter the color'},
+                            { pattern: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, message: 'Please enter a valid color'}
+                        ]}
+                        className="param-color"
+                        label="Color" name="color"
+                    >
+                        <Space>
+                            <Form.Item name="color"noStyle>
+                                <Input className="color-picker-input" style={{ backgroundColor: paramItem?.color, color: getOpositeColor(paramItem?.color!) }} value={paramItem?.color}
+                                    onChange={(e) => {
+                                        let value = e.target.value;
+                                        if (value.length > 7) value = value.slice(0, 7);
+                                        if (value[0] !== '#') value = '#' + value;
+                                        form.setFieldsValue({color: value});
+                                        setParamItem({...paramItem!, color: value});
+                                    }}
+                                ></Input>
+                            </Form.Item>
+                            <Button className="color-picker-button" onClick={() => setColorPicker(!colorPicker)} icon={<BgColorsOutlined/>}></Button>
+                        </Space>
                         <HexColorPicker className="color-picker" color={paramItem?.color} onChange={
-                            (color) => {
-                                setParamItem({...paramItem!, color: color});
-                            }
+                                (color) => {
+                                    form.setFieldsValue({color: color});
+                                    setParamItem({...paramItem!, color: color});
+                                }
                         } style={{ display: colorPicker ? 'inline-flex' : 'none' }} />
                     </Form.Item>
-                    <Form.Item className="param-step" label="Step" style={{ display: typeVisibility(SpecialVisibility.STEP, param?.type) }} name="step">
-                        <InputNumber min={0} defaultValue={paramItem?.step}></InputNumber>
+                    <Form.Item
+                        rules={[{ required: stepRequired, message: 'Please enter the amount of steps'}]}
+                        className="param-step"
+                        style={{ display: stepRequired ? 'block' : 'none' }}
+                        label="Step" name="step"
+                    >
+                        <InputNumber min={0}></InputNumber>
                     </Form.Item>
-                    <Form.Item className="param-min-value" label="Min Value" style={{ display: typeVisibility(SpecialVisibility.MIN, param?.type) }} name="min">
-                        <InputNumber min={0} defaultValue={paramItem?.min}></InputNumber>
+                    <Form.Item
+                        rules={[{ required: minRequired, message: 'Please enter the minimum value'}]}
+                        className="param-min-value"
+                        style={{ display: minRequired ? 'block' : 'none' }}
+                        label="Min Value" name="min"
+                    >
+                        <InputNumber min={0}></InputNumber>
                     </Form.Item>
-                    <Form.Item className="param-max-value" label="Max Value" style={{ display: typeVisibility(SpecialVisibility.MAX, param?.type) }} name="max">
-                        <InputNumber min={0} defaultValue={paramItem?.max}></InputNumber>
+                    <Form.Item
+                        rules={[{ required: maxRequired, message: 'Please enter the maximum value'}]}
+                        className="param-max-value"
+                        style={{ display: maxRequired ? 'block' : 'none' }}
+                        label="Max Value" name="max"
+                    >
+                        <InputNumber min={0}></InputNumber>
                     </Form.Item>
-                    <Form.Item className="param-default-value" label="Default Value" name="defaultValue">
-                        <Input defaultValue={paramItem?.defaultValue?.toString()}></Input>
-                    </Form.Item>
-                    <Form.Item className="buttons">
-                        <Button className="cancel" type="primary" onClick={() => closePopup(false)}>Cancel</Button>
-                        <Button className="save" htmlType="submit" type="primary">Save</Button>
+                    <Form.Item
+                        className="param-default-value"
+                        label="Default Value" name="defaultValue"
+                    >
+                        <Input></Input>
                     </Form.Item>
                 </Form>
-            </div>
-            <div
-                style={{
-                    display: backdropDisplay,
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    zIndex: 1
-                }}
-            />
+            </Modal>
         </div >
     );
 }
