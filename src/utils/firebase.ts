@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { collection, doc, getDoc, getDocs, getFirestore, updateDoc } from 'firebase/firestore/lite';
+import { User } from "../components/types/User";
 import { DataParamsModes, ParamItem } from "./params/ParamItem";
 
 const firebaseConfig = {
@@ -44,4 +45,9 @@ export async function getParams(mode: DataParamsModes, seasonYear: string) {
 
 export async function setParamInFirebase(param: ParamItem, mode: DataParamsModes, seasonYear: string) {
     await updateDoc(doc(firestore, 'seasons', seasonYear, 'data-params', mode), { [param.name]: param});
+}
+
+export async function getUsers(seasonYear: string){
+    const users = await getDocs(collection(firestore, 'seasons', seasonYear, 'users'));
+    return users.docs.map((doc) => { return { ...doc.data(), teamNumber: parseInt(doc.id) } as User });
 }
