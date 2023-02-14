@@ -138,7 +138,7 @@ export const SeasonEditor = () => {
                     <Button className="summary-button mode-button" onClick={() => setMode(DataParamsModes.SUMMARY)}>Summary</Button>
                     <Button className="users-button mode-button" onClick={() => setMode(DataParamsModes.USERS)}>Users</Button>
                 </Space>
-                <Space className="params-search-bar">
+                <Space className="params-search-bar" style={{display: mode === DataParamsModes.USERS ? 'none' : 'flex-inline'}}>
                     <i className="fa fa-search"></i>
                     <Input placeholder="Search..." onChange={
                         (event) => {
