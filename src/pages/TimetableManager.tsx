@@ -3,6 +3,24 @@ import { resetSeason } from "../utils/season-handler";
 import { Buffer } from 'buffer'
 import { type } from "os";
 import { Select } from "antd";
+import { getDocumentRef, updateData } from "../utils/firebase";
+import { QualsTable } from "../components/QualsTable";
+type team = {
+    teamNumber: number
+    station: string
+    surrogate: boolean
+}
+type Schedule = {
+    field: string
+    tournamentLevel: string
+    description: string
+    startTime: string
+    matchNumber: number
+    teams: team[]
+}
+type compSchedule = {
+    Schedule: Schedule[]
+}
 type Events = {
     address: string
     allianceCount: string
@@ -32,7 +50,26 @@ type JSONResponse = {
     }
     errors?: Array<{ message: string }>
 }
+function adddata(Events: Events[]) {
+    const partialURL = 'http://localhost:3000/frcapi/v3.0/2022/schedule/'
+    const myHeaders = new Headers();
+    myHeaders.append("If-Modified-Since", "");
+    const requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+    } as RequestInit;
+    Events.forEach(async event => {
+        const responseSchedule = await (await fetch(partialURL + event.code + "?tournamentLevel=qual", requestOptions)).text()
+        const dataSchedule: compSchedule = JSON.parse(responseSchedule)
+        let id = event.code
+        dataSchedule.Schedule.forEach(async qual => {
 
+            await updateData("seasons/2022/" + id + "/Qual" + qual.matchNumber, { 0: getDocumentRef("seasons/2019/teams/6969/scouters/scouter0ccab1c1-3e6f-4cdb-9cae-73049cb73f7a"), 1: getDocumentRef("seasons/2019/teams/6969/scouters/scouter602bf228-66b4-4e63-a14f-2083142719b6"), 2: getDocumentRef("seasons/2019/teams/6969/scouters/scouter61e04732-8e87-488c-93cb-5aa51da18003"), 3: getDocumentRef("seasons/2019/teams/6969/scouters/scouter9b12bba3-cf17-418a-9fa9-f04a3f16dbe2"), 4: getDocumentRef("seasons/2019/teams/6969/scouters/scouter9ce40fb3-f6eb-4017-b719-94d29bf7838d"), 5: getDocumentRef("seasons/2019/teams/6969/scouters/scoutera0107744-800e-4dd5-b248-57376c96b76e") })
+        })
+    })
+    console.log("done!")
+}
 
 export const TimetableManager = () => {
     const [events, setEvents] = useState<Events[]>([]);
@@ -46,8 +83,10 @@ export const TimetableManager = () => {
         setLoading(true);
         setError(null);
         async function getCompData() {
-            const targetUrl = `http://localhost:3000/frcapi/v3.0/2023/events?districtCode=ISR`;
-            const targetUrl2 = `http://localhost:3000/frcapi/v3.0/2023/events?tournamentType=Championship`
+            const targetUrl = `http://localhost:3000/frcapi/v3.0/2022/events?districtCode=ISR`;
+            const targetUrl2 = `http://localhost:3000/frcapi/v3.0/2022/events?tournamentType=Championship`
+            const targetUrl3 = 'http://localhost:3000/frcapi/v3.0/2022/schedule/ISDE1?tournamentLevel=qual'
+
             const myHeaders = new Headers();
             myHeaders.append("If-Modified-Since", "");
 
@@ -63,6 +102,11 @@ export const TimetableManager = () => {
             const dataChamp: frcEvents = JSON.parse(responseChamp)
             eventsfrc.push(dataChamp.Events[0])
             setEvents(eventsfrc)
+            // adddata(eventsfrc)
+            const responseSchedule = await (await fetch(targetUrl3, requestOptions)).text()
+            const dataSchedule: compSchedule = JSON.parse(responseSchedule)
+            console.log("started")
+            // await updateData("seasons/2022/ISDE1/Qual1", {})
         }
         getCompData()
         resetSeason();
@@ -77,11 +121,12 @@ export const TimetableManager = () => {
             {/* <p>{events[0].name}</p> */}
             <Select
 
-                defaultValue={{ value: events[0].code, label: events[0].name }}
+                defaultValue={{ value: "default", label: "please choose a competiotion" }}
             >
                 {frcEventsOptions}
 
             </Select>
+            <QualsTable seasonPath="seasons/2022" tournmentsSubPath="/ISDE1" scoutersSubPath="asd" />
         </div>
     );
 };

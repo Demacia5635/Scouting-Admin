@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc } from 'firebase/firestore/lite';
+import { ScouterDataType } from "../components/types/TableDataTypes"
+import { collection, deleteDoc, doc, DocumentReference, getDoc, getDocs, getFirestore, setDoc } from 'firebase/firestore/lite';
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -17,6 +18,15 @@ export const firestore = getFirestore(firebase);
 export async function updateData(docPath: string, data: any) {
     await setDoc(doc(firestore, docPath), data);
 }
+export function getDocumentRef(docPath: string): DocumentReference {
+    return doc(firestore, docPath)
+}
+// async function try1(docPath: string){
+//     const seasons = await getDocs(collection(firestore, 'seasons'));
+//     seasons.docs.map((doc) => {
+//         getDoc(doc.get("ref")) 
+//      });
+// }
 export async function deleteDocument(docPath: string) {
     await deleteDoc(doc(firestore, docPath))
 }
@@ -36,5 +46,25 @@ export async function getscouters(collectionName: any): Promise<{ key: string, f
         return { key: doc.id + "", firstname: doc.get("firstname"), lastname: doc.get("lastname") }
     });
 }
+export function getScouterDataTypeFromDocRef(docRef: DocumentReference): ScouterDataType {
+    let data = { key: "", firstname: "", lastname: "" }
+    getDoc(docRef).then((snapshot) => {
+        console.log(snapshot.data())
+        data = { key: snapshot.id, firstname: snapshot.get("firstname"), lastname: snapshot.get("lastname") }
+    }).catch((e) => { data = { key: "", firstname: "", lastname: "" } })
+    return data
+
+
+}
+export async function getquals(qualPath: any): Promise<{ qual: string, scouters: { key: string, firstname: string, lastname: string }[] }[]> {
+    const seasons = await getDocs(collection(firestore, qualPath));
+    return seasons.docs.map((doc) => {
+
+        return {
+            qual: doc.id + "", scouters: [getScouterDataTypeFromDocRef(doc.get("0")), getScouterDataTypeFromDocRef(doc.get("1")), getScouterDataTypeFromDocRef(doc.get("2")), getScouterDataTypeFromDocRef(doc.get("3")), getScouterDataTypeFromDocRef(doc.get("4")), getScouterDataTypeFromDocRef(doc.get("5"))]
+        }
+    });
+}
+
 
 

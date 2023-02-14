@@ -6,13 +6,10 @@ import { deleteDocument, getscouters } from '../utils/firebase';
 import { FileUploader } from './FileUploader';
 import NewScouterForm from './NewScouterForm';
 import { currentteam } from './types/CurrentTeam';
+import { ScouterDataType } from './types/TableDataTypes';
 
 
-interface ScouterDataType {
-    key: React.Key;
-    firstname: string;
-    lastname: string;
-}
+
 
 const columns: ColumnsType<ScouterDataType> = [
     {
