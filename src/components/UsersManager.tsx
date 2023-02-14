@@ -1,5 +1,5 @@
 import { EditOutlined, EyeOutlined, EyeInvisibleOutlined, DeleteOutlined, UserAddOutlined } from "@ant-design/icons";
-import { Button, Divider, Input, Space, Table, Tag } from "antd";
+import { Button, Divider, Input, Space, Spin, Table, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { getUsers } from "../utils/firebase";
@@ -100,11 +100,11 @@ const columns: ColumnsType<UsersDataType> = [
 export const UsersManager = ({ year, mode }: UsersManagerProps) => {
 
     const [data, setData] = useState<UsersDataType[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
     
     useEffect(() => {
         async function getUsersData() {
             const users: User[] = await getUsers(year);
-            console.log(users);
             const usersData: UsersDataType[] = users.map((user) => {
                 return {
                     key: user.username,
@@ -112,6 +112,7 @@ export const UsersManager = ({ year, mode }: UsersManagerProps) => {
                 };
             });
             setData(usersData);
+            setLoading(false);
         }
         getUsersData();
     }, []);
@@ -123,9 +124,12 @@ export const UsersManager = ({ year, mode }: UsersManagerProps) => {
                 <Button style={{backgroundColor: '#9002b3'}} type="primary" shape="circle" size="large" icon={<UserAddOutlined />} />
             </Space>
             <Divider />
+            {loading ?
+            <Spin size="large" /> :
             <Table columns={columns} dataSource={data}>
 
-            </Table>
+            </Table>}
+            
         </div>
     );
 };
