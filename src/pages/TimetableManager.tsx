@@ -65,7 +65,7 @@ function adddata(Events: Events[]) {
         let id = event.code
         dataSchedule.Schedule.forEach(async qual => {
 
-            await updateData("seasons/2022/" + id + "/Qual" + qual.matchNumber, { 0: getDocumentRef("seasons/2019/teams/6969/scouters/scouter0ccab1c1-3e6f-4cdb-9cae-73049cb73f7a"), 1: getDocumentRef("seasons/2019/teams/6969/scouters/scouter602bf228-66b4-4e63-a14f-2083142719b6"), 2: getDocumentRef("seasons/2019/teams/6969/scouters/scouter61e04732-8e87-488c-93cb-5aa51da18003"), 3: getDocumentRef("seasons/2019/teams/6969/scouters/scouter9b12bba3-cf17-418a-9fa9-f04a3f16dbe2"), 4: getDocumentRef("seasons/2019/teams/6969/scouters/scouter9ce40fb3-f6eb-4017-b719-94d29bf7838d"), 5: getDocumentRef("seasons/2019/teams/6969/scouters/scoutera0107744-800e-4dd5-b248-57376c96b76e") })
+            await updateData("seasons/2022/" + id + "/Qual" + qual.matchNumber, { 0: ["scouter0ccab1c1-3e6f-4cdb-9cae-73049cb73f7a", "alpha kenny", "body"], 1: ["scouter9ce40fb3-f6eb-4017-b719-94d29bf7838d", "Bennie ", "Factor"], 2: ["scouter9b12bba3-cf17-418a-9fa9-f04a3f16dbe2", "Arty ", "Fischel"], 3: ["scouter61e04732-8e87-488c-93cb-5aa51da18003", "Carole", "Singer"], 4: ["scouter602bf228-66b4-4e63-a14f-2083142719b6", "Ben ", "Dover"], 5: ["scouter145c6006-2f1e-4ef6-afb3-c0ed30dfc9a3", "a", "b"] })
         })
     })
     console.log("done!")

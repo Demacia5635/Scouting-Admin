@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { ScouterDataType } from "../components/types/TableDataTypes"
-import { collection, deleteDoc, doc, DocumentReference, getDoc, getDocs, getFirestore, setDoc } from 'firebase/firestore/lite';
+import { collection, deleteDoc, doc, DocumentData, DocumentReference, getDoc, getDocs, getFirestore, setDoc } from 'firebase/firestore/lite';
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -46,15 +46,11 @@ export async function getscouters(collectionName: any): Promise<{ key: string, f
         return { key: doc.id + "", firstname: doc.get("firstname"), lastname: doc.get("lastname") }
     });
 }
-export function getScouterDataTypeFromDocRef(docRef: DocumentReference): ScouterDataType {
-    let data = { key: "", firstname: "", lastname: "" }
-    getDoc(docRef).then((snapshot) => {
-        console.log(snapshot.data())
-        data = { key: snapshot.id, firstname: snapshot.get("firstname"), lastname: snapshot.get("lastname") }
-    }).catch((e) => { data = { key: "", firstname: "", lastname: "" } })
+export function getScouterDataTypeFromDocRef(docRef: string[]): ScouterDataType {
+    console.log(docRef)
+
+    let data = { key: (docRef[0] || 'undefined'), firstname: (docRef[1] || 'undefined'), lastname: (docRef[2] || 'undefined') }
     return data
-
-
 }
 export async function getquals(qualPath: any): Promise<{ qual: string, scouters: { key: string, firstname: string, lastname: string }[] }[]> {
     const seasons = await getDocs(collection(firestore, qualPath));

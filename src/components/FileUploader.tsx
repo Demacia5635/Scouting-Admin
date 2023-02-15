@@ -5,7 +5,7 @@ import { resolve } from "path"
 import { useEffect, useState } from "react"
 import { CellObject, read, utils } from "xlsx"
 import { deleteDocument, updateData } from "../utils/firebase"
-import {v4 as uuid} from 'uuid'
+import { v4 as uuid } from 'uuid'
 
 type numberOfScouters = {
     scouterDocPath: string
@@ -18,7 +18,7 @@ type numberOfScouters = {
 export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScouts, scoutersToBeDeleted }: numberOfScouters) => {
     const [isFirstTime, setFirstTime] = useState(false);
     const [isModelOpened, setIsModalOpen] = useState(false)
-    
+
     useEffect(() => {
         setFirstTime(true)
     }, [])
@@ -35,12 +35,12 @@ export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScou
     const handleCancel = () => {
         setIsModalOpen(false);
     };
-    
+
     interface Names {
         scoutersnames: string;
         scouterslastname: string;
     }
-    
+
     const descriptionElement = (
         <code>
             Please upload an exel file (.xslx) in the following format:
@@ -50,7 +50,7 @@ export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScou
             Second column (will include the scouters last name) title: "scouterslastname"
         </code>
     )
-    
+
     return (
         <div>
 
