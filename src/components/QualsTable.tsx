@@ -37,7 +37,7 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
     const selectRef = useRef<RefSelectProps>(null)
     const [isFinishedLoading, setIsFinishedLoading] = useState<boolean>(false)
     const clearselected = () => {
-        selectRef.relect
+        selectRef
         // const nultipleSelect = <>document.getElementById("deez")
     }
     const clickHandler = () => {
