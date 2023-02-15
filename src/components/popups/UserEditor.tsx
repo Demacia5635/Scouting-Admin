@@ -1,20 +1,18 @@
 import { EditOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Button, Form, Input, InputNumber, Modal, Select, Tag } from "antd";
 import { InternalNamePath } from "antd/es/form/interface";
-import { Option } from "antd/es/mentions";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import '../../styles/popups/user-editor.css';
 import { User } from "../types/User";
 import { UsersDataType, UserTags } from "../UsersManager";
 
 type UserEditorProps = {
     userData: UsersDataType;
-    seasonYear: string;
     onSave: (user: User, isNew: boolean) => void;
     newUser: boolean;
 };
 
-export const UserEditor = ({ userData, seasonYear, onSave: handleSave, newUser}: UserEditorProps) => {
+export const UserEditor = ({ userData, onSave: handleSave, newUser}: UserEditorProps) => {
 
     const [form] = Form.useForm<User>();
     const [user, setUser] = useState<User>(userData);
@@ -37,14 +35,12 @@ export const UserEditor = ({ userData, seasonYear, onSave: handleSave, newUser}:
 
     const onSave = (values: User) => {
         if (!values.username) values.username = user.username;
-        if (user) {
-            setUser({...user});
-        }
+        setUser({...values});
         if (newUser) {
             form.resetFields();
         }
 
-        handleSave(values, user ? false : true);
+        handleSave(values, newUser);
 
         closePopup();
     }

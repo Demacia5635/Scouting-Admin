@@ -1,12 +1,12 @@
-import { EyeOutlined, EyeInvisibleOutlined, DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import { Button, Divider, Input, notification, Popconfirm, Space, Spin, Table, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { addUserToFirebase, deleteUser, getUsers, updateUserInFirebase } from "../utils/firebase";
+import { sendNotification } from "../utils/notification";
 import { DataParamsModes } from "../utils/params/ParamItem";
 import { UserEditor } from "./popups/UserEditor";
 import { User } from "./types/User";
-import type { NotificationPlacement } from 'antd/es/notification/interface';
 
 type UsersManagerProps = {
     year: string;
@@ -40,6 +40,33 @@ export const UsersManager = ({ year, mode }: UsersManagerProps) => {
             }
             return item;
         }));
+    }
+
+    const saveUser = (user: User, isNew: boolean) => {
+
+        if (isNew) {
+            addUserToFirebase(year, user).then(() => {
+                sendNotification(api, 'success', 'User Added',
+                                `User ${user.username} has been added to the database.`, 'bottomRight');
+            }).catch((error) => {
+                sendNotification(api, 'error', 'Error Adding User',
+                                `There was an error adding user ${user.username} to the database. ${error}`, 'bottomRight');
+            });
+            setData([...data, {
+                key: user.username,
+                year: year,
+                ...user,
+            }]);
+        } else {
+            updateUserInFirebase(year, user).then(() => {
+                sendNotification(api, 'success', 'User Updated',
+                                `User ${user.username} has been updated in the database.`, 'bottomRight');
+            }).catch((error) => {
+                sendNotification(api, 'error', 'Error Updating User',
+                                `There was an error updating user ${user.username} in the database. ${error}`, 'bottomRight');
+            });
+            updateUserList(user);
+        }
     }
 
     const columns: ColumnsType<UsersDataType> = [
@@ -109,13 +136,7 @@ export const UsersManager = ({ year, mode }: UsersManagerProps) => {
             key: 'edit',
             render: (text: string, record: UsersDataType) => (
                 <Space size="middle">
-                    <UserEditor userData={record} seasonYear={year} newUser={false} onSave={
-                        (user: User, isNew: boolean) => {
-                            console.log(user);
-                            updateUserInFirebase(year, user);
-                            updateUserList(user);
-                        }
-                    } />
+                    <UserEditor userData={record} newUser={false} onSave={saveUser}/>
                 </Space>
             ),
         },
@@ -124,22 +145,20 @@ export const UsersManager = ({ year, mode }: UsersManagerProps) => {
             key: 'delete',
             render: (text: string, record: UsersDataType) => (
                 <Space size="middle">
-                    {contextHolder}
                     <Popconfirm
                         title="Delete this user"
                         description="Are you sure you want to delete this user?"
                         onConfirm={() => {
                             if (record.tags.includes(UserTags.ADMIN.toUpperCase())) {
-                                api.error({
-                                    message: 'Cannot delete an admin user',
-                                    description: 'Remove the admin tag first or delete the user from the firebase console instead.',
-                                    placement: 'top',
-                                    duration: 5
-                                });
+                                sendNotification(api, 'error', 'Cannot Delete Admin User',
+                                                'Remove the admin tag first or delete the user from the firebase console instead.',
+                                                'bottomRight');
                                 return;
                             }
                             deleteUser(year, record.username);
                             setData(data.filter((item) => item.key !== record.key));
+                            sendNotification(api, 'success', 'User Deleted', `User ${record.username} has been deleted from the database.`,
+                                            'bottomRight');
                         }}
                         okText="Yes"
                         cancelText="No"
@@ -170,6 +189,7 @@ export const UsersManager = ({ year, mode }: UsersManagerProps) => {
     if (mode !== DataParamsModes.USERS) return <></>;
     return (
         <div>
+            {contextHolder}
             <Space>
                 <UserEditor userData={
                     {
@@ -181,16 +201,7 @@ export const UsersManager = ({ year, mode }: UsersManagerProps) => {
                         key: '',
                         year: year
                     }
-                } newUser={true} seasonYear={year} onSave={
-                    (user: User, isNew: boolean) => {
-                        addUserToFirebase(year, user);
-                        setData(data => [...data, {
-                            key: user.username,
-                            year: year,
-                            ...user
-                        }]);
-                    }
-                } />
+                } newUser={true} onSave={saveUser} />
             </Space>
             <Divider />
             {loading ?
