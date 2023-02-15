@@ -13,7 +13,7 @@ export type ItemParamPopupProps = {
     mode: DataParamsModes;
 }
 
-export const ItemParamPopup = ({ param, onSave: handleSave, mode}: ItemParamPopupProps) => {
+export const ItemParamEditor = ({ param, onSave: handleSave, mode}: ItemParamPopupProps) => {
     const [form] = Form.useForm<ParamItem>();
     const [buttonTitle, setButtonTitle] = useState(param ? param.displayName : 'Add New Param');
     const [buttonBackground, setButtonBackground] = useState(param ? param.color : '#FFFFFF');

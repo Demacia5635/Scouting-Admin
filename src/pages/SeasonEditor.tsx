@@ -1,7 +1,7 @@
 import { Button, Input, Space } from "antd";
 import { ReactElement, useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
-import { ItemParamPopup } from "../components/popups/ItemParamPopup";
+import { ItemParamEditor } from "../components/popups/ItemParamEditor";
 import { UsersManager } from "../components/UsersManager";
 import "../styles/editor/seasoneditor.css";
 import { getAllParams, setParamInFirebase } from "../utils/firebase";
@@ -22,7 +22,7 @@ export const SeasonEditor = () => {
     const createParamElement = (param: ParamItem | undefined, mode: DataParamsModes) => {
         if (mode === DataParamsModes.USERS) return <></>;
         if (param) {
-            return <ItemParamPopup key={uuidv4()} param={param} mode={mode} onSave={
+            return <ItemParamEditor key={uuidv4()} param={param} mode={mode} onSave={
                 (param: ParamItem, justCreated: boolean, mode: DataParamsModes) => {
                     const index = dataOrder(mode);
                     if (!justCreated) {
@@ -38,7 +38,7 @@ export const SeasonEditor = () => {
                 }
             }/>;
         } else {
-            return <ItemParamPopup key={uuidv4()} mode={mode} onSave={
+            return <ItemParamEditor key={uuidv4()} mode={mode} onSave={
                 (param: ParamItem, justCreated: boolean, mode: DataParamsModes) => {
                     const index = dataOrder(mode);
                     if (justCreated) {

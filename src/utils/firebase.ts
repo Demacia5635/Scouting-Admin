@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { collection, doc, getDoc, getDocs, getFirestore, updateDoc } from 'firebase/firestore/lite';
-import { User } from "../components/types/User";
+import { collection, doc, getDoc, getDocs, getFirestore, updateDoc, deleteDoc, setDoc } from 'firebase/firestore/lite';
+import { userToFirebase, User } from "../components/types/User";
 import { DataParamsModes, ParamItem } from "./params/ParamItem";
 
 const firebaseConfig = {
@@ -49,5 +49,17 @@ export async function setParamInFirebase(param: ParamItem, mode: DataParamsModes
 
 export async function getUsers(seasonYear: string){
     const users = await getDocs(collection(firestore, 'seasons', seasonYear, 'users'));
-    return users.docs.map((doc) => { return { ...doc.data(), teamNumber: parseInt(doc.id) } as User });
+    return users.docs.map((doc) => { return { ...doc.data(), username: doc.id } as User });
+}
+
+export async function deleteUser(seasonYear: string, username: string){
+    await deleteDoc(doc(firestore, 'seasons', seasonYear, 'users', username));
+}
+
+export async function updateUserInFirebase(seasonYear: string, user: User){
+    await updateDoc(doc(firestore, 'seasons', seasonYear, 'users', user.username), userToFirebase(user));
+}
+
+export async function addUserToFirebase(seasonYear: string, user: User){
+    await setDoc(doc(firestore, 'seasons', seasonYear, 'users', user.username), userToFirebase(user));
 }
