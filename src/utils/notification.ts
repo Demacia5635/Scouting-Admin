@@ -1,6 +1,8 @@
 import { NotificationInstance, NotificationPlacement } from "antd/es/notification/interface";
 
-export const sendNotification = (api: NotificationInstance, mode: string, message: string, description: string, placement: NotificationPlacement, duration: number=5) => {
+export type NotificationMode = 'success' | 'error' | 'info' | 'warning' | 'open';
+
+export const sendNotification = (api: NotificationInstance, mode: NotificationMode, message: string, description: string, placement: NotificationPlacement, duration: number=5) => {
     switch (mode) {
         case 'success':
             api.success({
