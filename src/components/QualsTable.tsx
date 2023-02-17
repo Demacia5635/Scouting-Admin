@@ -1,4 +1,4 @@
-import { Button, Select, Spin, Table } from "antd";
+import { Button, Form, Select, Spin, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { RefSelectProps } from 'antd/lib/select';
 import { useEffect, useRef, useState } from "react";
@@ -8,6 +8,8 @@ import { getFieldValue, getquals, getscouters } from "../utils/firebase";
 import { QualsTableDataType, ScouterDataType } from "./types/TableDataTypes";
 import { SELECTION_ALL } from "antd/es/table/hooks/useSelection";
 import { TypeOfTag } from "typescript";
+import { Option } from "antd/es/mentions";
+import { NamePath } from "antd/es/form/interface";
 
 type QulTableProps = {
     seasonPath: string
@@ -17,37 +19,37 @@ type QulTableProps = {
 
 
 
-// function getScoutersOptions(scouters: ScouterDataType[]): JSX.Element[] {
-//     const options = scouters.map((scouter) => {
-//         if (scouter.key == undefined) {
-
-//             return (<option key="{scouter.key}" value="{scouter.key}">{"whyyyy"}</option>)
-//         } else {
-//             return (<option key={scouter.key} value={scouter.key}>{scouter.firstname + " " + scouter.lastname}</option>)
-//         }
-//     })
-//     return options
-// }
+function getScoutersOptions(scouters: ScouterDataType[]): any[] {
+    const options: any[] = scouters.map((scouter) => {
+        return (<Option key={scouter.key} value={scouter.key}>{scouter.firstname + " " + scouter.lastname}</Option>)
+    })
+    return options
+}
 
 
 
 
 export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: QulTableProps) => {
     const [data, setdata] = useState<QualsTableDataType[]>([]);
-    const selectRef = useRef<RefSelectProps>(null)
     const [isFinishedLoading, setIsFinishedLoading] = useState<boolean>(false)
-    const clearselected = () => {
-        selectRef
-        // const nultipleSelect = <>document.getElementById("deez")
+    const [form] = Form.useForm();
+
+    const resetvalues = (scouterkey: string, valuetochane: string) => {
+        form.setFieldsValue({
+            [scouterkey]: valuetochane
+        })
     }
+
     const clickHandler = () => {
         let shuffledarray = arrayShuffle(data[0].allScouters)
         const slices = shuffledarray.length;
-        const newdata = data.map((qualTableType) => {
+        data.forEach(function (qualsTableData) {
+            for (let i = 0; i < shuffledarray.length; i++) {
+                resetvalues(qualsTableData.key + "" + i, shuffledarray[i].key)
+            }
             shuffledarray = arrayShuffle(data[0].allScouters)
-            return ({ key: qualTableType.key, match: qualTableType.match, chosenScouters: shuffledarray.slice((slices - 6), (slices + 1)), allScouters: qualTableType.allScouters })
         })
-        setdata(newdata)
+
     }
     useEffect(() => {
         async function getScoutes() {
@@ -88,96 +90,126 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
             dataIndex: 'allScouters',
             key: 'firstScouter',
             render: (_, record) => (
+                <>
+                    <Form.Item
+                        name={record.key + "0"}
+                    >
+                        <Select
+                            showSearch
+                            style={{ width: "200px" }}
+                            defaultValue={record.chosenScouters[0].firstname + " " + record.chosenScouters[0].lastname}
+                            optionFilterProp="children"
 
-                <Select
-                    showSearch
-                    ref={selectRef}
-                    placeholder={record.chosenScouters[0].firstname + " " + record.chosenScouters[0].lastname}
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                    }
-                    options={record.allScouters.map((scouter) => {
-                        return ({ value: (scouter.key), label: (scouter.firstname + " " + scouter.lastname) })
-                    })} />
-
+                        >
+                            {getScoutersOptions(record.allScouters)}
+                        </Select></Form.Item>
+                </>
             )
         },
         {
             title: 'Second Scouter',
             dataIndex: 'chosenScouters',
             key: 'secondScouter',
-            render: (_, record) => {
-                return (<Select
-                    showSearch
-                    id="deez"
-                    placeholder={record.chosenScouters[1].firstname + " " + record.chosenScouters[1].lastname}
-                    options={record.allScouters.map((scouter) => {
-                        return ({ value: (scouter.key), label: (scouter.firstname + " " + scouter.lastname) })
-                    })} />
-                )
-            }
+            render: (_, record) => (
+                <>
+                    <Form.Item
+                        name={record.key + "1"}
+                    >
+                        <Select
+                            showSearch
+                            style={{ width: "200px" }}
+                            defaultValue={record.chosenScouters[1].firstname + " " + record.chosenScouters[1].lastname}
+                            optionFilterProp="children"
+
+                        >
+                            {getScoutersOptions(record.allScouters)}
+                        </Select></Form.Item>
+                </>
+            )
         },
         {
             title: 'Third Scouter',
             dataIndex: 'chosenScouters',
             key: 'thirdScouter',
-            render: (_, record) => {
-                console.log(record)
-                return (<Select
-                    showSearch
-                    placeholder={record.chosenScouters[2].firstname + " " + record.chosenScouters[2].lastname}
-                    options={record.allScouters.map((scouter) => {
-                        return ({ value: (scouter.key), label: (scouter.firstname + " " + scouter.lastname) })
-                    })} />
-                )
-            }
+            render: (_, record) => (
+                <>
+                    <Form.Item
+                        name={record.key + "2"}
+                    >
+                        <Select
+                            showSearch
+                            style={{ width: "200px" }}
+                            defaultValue={record.chosenScouters[2].firstname + " " + record.chosenScouters[2].lastname}
+                            optionFilterProp="children"
+
+                        >
+                            {getScoutersOptions(record.allScouters)}
+                        </Select></Form.Item>
+                </>
+            )
         },
         {
             title: 'Fourth Scouter',
             dataIndex: 'chosenScouters',
             key: 'fourthScouter',
-            render: (_, record) => {
-                return (<Select
-                    showSearch
-                    placeholder={record.chosenScouters[3].firstname + " " + record.chosenScouters[3].lastname}
-                    options={record.allScouters.map((scouter) => {
-                        return ({ value: (scouter.key), label: (scouter.firstname + " " + scouter.lastname) })
-                    })} />
-                )
-            }
+            render: (_, record) => (
+                <>
+                    <Form.Item
+                        name={record.key + "3"}
+                    >
+                        <Select
+                            showSearch
+                            style={{ width: "200px" }}
+                            defaultValue={record.chosenScouters[3].firstname + " " + record.chosenScouters[3].lastname}
+                            optionFilterProp="children"
+
+                        >
+                            {getScoutersOptions(record.allScouters)}
+                        </Select></Form.Item>
+                </>
+            )
         },
         {
             title: 'Fifth Scouter',
             dataIndex: 'chosenScouters',
             key: 'fifthScouter',
-            render: (_, record) => {
-                return (<Select
-                    showSearch
-                    placeholder={record.chosenScouters[4].firstname + " " + record.chosenScouters[4].lastname}
-                    options={record.allScouters.map((scouter) => {
-                        return ({ value: (scouter.key), label: (scouter.firstname + " " + scouter.lastname) })
-                    })} />
-                )
-            }
+            render: (_, record) => (
+                <>
+                    <Form.Item
+                        name={record.key + "4"}
+                    >
+                        <Select
+                            showSearch
+                            style={{ width: "200px" }}
+                            defaultValue={record.chosenScouters[4].firstname + " " + record.chosenScouters[4].lastname}
+                            optionFilterProp="children"
+
+                        >
+                            {getScoutersOptions(record.allScouters)}
+                        </Select></Form.Item>
+                </>
+            )
         },
         {
             title: 'Sixth Scouter',
             dataIndex: 'chosenScouters',
             key: 'sixthScouter',
-            render: (_, record) => {
-                return (<Select
+            render: (_, record) => (
+                <>
+                    <Form.Item
+                        name={record.key + "5"}
+                    >
+                        <Select
+                            showSearch
+                            style={{ width: "200px" }}
+                            defaultValue={record.chosenScouters[5].firstname + " " + record.chosenScouters[5].lastname}
+                            optionFilterProp="children"
 
-                    showSearch
-                    placeholder={record.chosenScouters[4].firstname + " " + record.chosenScouters[4].lastname}
-                    defaultValue={{ value: (record.chosenScouters[5].key) }}
-                    options={
-                        record.allScouters.map((scouter) => {
-                            return ({ value: (scouter.key), label: (scouter.firstname + " " + scouter.lastname) })
-                        })
-                    } />
-                )
-            }
+                        >
+                            {getScoutersOptions(record.allScouters)}
+                        </Select></Form.Item>
+                </>
+            )
         }
 
     ];
@@ -185,11 +217,18 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
 
     return (
         <div>
-            <Button onClick={clearselected}>deez</Button>
             {isFinishedLoading
                 ? <>
+                    {/* <Button onClick={resetvalues}>deez</Button> */}
                     <Button onClick={clickHandler}>shuffle</Button>
-                    <Table dataSource={data} columns={columns} /></>
+                    <Form
+                        form={form}
+                        name="basic"
+                        autoComplete="off"
+                    >
+                        <Table dataSource={data} columns={columns} />
+                    </Form>
+                </>
                 : <div style={{ marginTop: '10px' }}><Spin /></div>
 
 
