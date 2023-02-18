@@ -6,7 +6,7 @@ import { Select } from "antd";
 import { getDocumentRef, updateData } from "../utils/firebase";
 import { QualsTable } from "../components/QualsTable";
 
-type team = {
+type Team = {
     teamNumber: number
     station: string
     surrogate: boolean
@@ -18,10 +18,10 @@ type Schedule = {
     description: string
     startTime: string
     matchNumber: number
-    teams: team[]
+    teams: Team[]
 }
 
-type compSchedule = {
+type CompetitionSchedule = {
     Schedule: Schedule[]
 }
 
@@ -52,12 +52,12 @@ type frcEvents = {
 
 type JSONResponse = {
     data?: {
-        pokemon: frcEvents
+        frcEvents: frcEvents
     }
     errors?: Array<{ message: string }>
 }
 
-function adddata(Events: Events[]) {
+function addData(Events: Events[]) {
     const partialURL = 'http://localhost:3000/frcapi/v3.0/2022/schedule/'
     const myHeaders = new Headers();
     myHeaders.append("If-Modified-Since", "");
@@ -66,10 +66,10 @@ function adddata(Events: Events[]) {
         headers: myHeaders,
         redirect: 'follow'
     } as RequestInit;
-    
+
     Events.forEach(async event => {
         const responseSchedule = await (await fetch(partialURL + event.code + "?tournamentLevel=qual", requestOptions)).text()
-        const dataSchedule: compSchedule = JSON.parse(responseSchedule)
+        const dataSchedule: CompetitionSchedule = JSON.parse(responseSchedule)
         let id = event.code
         dataSchedule.Schedule.forEach(async qual => {
 
@@ -86,10 +86,10 @@ export const TimetableManager = () => {
         return <option key={event.code} value={event.code}>{event.name}</option>
     })
     useEffect(() => {
-        async function getCompData() {
-            const targetUrl = `http://localhost:3000/frcapi/v3.0/2022/events?districtCode=ISR`;
-            const targetUrl2 = `http://localhost:3000/frcapi/v3.0/2022/events?tournamentType=Championship`
-            const targetUrl3 = 'http://localhost:3000/frcapi/v3.0/2022/schedule/ISDE1?tournamentLevel=qual'
+        async function getCompetitionData() {
+            const israelCompetitionsUrl = `http://localhost:3000/frcapi/v3.0/2022/events?districtCode=ISR`;
+            const worldChampionshipUrl = `http://localhost:3000/frcapi/v3.0/2022/events?tournamentType=Championship`
+            const tournementScheduleUrl = 'http://localhost:3000/frcapi/v3.0/2022/schedule/ISDE1?tournamentLevel=qual'
 
             const myHeaders = new Headers();
             myHeaders.append("If-Modified-Since", "");
@@ -98,18 +98,18 @@ export const TimetableManager = () => {
                 headers: myHeaders,
                 redirect: 'follow'
             } as RequestInit;
-            
-            const response = await (await fetch(targetUrl, requestOptions)).text()
+
+            const response = await (await fetch(israelCompetitionsUrl, requestOptions)).text()
             const data: frcEvents = JSON.parse(response)
             const eventsfrc = data.Events
-            const responseChamp = await (await fetch(targetUrl2, requestOptions)).text()
+            const responseChamp = await (await fetch(worldChampionshipUrl, requestOptions)).text()
             const dataChamp: frcEvents = JSON.parse(responseChamp)
             eventsfrc.push(dataChamp.Events[0])
             setEvents(eventsfrc)
-            const responseSchedule = await (await fetch(targetUrl3, requestOptions)).text()
-            const dataSchedule: compSchedule = JSON.parse(responseSchedule)
+            const responseSchedule = await (await fetch(tournementScheduleUrl, requestOptions)).text()
+            const dataSchedule: CompetitionSchedule = JSON.parse(responseSchedule)
         }
-        getCompData()
+        getCompetitionData()
         resetSeason();
     }, []);
 

@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { ScouterDataType } from "../components/types/TableDataTypes"
-import { collection, doc, getDoc, getDocs, getFirestore, updateDoc, deleteDoc, setDoc, DocumentData, DocumentReference } from 'firebase/firestore/lite';
+import { collection, doc, getDoc, getDocs, getFirestore, updateDoc, deleteDoc, setDoc, DocumentData, DocumentReference, QueryDocumentSnapshot } from 'firebase/firestore/lite';
 import { userToFirebase, User } from "../components/types/User";
 import { DataParamsModes, ParamItem } from "./params/ParamItem";
 
@@ -41,9 +41,16 @@ export async function getScouters(collectionName: any): Promise<{ key: string, f
     });
 }
 
-export function getScouterDataTypeFromDocRef(docRef: string[]): ScouterDataType {
+function getScouterDataTypeFromDocRef(docRef: string[]): ScouterDataType {
     let data = { key: (docRef[0] || 'undefined'), firstname: (docRef[1] || 'undefined'), lastname: (docRef[2] || 'undefined') }
     return data
+}
+function getScouterDataTypeArrayFromDocumentSnapshot(doc: QueryDocumentSnapshot<DocumentData>): ScouterDataType[] {
+    let scouters: ScouterDataType[] = []
+    for (let index = 0; index < 6; index++) {
+        scouters.push(getScouterDataTypeFromDocRef(doc.get("" + index)))
+    }
+    return scouters
 }
 
 export async function getquals(qualPath: any): Promise<{ qual: string, scouters: { key: string, firstname: string, lastname: string }[] }[]> {
@@ -51,7 +58,7 @@ export async function getquals(qualPath: any): Promise<{ qual: string, scouters:
     return seasons.docs.map((doc) => {
 
         return {
-            qual: doc.id + "", scouters: [getScouterDataTypeFromDocRef(doc.get("0")), getScouterDataTypeFromDocRef(doc.get("1")), getScouterDataTypeFromDocRef(doc.get("2")), getScouterDataTypeFromDocRef(doc.get("3")), getScouterDataTypeFromDocRef(doc.get("4")), getScouterDataTypeFromDocRef(doc.get("5"))]
+            qual: doc.id + "", scouters: getScouterDataTypeArrayFromDocumentSnapshot(doc)
         }
     });
 }
@@ -81,26 +88,26 @@ export async function getParams(mode: DataParamsModes, seasonYear: string) {
     }
     params = params.filter((param) => param != null);
     return params;
-    
+
 }
 
 export async function setParamInFirebase(param: ParamItem, mode: DataParamsModes, seasonYear: string) {
-    await updateDoc(doc(firestore, 'seasons', seasonYear, 'data-params', mode), { [param.name]: param});
+    await updateDoc(doc(firestore, 'seasons', seasonYear, 'data-params', mode), { [param.name]: param });
 }
 
-export async function getUsers(seasonYear: string){
+export async function getUsers(seasonYear: string) {
     const users = await getDocs(collection(firestore, 'seasons', seasonYear, 'users'));
     return users.docs.map((doc) => { return { ...doc.data(), username: doc.id } as User });
 }
 
-export async function deleteUser(seasonYear: string, username: string){
+export async function deleteUser(seasonYear: string, username: string) {
     await deleteDoc(doc(firestore, 'seasons', seasonYear, 'users', username));
 }
 
-export async function updateUserInFirebase(seasonYear: string, user: User){
+export async function updateUserInFirebase(seasonYear: string, user: User) {
     await updateDoc(doc(firestore, 'seasons', seasonYear, 'users', user.username), userToFirebase(user));
 }
 
-export async function addUserToFirebase(seasonYear: string, user: User){
+export async function addUserToFirebase(seasonYear: string, user: User) {
     await setDoc(doc(firestore, 'seasons', seasonYear, 'users', user.username), userToFirebase(user));
 }

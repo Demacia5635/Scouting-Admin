@@ -6,15 +6,15 @@ import { useEffect, useState } from "react";
 import { getquals, getScouters, updateData } from "../utils/firebase";
 import { QualsTableDataType, ScouterDataType } from "./types/TableDataTypes";
 
-type QulTableProps = {
+type QualTableProps = {
     seasonPath: string
     tournmentsSubPath: string
     scoutersSubPath: string
 }
 
 
-function getScoutersOptions(scouters: ScouterDataType[]): any[] {
-    const options: any[] = scouters.map((scouter) => {
+function getScoutersSelectOptions(scouters: ScouterDataType[]): any[] {
+    const options = scouters.map((scouter) => {
         return (<Option key={scouter.key} value={scouter.key}>{scouter.firstname + " " + scouter.lastname}</Option>)
     })
     return options
@@ -43,7 +43,7 @@ const columns: ColumnsType<QualsTableDataType> = [
                         optionFilterProp="children"
 
                     >
-                        {getScoutersOptions(record.allScouters)}
+                        {getScoutersSelectOptions(record.allScouters)}
                     </Select></Form.Item>
             </>
         )
@@ -64,7 +64,7 @@ const columns: ColumnsType<QualsTableDataType> = [
                         optionFilterProp="children"
 
                     >
-                        {getScoutersOptions(record.allScouters)}
+                        {getScoutersSelectOptions(record.allScouters)}
                     </Select></Form.Item>
             </>
         )
@@ -85,7 +85,7 @@ const columns: ColumnsType<QualsTableDataType> = [
                         optionFilterProp="children"
 
                     >
-                        {getScoutersOptions(record.allScouters)}
+                        {getScoutersSelectOptions(record.allScouters)}
                     </Select></Form.Item>
             </>
         )
@@ -106,7 +106,7 @@ const columns: ColumnsType<QualsTableDataType> = [
                         optionFilterProp="children"
 
                     >
-                        {getScoutersOptions(record.allScouters)}
+                        {getScoutersSelectOptions(record.allScouters)}
                     </Select></Form.Item>
             </>
         )
@@ -127,7 +127,7 @@ const columns: ColumnsType<QualsTableDataType> = [
                         optionFilterProp="children"
 
                     >
-                        {getScoutersOptions(record.allScouters)}
+                        {getScoutersSelectOptions(record.allScouters)}
                     </Select></Form.Item>
             </>
         )
@@ -148,7 +148,7 @@ const columns: ColumnsType<QualsTableDataType> = [
                         optionFilterProp="children"
 
                     >
-                        {getScoutersOptions(record.allScouters)}
+                        {getScoutersSelectOptions(record.allScouters)}
                     </Select></Form.Item>
             </>
         )
@@ -156,11 +156,11 @@ const columns: ColumnsType<QualsTableDataType> = [
 
 ];
 
-export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: QulTableProps) => {
+export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: QualTableProps) => {
     const [data, setdata] = useState<QualsTableDataType[]>([]);
     const [isFinishedLoading, setIsFinishedLoading] = useState<boolean>(false)
     const [form] = Form.useForm();
-    
+
     const updateFirebase = async (qualsnum: string, scouterkeys: string[]) => {
         await updateData(seasonPath + tournmentsSubPath + "/" + qualsnum, {
             0: [scouterkeys[0],
@@ -183,18 +183,18 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
             data[5].allScouters.find(function (scouter) { return scouter.key === scouterkeys[5] })?.lastname]
         })
     }
-    
-    const finishhandler = () => {
+
+    const finishHandler = () => {
         data.forEach((qualsTableData) => {
-            let scouterKey: string[] = []
+            let scouterKeys: string[] = []
             for (let i = 0; i < 6; i++) {
-                scouterKey.push(form.getFieldValue([qualsTableData.key + i]))
+                scouterKeys.push(form.getFieldValue([qualsTableData.key + i]))
             }
-            updateFirebase(qualsTableData.key, scouterKey)
+            updateFirebase(qualsTableData.key, scouterKeys)
         })
     }
-    
-    const resetvalues = (scouterKey: string, valueToChane: string) => {
+
+    const resetValues = (scouterKey: string, valueToChane: string) => {
         form.setFieldsValue({
             [scouterKey]: valueToChane
         })
@@ -204,14 +204,14 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
         let shuffledArray = arrayShuffle(data[0].allScouters)
         const slices = shuffledArray.length;
         data.forEach((qualsTableData) => {
-            for (let i = 0; i < shuffledArray.length; i++) {
-                resetvalues(qualsTableData.key + "" + i, shuffledArray[i].key)
+            for (let i = 0; i < 6; i++) {
+                resetValues(qualsTableData.key + "" + i, shuffledArray[i].key)
             }
             shuffledArray = arrayShuffle(data[0].allScouters)
         })
 
     }
-    
+
     useEffect(() => {
         setIsFinishedLoading(false)
 
@@ -219,16 +219,13 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
             const scouters = await getScouters(/*seasonPath + scoutersSubPath*/"seasons/2019/teams/6969/scouters")
             const matches = await getquals(seasonPath + tournmentsSubPath)
             let tableData = matches.map((match) => {
-                if (match.scouters == undefined) {
-                    console.log("why????")
-                }
                 return ({ key: match.qual, match: match.qual, chosenScouters: match.scouters, allScouters: scouters })
             })
             setdata(tableData)
         }
         getScoutes()
     }, [tournmentsSubPath]);
-    
+
     useEffect(() => {
         if (data.length != 0) {
             setIsFinishedLoading(true)
@@ -244,7 +241,7 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
                         form={form}
                         name="basic"
                         autoComplete="off"
-                        onFinish={finishhandler}
+                        onFinish={finishHandler}
                     >
                         <Space>
                             <Form.Item>
