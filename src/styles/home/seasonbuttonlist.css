@@ -12,10 +12,3 @@ body {
     font-size: 500%;
     color: azure;
 }
-
-.seasonbuttonlist .plusbutton {
-    margin-right: 100%;
-    margin-bottom: 10px;
-    cursor: pointer;
-    size: 1px;
-}

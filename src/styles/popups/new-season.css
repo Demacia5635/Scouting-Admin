@@ -1,0 +1,30 @@
+.new-season .plusbutton {
+    margin-right: 100%;
+    margin-bottom: 10px;
+    cursor: pointer;
+    size: 1px;
+}
+
+.ant-form {
+    margin-top: 10px;
+}
+
+.form input, .form .ant-input-number{
+    text-align: left;
+    width: 250px;
+}
+
+.form .ant-form-item {
+    margin-bottom: 10px;
+}
+
+.form .ant-form-item-label {
+    text-align: left;
+    height: fit-content;
+    font-weight: bold;
+}
+
+/* Make the form items align to the right */
+.form .ant-form-item-control {
+    text-align: right;
+}
