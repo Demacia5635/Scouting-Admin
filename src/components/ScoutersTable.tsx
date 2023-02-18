@@ -9,8 +9,6 @@ import { currentteam } from './types/CurrentTeam';
 import { ScouterDataType } from './types/TableDataTypes';
 
 
-
-
 const columns: ColumnsType<ScouterDataType> = [
     {
         title: 'FirstName',

@@ -13,7 +13,6 @@ type QulTableProps = {
 }
 
 
-
 function getScoutersOptions(scouters: ScouterDataType[]): any[] {
     const options: any[] = scouters.map((scouter) => {
         return (<Option key={scouter.key} value={scouter.key}>{scouter.firstname + " " + scouter.lastname}</Option>)
@@ -161,6 +160,7 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
     const [data, setdata] = useState<QualsTableDataType[]>([]);
     const [isFinishedLoading, setIsFinishedLoading] = useState<boolean>(false)
     const [form] = Form.useForm();
+    
     const updateFirebase = async (qualsnum: string, scouterkeys: string[]) => {
         await updateData(seasonPath + tournmentsSubPath + "/" + qualsnum, {
             0: [scouterkeys[0],
@@ -183,8 +183,9 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
             data[5].allScouters.find(function (scouter) { return scouter.key === scouterkeys[5] })?.lastname]
         })
     }
+    
     const finishhandler = () => {
-        data.forEach(function (qualsTableData) {
+        data.forEach((qualsTableData) => {
             let scouterKey: string[] = []
             for (let i = 0; i < 6; i++) {
                 scouterKey.push(form.getFieldValue([qualsTableData.key + i]))
@@ -192,6 +193,7 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
             updateFirebase(qualsTableData.key, scouterKey)
         })
     }
+    
     const resetvalues = (scouterKey: string, valueToChane: string) => {
         form.setFieldsValue({
             [scouterKey]: valueToChane
@@ -201,7 +203,7 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
     const clickHandler = () => {
         let shuffledArray = arrayShuffle(data[0].allScouters)
         const slices = shuffledArray.length;
-        data.forEach(function (qualsTableData) {
+        data.forEach((qualsTableData) => {
             for (let i = 0; i < shuffledArray.length; i++) {
                 resetvalues(qualsTableData.key + "" + i, shuffledArray[i].key)
             }
@@ -209,6 +211,7 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
         })
 
     }
+    
     useEffect(() => {
         setIsFinishedLoading(false)
 
@@ -219,23 +222,18 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
                 if (match.scouters == undefined) {
                     console.log("why????")
                 }
-                console.log(match)
-                console.log(scouters)
                 return ({ key: match.qual, match: match.qual, chosenScouters: match.scouters, allScouters: scouters })
             })
-            console.log(tableData)
             setdata(tableData)
-            console.log(data)
         }
         getScoutes()
     }, [tournmentsSubPath]);
+    
     useEffect(() => {
         if (data.length != 0) {
             setIsFinishedLoading(true)
         }
     }, [data])
-
-
 
 
     return (
@@ -259,8 +257,6 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
                     </Form>
                 </>
                 : <div style={{ marginTop: '10px' }}><Spin /></div>
-
-
             }
         </div>)
 

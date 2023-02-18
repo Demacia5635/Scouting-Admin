@@ -40,12 +40,12 @@ export async function getScouters(collectionName: any): Promise<{ key: string, f
         return { key: doc.id + "", firstname: doc.get("firstname"), lastname: doc.get("lastname") }
     });
 }
-export function getScouterDataTypeFromDocRef(docRef: string[]): ScouterDataType {
-    console.log(docRef)
 
+export function getScouterDataTypeFromDocRef(docRef: string[]): ScouterDataType {
     let data = { key: (docRef[0] || 'undefined'), firstname: (docRef[1] || 'undefined'), lastname: (docRef[2] || 'undefined') }
     return data
 }
+
 export async function getquals(qualPath: any): Promise<{ qual: string, scouters: { key: string, firstname: string, lastname: string }[] }[]> {
     const seasons = await getDocs(collection(firestore, qualPath));
     return seasons.docs.map((doc) => {
