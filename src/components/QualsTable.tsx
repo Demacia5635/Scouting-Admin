@@ -1,10 +1,10 @@
-import { Button, Form, Select, Spin, Table } from "antd";
+import { Button, Form, Select, Space, Spin, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { RefSelectProps } from 'antd/lib/select';
 import { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import arrayShuffle from 'array-shuffle';
-import { getFieldValue, getquals, getscouters } from "../utils/firebase";
+import { getFieldValue, getquals, getscouters, updateData } from "../utils/firebase";
 import { QualsTableDataType, ScouterDataType } from "./types/TableDataTypes";
 import { SELECTION_ALL } from "antd/es/table/hooks/useSelection";
 import { TypeOfTag } from "typescript";
@@ -33,7 +33,37 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
     const [data, setdata] = useState<QualsTableDataType[]>([]);
     const [isFinishedLoading, setIsFinishedLoading] = useState<boolean>(false)
     const [form] = Form.useForm();
-
+    const updateFirebase = async (qualsnum: string, scouterkeys: string[]) => {
+        await updateData(seasonPath + tournmentsSubPath + "/" + qualsnum, {
+            0: [scouterkeys[0],
+            data[0].allScouters.find(function (scouter) { return scouter.key === scouterkeys[0] })?.firstname,
+            data[0].allScouters.find(function (scouter) { return scouter.key === scouterkeys[0] })?.lastname],
+            1: [scouterkeys[1],
+            data[1].allScouters.find(function (scouter) { return scouter.key === scouterkeys[1] })?.firstname,
+            data[1].allScouters.find(function (scouter) { return scouter.key === scouterkeys[1] })?.lastname],
+            2: [scouterkeys[2],
+            data[2].allScouters.find(function (scouter) { return scouter.key === scouterkeys[2] })?.firstname,
+            data[2].allScouters.find(function (scouter) { return scouter.key === scouterkeys[2] })?.lastname],
+            3: [scouterkeys[3],
+            data[3].allScouters.find(function (scouter) { return scouter.key === scouterkeys[3] })?.firstname,
+            data[3].allScouters.find(function (scouter) { return scouter.key === scouterkeys[3] })?.lastname],
+            4: [scouterkeys[4],
+            data[4].allScouters.find(function (scouter) { return scouter.key === scouterkeys[4] })?.firstname,
+            data[4].allScouters.find(function (scouter) { return scouter.key === scouterkeys[4] })?.lastname],
+            5: [scouterkeys[0],
+            data[5].allScouters.find(function (scouter) { return scouter.key === scouterkeys[5] })?.firstname,
+            data[5].allScouters.find(function (scouter) { return scouter.key === scouterkeys[5] })?.lastname]
+        })
+    }
+    const finishhandler = () => {
+        data.forEach(function (qualsTableData) {
+            let scouterkey: string[] = []
+            for (let i = 0; i < 6; i++) {
+                scouterkey.push(form.getFieldValue([qualsTableData.key + i]))
+            }
+            updateFirebase(qualsTableData.key, scouterkey)
+        })
+    }
     const resetvalues = (scouterkey: string, valuetochane: string) => {
         form.setFieldsValue({
             [scouterkey]: valuetochane
@@ -72,9 +102,6 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
     useEffect(() => {
         if (data.length != 0) {
             setIsFinishedLoading(true)
-            if (data[0].chosenScouters[0] == undefined) {
-                console.log("why????")
-            }
         }
         console.log(data)
     }, [data])
@@ -220,12 +247,19 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
             {isFinishedLoading
                 ? <>
                     {/* <Button onClick={resetvalues}>deez</Button> */}
-                    <Button onClick={clickHandler}>shuffle</Button>
                     <Form
                         form={form}
                         name="basic"
                         autoComplete="off"
+                        onFinish={finishhandler}
                     >
+                        <Space>
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit">
+                                    Submit
+                                </Button>
+                            </Form.Item><Button onClick={clickHandler}>shuffle</Button>
+                        </Space>
                         <Table dataSource={data} columns={columns} />
                     </Form>
                 </>
