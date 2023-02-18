@@ -1,15 +1,10 @@
 import { Button, Form, Select, Space, Spin, Table } from "antd";
-import { ColumnsType } from "antd/es/table";
-import { RefSelectProps } from 'antd/lib/select';
-import { useEffect, useRef, useState } from "react";
-import ReactDOM from "react-dom";
-import arrayShuffle from 'array-shuffle';
-import { getFieldValue, getquals, getscouters, updateData } from "../utils/firebase";
-import { QualsTableDataType, ScouterDataType } from "./types/TableDataTypes";
-import { SELECTION_ALL } from "antd/es/table/hooks/useSelection";
-import { TypeOfTag } from "typescript";
 import { Option } from "antd/es/mentions";
-import { NamePath } from "antd/es/form/interface";
+import { ColumnsType } from "antd/es/table";
+import arrayShuffle from 'array-shuffle';
+import { useEffect, useState } from "react";
+import { getquals, getscouters, updateData } from "../utils/firebase";
+import { QualsTableDataType, ScouterDataType } from "./types/TableDataTypes";
 
 type QulTableProps = {
     seasonPath: string
@@ -27,7 +22,140 @@ function getScoutersOptions(scouters: ScouterDataType[]): any[] {
 }
 
 
+const columns: ColumnsType<QualsTableDataType> = [
+    {
+        title: 'Match number',
+        dataIndex: 'match',
+        key: 'match'
+    },
+    {
+        title: 'First Scouter',
+        dataIndex: 'allScouters',
+        key: 'firstScouter',
+        render: (_, record) => (
+            <>
+                <Form.Item
+                    name={record.key + "0"}
+                >
+                    <Select
+                        showSearch
+                        style={{ width: "200px" }}
+                        defaultValue={record.chosenScouters[0].firstname + " " + record.chosenScouters[0].lastname}
+                        optionFilterProp="children"
 
+                    >
+                        {getScoutersOptions(record.allScouters)}
+                    </Select></Form.Item>
+            </>
+        )
+    },
+    {
+        title: 'Second Scouter',
+        dataIndex: 'chosenScouters',
+        key: 'secondScouter',
+        render: (_, record) => (
+            <>
+                <Form.Item
+                    name={record.key + "1"}
+                >
+                    <Select
+                        showSearch
+                        style={{ width: "200px" }}
+                        defaultValue={record.chosenScouters[1].firstname + " " + record.chosenScouters[1].lastname}
+                        optionFilterProp="children"
+
+                    >
+                        {getScoutersOptions(record.allScouters)}
+                    </Select></Form.Item>
+            </>
+        )
+    },
+    {
+        title: 'Third Scouter',
+        dataIndex: 'chosenScouters',
+        key: 'thirdScouter',
+        render: (_, record) => (
+            <>
+                <Form.Item
+                    name={record.key + "2"}
+                >
+                    <Select
+                        showSearch
+                        style={{ width: "200px" }}
+                        defaultValue={record.chosenScouters[2].firstname + " " + record.chosenScouters[2].lastname}
+                        optionFilterProp="children"
+
+                    >
+                        {getScoutersOptions(record.allScouters)}
+                    </Select></Form.Item>
+            </>
+        )
+    },
+    {
+        title: 'Fourth Scouter',
+        dataIndex: 'chosenScouters',
+        key: 'fourthScouter',
+        render: (_, record) => (
+            <>
+                <Form.Item
+                    name={record.key + "3"}
+                >
+                    <Select
+                        showSearch
+                        style={{ width: "200px" }}
+                        defaultValue={record.chosenScouters[3].firstname + " " + record.chosenScouters[3].lastname}
+                        optionFilterProp="children"
+
+                    >
+                        {getScoutersOptions(record.allScouters)}
+                    </Select></Form.Item>
+            </>
+        )
+    },
+    {
+        title: 'Fifth Scouter',
+        dataIndex: 'chosenScouters',
+        key: 'fifthScouter',
+        render: (_, record) => (
+            <>
+                <Form.Item
+                    name={record.key + "4"}
+                >
+                    <Select
+                        showSearch
+                        style={{ width: "200px" }}
+                        defaultValue={record.chosenScouters[4].firstname + " " + record.chosenScouters[4].lastname}
+                        optionFilterProp="children"
+
+                    >
+                        {getScoutersOptions(record.allScouters)}
+                    </Select></Form.Item>
+            </>
+        )
+    },
+    {
+        title: 'Sixth Scouter',
+        dataIndex: 'chosenScouters',
+        key: 'sixthScouter',
+        render: (_, record) => (
+            <>
+                <Form.Item
+                    name={record.key + "5"}
+                >
+                    <Select
+                        showSearch
+                        style={{ width: "200px" }}
+                        defaultValue={record.chosenScouters[5].firstname + " " + record.chosenScouters[5].lastname}
+                        optionFilterProp="children"
+
+                    >
+                        {getScoutersOptions(record.allScouters)}
+                    </Select></Form.Item>
+            </>
+        )
+    }
+
+];
 
 export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: QulTableProps) => {
     const [data, setdata] = useState<QualsTableDataType[]>([]);
@@ -57,31 +185,33 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
     }
     const finishhandler = () => {
         data.forEach(function (qualsTableData) {
-            let scouterkey: string[] = []
+            let scouterKey: string[] = []
             for (let i = 0; i < 6; i++) {
-                scouterkey.push(form.getFieldValue([qualsTableData.key + i]))
+                scouterKey.push(form.getFieldValue([qualsTableData.key + i]))
             }
-            updateFirebase(qualsTableData.key, scouterkey)
+            updateFirebase(qualsTableData.key, scouterKey)
         })
     }
-    const resetvalues = (scouterkey: string, valuetochane: string) => {
+    const resetvalues = (scouterKey: string, valueToChane: string) => {
         form.setFieldsValue({
-            [scouterkey]: valuetochane
+            [scouterKey]: valueToChane
         })
     }
 
     const clickHandler = () => {
-        let shuffledarray = arrayShuffle(data[0].allScouters)
-        const slices = shuffledarray.length;
+        let shuffledArray = arrayShuffle(data[0].allScouters)
+        const slices = shuffledArray.length;
         data.forEach(function (qualsTableData) {
-            for (let i = 0; i < shuffledarray.length; i++) {
-                resetvalues(qualsTableData.key + "" + i, shuffledarray[i].key)
+            for (let i = 0; i < shuffledArray.length; i++) {
+                resetvalues(qualsTableData.key + "" + i, shuffledArray[i].key)
             }
-            shuffledarray = arrayShuffle(data[0].allScouters)
+            shuffledArray = arrayShuffle(data[0].allScouters)
         })
 
     }
     useEffect(() => {
+        setIsFinishedLoading(false)
+
         async function getScoutes() {
             const scouters = await getscouters(/*seasonPath + scoutersSubPath*/"seasons/2019/teams/6969/scouters")
             const matches = await getquals(seasonPath + tournmentsSubPath)
@@ -98,155 +228,20 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
             console.log(data)
         }
         getScoutes()
-    }, []);
+    }, [tournmentsSubPath]);
     useEffect(() => {
         if (data.length != 0) {
             setIsFinishedLoading(true)
         }
-        console.log(data)
     }, [data])
 
-    const columns: ColumnsType<QualsTableDataType> = [
-        {
-            title: 'Match number',
-            dataIndex: 'match',
-            key: 'match'
-        },
-        {
-            title: 'First Scouter',
-            dataIndex: 'allScouters',
-            key: 'firstScouter',
-            render: (_, record) => (
-                <>
-                    <Form.Item
-                        name={record.key + "0"}
-                    >
-                        <Select
-                            showSearch
-                            style={{ width: "200px" }}
-                            defaultValue={record.chosenScouters[0].firstname + " " + record.chosenScouters[0].lastname}
-                            optionFilterProp="children"
 
-                        >
-                            {getScoutersOptions(record.allScouters)}
-                        </Select></Form.Item>
-                </>
-            )
-        },
-        {
-            title: 'Second Scouter',
-            dataIndex: 'chosenScouters',
-            key: 'secondScouter',
-            render: (_, record) => (
-                <>
-                    <Form.Item
-                        name={record.key + "1"}
-                    >
-                        <Select
-                            showSearch
-                            style={{ width: "200px" }}
-                            defaultValue={record.chosenScouters[1].firstname + " " + record.chosenScouters[1].lastname}
-                            optionFilterProp="children"
-
-                        >
-                            {getScoutersOptions(record.allScouters)}
-                        </Select></Form.Item>
-                </>
-            )
-        },
-        {
-            title: 'Third Scouter',
-            dataIndex: 'chosenScouters',
-            key: 'thirdScouter',
-            render: (_, record) => (
-                <>
-                    <Form.Item
-                        name={record.key + "2"}
-                    >
-                        <Select
-                            showSearch
-                            style={{ width: "200px" }}
-                            defaultValue={record.chosenScouters[2].firstname + " " + record.chosenScouters[2].lastname}
-                            optionFilterProp="children"
-
-                        >
-                            {getScoutersOptions(record.allScouters)}
-                        </Select></Form.Item>
-                </>
-            )
-        },
-        {
-            title: 'Fourth Scouter',
-            dataIndex: 'chosenScouters',
-            key: 'fourthScouter',
-            render: (_, record) => (
-                <>
-                    <Form.Item
-                        name={record.key + "3"}
-                    >
-                        <Select
-                            showSearch
-                            style={{ width: "200px" }}
-                            defaultValue={record.chosenScouters[3].firstname + " " + record.chosenScouters[3].lastname}
-                            optionFilterProp="children"
-
-                        >
-                            {getScoutersOptions(record.allScouters)}
-                        </Select></Form.Item>
-                </>
-            )
-        },
-        {
-            title: 'Fifth Scouter',
-            dataIndex: 'chosenScouters',
-            key: 'fifthScouter',
-            render: (_, record) => (
-                <>
-                    <Form.Item
-                        name={record.key + "4"}
-                    >
-                        <Select
-                            showSearch
-                            style={{ width: "200px" }}
-                            defaultValue={record.chosenScouters[4].firstname + " " + record.chosenScouters[4].lastname}
-                            optionFilterProp="children"
-
-                        >
-                            {getScoutersOptions(record.allScouters)}
-                        </Select></Form.Item>
-                </>
-            )
-        },
-        {
-            title: 'Sixth Scouter',
-            dataIndex: 'chosenScouters',
-            key: 'sixthScouter',
-            render: (_, record) => (
-                <>
-                    <Form.Item
-                        name={record.key + "5"}
-                    >
-                        <Select
-                            showSearch
-                            style={{ width: "200px" }}
-                            defaultValue={record.chosenScouters[5].firstname + " " + record.chosenScouters[5].lastname}
-                            optionFilterProp="children"
-
-                        >
-                            {getScoutersOptions(record.allScouters)}
-                        </Select></Form.Item>
-                </>
-            )
-        }
-
-    ];
 
 
     return (
         <div>
             {isFinishedLoading
                 ? <>
-                    {/* <Button onClick={resetvalues}>deez</Button> */}
                     <Form
                         form={form}
                         name="basic"

@@ -73,15 +73,12 @@ function adddata(Events: Events[]) {
 
 export const TimetableManager = () => {
     const [events, setEvents] = useState<Events[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [currentTournment, setCurrentTournment] = useState("didnt choose")
 
     const frcEventsOptions = events.map((event) => {
         return (<option key={event.code} value={event.code}>{event.name}</option>)
     })
     useEffect(() => {
-        setLoading(true);
-        setError(null);
         async function getCompData() {
             const targetUrl = `http://localhost:3000/frcapi/v3.0/2022/events?districtCode=ISR`;
             const targetUrl2 = `http://localhost:3000/frcapi/v3.0/2022/events?tournamentType=Championship`
@@ -102,11 +99,9 @@ export const TimetableManager = () => {
             const dataChamp: frcEvents = JSON.parse(responseChamp)
             eventsfrc.push(dataChamp.Events[0])
             setEvents(eventsfrc)
-            // adddata(eventsfrc)
             const responseSchedule = await (await fetch(targetUrl3, requestOptions)).text()
             const dataSchedule: compSchedule = JSON.parse(responseSchedule)
             console.log("started")
-            // await updateData("seasons/2022/ISDE1/Qual1", {})
         }
         getCompData()
         resetSeason();
@@ -114,19 +109,19 @@ export const TimetableManager = () => {
 
     return (
         <div>
-            <h1 onClick={() => {
-                console.log(events)
-                console.log(events.length)
-            }}>Timetable Manager</h1>
-            {/* <p>{events[0].name}</p> */}
+            <h1>Timetable Manager</h1>
             <Select
-
+                onChange={(value) => setCurrentTournment("/" + value)}
                 defaultValue={{ value: "default", label: "please choose a competiotion" }}
             >
                 {frcEventsOptions}
 
             </Select>
-            <QualsTable seasonPath="seasons/2022" tournmentsSubPath="/ISDE1" scoutersSubPath="asd" />
+            {
+                //scoutersubpath will be changed after we do the login page because then we will put the curren team number in the session storage
+            }
+
+            <QualsTable seasonPath="seasons/2022" tournmentsSubPath={currentTournment} scoutersSubPath="tbd" />
         </div>
     );
 };

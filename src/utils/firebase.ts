@@ -21,12 +21,6 @@ export async function updateData(docPath: string, data: any) {
 export function getDocumentRef(docPath: string): DocumentReference {
     return doc(firestore, docPath)
 }
-// async function try1(docPath: string){
-//     const seasons = await getDocs(collection(firestore, 'seasons'));
-//     seasons.docs.map((doc) => {
-//         getDoc(doc.get("ref")) 
-//      });
-// }
 export async function deleteDocument(docPath: string) {
     await deleteDoc(doc(firestore, docPath))
 }
