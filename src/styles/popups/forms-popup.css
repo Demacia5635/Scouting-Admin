@@ -1,0 +1,36 @@
+.ant-form {
+    margin-top: 10px;
+}
+
+.form input, .form .type-select, .form .ant-input-number {
+    text-align: left;
+    width: 200px;
+}
+
+.form .ant-form-item {
+    margin-bottom: 10px;
+}
+
+.form .ant-form-item-label {
+    text-align: left;
+    height: fit-content;
+    font-weight: bold;
+}
+
+.form .color-picker-button {
+    background-color: aqua;
+    cursor: pointer;
+}
+
+.form .color-picker-input {
+    width: 160px;
+}
+
+/* Make the form items align to the right */
+.form .ant-form-item-control {
+    text-align: right;
+}
+
+.form .color-picker {
+    margin-top: 20px;
+}

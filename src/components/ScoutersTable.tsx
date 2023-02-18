@@ -2,7 +2,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Divider, Space, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useState } from 'react';
-import { deleteDocument, getscouters } from '../utils/firebase';
+import { deleteDocument, getScouters } from '../utils/firebase';
 import { FileUploader } from './FileUploader';
 import NewScouterForm from './NewScouterForm';
 import { currentteam } from './types/CurrentTeam';
@@ -46,7 +46,7 @@ const ScoutersTable = ({ currenteamnum }: currentteam) => {
 
     useEffect(() => {
         async function setscouters() {
-            const scouters = await getscouters("seasons/2019/teams/" + currenteamnum + "/scouters")
+            const scouters = await getScouters("seasons/2019/teams/" + currenteamnum + "/scouters")
             setdata(scouters)
 
             console.log("setting length")
