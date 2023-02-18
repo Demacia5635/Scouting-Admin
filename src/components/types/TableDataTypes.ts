@@ -3,6 +3,7 @@ export interface ScouterDataType {
     firstname: string;
     lastname: string;
 }
+
 export interface QualsTableDataType {
     key: string
     match: string
