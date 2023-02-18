@@ -3,7 +3,7 @@ import { Option } from "antd/es/mentions";
 import { ColumnsType } from "antd/es/table";
 import arrayShuffle from 'array-shuffle';
 import { useEffect, useState } from "react";
-import { getquals, getscouters, updateData } from "../utils/firebase";
+import { getquals, getScouters, updateData } from "../utils/firebase";
 import { QualsTableDataType, ScouterDataType } from "./types/TableDataTypes";
 
 type QulTableProps = {
@@ -213,7 +213,7 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
         setIsFinishedLoading(false)
 
         async function getScoutes() {
-            const scouters = await getscouters(/*seasonPath + scoutersSubPath*/"seasons/2019/teams/6969/scouters")
+            const scouters = await getScouters(/*seasonPath + scoutersSubPath*/"seasons/2019/teams/6969/scouters")
             const matches = await getquals(seasonPath + tournmentsSubPath)
             let tableData = matches.map((match) => {
                 if (match.scouters == undefined) {
