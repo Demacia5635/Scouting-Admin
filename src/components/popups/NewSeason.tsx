@@ -7,6 +7,7 @@ import { moveToSeasonEditor } from "../../utils/season-handler";
 import { NavigateFunction } from "react-router";
 import { InternalNamePath } from "rc-field-form/es/interface";
 import { sendNotification } from "../../utils/notification";
+import { createSeason } from "../../utils/firebase";
 
 type NewSeasonProps = {
     seasons: SeasonButtonProps[]
@@ -30,12 +31,12 @@ export const NewSeason = ({seasons, navigator}: NewSeasonProps) => {
         
     }
 
-    const createNewSeason = (values: SeasonButtonProps) => {
+    const createNewSeason = async (values: SeasonButtonProps) => {
         if (seasons.find(season => season.year === values.year)) {
             form.resetFields();
         }
         closePopup();
-        
+        await createSeason(values.year, values.name);
         moveToSeasonEditor({name: values.name, year: values.year}, navigator);
     };
 
@@ -54,7 +55,7 @@ export const NewSeason = ({seasons, navigator}: NewSeasonProps) => {
 
                 <Form
                     form={form}
-                    onFinish={(values) => {createNewSeason(values)}}
+                    onFinish={async (values) => {await createNewSeason(values)}}
                     onFinishFailed={({values, errorFields, outOfDate}) => {onFail(values, errorFields, outOfDate)}}
                     layout={'horizontal'}
                 >
@@ -72,11 +73,11 @@ export const NewSeason = ({seasons, navigator}: NewSeasonProps) => {
                         label="Year"
                         rules={[
                             { required: true, message: 'Please input the year of the season', type: 'number', min: 1, max: 9999999},
-                            { validator: (rule, value, callback) => {
+                            { validator: (_, value) => {
                                 if (seasons.find(season => parseInt(season.year) === value)) {
-                                    callback("A season with this year already exists");
+                                    return Promise.reject(new Error('Season already exists'));
                                 } else {
-                                    callback();
+                                    return Promise.resolve();
                                 }
                             }}
                         ]}
