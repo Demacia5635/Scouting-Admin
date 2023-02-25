@@ -1,8 +1,9 @@
 import { EditOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Button, Form, Input, InputNumber, Modal, Select, Tag } from "antd";
 import { InternalNamePath } from "antd/es/form/interface";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import '../../styles/popups/user-editor.css';
+import { getUsernames } from "../../utils/firebase";
 import { User } from "../types/User";
 import { UsersDataType, UserTags } from "../UsersManager";
 
@@ -10,14 +11,24 @@ type UserEditorProps = {
     userData: UsersDataType;
     onSave: (user: User, isNew: boolean) => void;
     newUser: boolean;
+    seasonYear: string;
 };
 
-export const UserEditor = ({ userData, onSave: handleSave, newUser}: UserEditorProps) => {
+export const UserEditor = ({ userData, onSave: handleSave, newUser, seasonYear}: UserEditorProps) => {
 
     const [form] = Form.useForm<User>();
     const [user, setUser] = useState<User>(userData);
     const [oldUser, setOldUser] = useState<User>(userData);
     const [show, setShow] = useState(false);
+    const [existingUsernames, setExistingUsernames] = useState<string[]>([]);
+
+    useEffect(() => {
+        async function fetchUsernames() {
+            const usernames = await getUsernames(seasonYear);
+            setExistingUsernames(usernames);
+        }
+        fetchUsernames();
+    }, [seasonYear]);
 
     const openPopup = () => {
         setShow(true);
@@ -75,7 +86,15 @@ export const UserEditor = ({ userData, onSave: handleSave, newUser}: UserEditorP
 
                     {newUser ?
                         <Form.Item
-                            rules={[{ required: true, message: 'Please enter the username'}]}
+                            rules={[
+                                { required: true, message: 'Please enter the username'},
+                                { validator: (_, value) => {
+                                    if (existingUsernames.includes(value)) {
+                                        return Promise.reject('Username already exists');
+                                    }
+                                    return Promise.resolve();
+                                }}
+                            ]}
                             className="param-username"
                             name="username"
                             label="Username">

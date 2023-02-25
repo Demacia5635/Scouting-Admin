@@ -47,10 +47,8 @@ const ScoutersTable = ({ currenteamnum, seasonYear, seasonName }: ScoutersTableP
 
     useEffect(() => {
         async function setscouters() {
-            const scouters = await getScouters(`seasons/${seasonYear}/teams/${currenteamnum}/scouters`)
+            const scouters = await getScouters(`seasons/${seasonYear}/scouting-teams/${currenteamnum}/scouters`)
             setdata(scouters)
-
-            console.log("setting length")
             setScoutersNum(data?.length || 0)
         }
         setscouters();
@@ -61,12 +59,12 @@ const ScoutersTable = ({ currenteamnum, seasonYear, seasonName }: ScoutersTableP
         <div>
             <Divider />
             <Space>
-                <NewScouterForm docPathToAdd={`seasons/${seasonYear}/teams/${currenteamnum}/scouters/`} updateNumberOfScouts={updateScoutersNum}
+                <NewScouterForm docPathToAdd={`seasons/${seasonYear}/scouting-teams/${currenteamnum}/scouters/`} updateNumberOfScouts={updateScoutersNum}
                     numOfScouters={currenteamnum} chosenScouters={selcetdScouters} />
-                <FileUploader scouterDocPath={`seasons/${seasonYear}/teams/${currenteamnum}/scouters/`} numOfScouters={scoutersNum} updateNumberOfScouts={updateScoutersNum} scoutersToBeDeleted={selcetdScouters} />
+                <FileUploader scouterDocPath={`seasons/${seasonYear}/scouting-teams/${currenteamnum}/scouters/`} numOfScouters={scoutersNum} updateNumberOfScouts={updateScoutersNum} scoutersToBeDeleted={selcetdScouters} />
                 <Button icon={<DeleteOutlined />} onClick={() => {
                     for (const scouter of selcetdScouters) {
-                        deleteDocument(`seasons/${seasonYear}/teams/${currenteamnum}/scouters/${scouter}`)
+                        deleteDocument(`seasons/${seasonYear}/scouting-teams/${currenteamnum}/scouters/${scouter}`)
                     }
                     setScoutersNum(scoutersNum - selcetdScouters.length)
                 }}>

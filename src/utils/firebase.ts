@@ -108,6 +108,11 @@ export async function getUsers(seasonYear: string) {
     return users.docs.map((doc) => { return { ...doc.data(), username: doc.id } as User });
 }
 
+export async function getUsernames(seasonYear: string) {
+    const users = getUsers(seasonYear);
+    return (await users).map((user) => user.username);
+}
+
 export async function deleteUser(seasonYear: string, username: string) {
     await deleteDoc(doc(firestore, 'seasons', seasonYear, 'users', username));
 }
@@ -118,6 +123,20 @@ export async function updateUserInFirebase(seasonYear: string, user: User) {
 
 export async function addUserToFirebase(seasonYear: string, user: User) {
     await setDoc(doc(firestore, 'seasons', seasonYear, 'users', user.username), userToFirebase(user));
+    const scoutingTeams = await getScoutingTeams(seasonYear);
+    console.log(scoutingTeams);
+    if (!scoutingTeams.includes(user.teamNumber.toString())) {
+        await addUserToScoutingTeams(seasonYear, user.teamNumber.toString(), user.teamName);
+    }
+}
+
+async function getScoutingTeams(seasonYear: string) {
+    const teams = await getDocs(collection(firestore, 'seasons', seasonYear, 'scouting-teams'));
+    return teams.docs.map((doc) => { return doc.id });
+}
+
+async function addUserToScoutingTeams(seasonYear: string, teamNumber: string, teamName: string) {
+    await setDoc(doc(firestore, 'seasons', seasonYear, 'scouting-teams', teamNumber), { name: teamName });
 }
 
 export async function createSeason(seasonYear: string, seasonName: string) {

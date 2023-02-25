@@ -3,13 +3,12 @@ import { Option } from "antd/es/mentions";
 import { ColumnsType } from "antd/es/table";
 import arrayShuffle from 'array-shuffle';
 import { useEffect, useState } from "react";
-import { getquals, getScouters, updateData } from "../utils/firebase";
+import { getFieldValue, getquals, getScouters, updateData } from "../utils/firebase";
 import { QualsTableDataType, ScouterDataType } from "./types/TableDataTypes";
 
 type QualTableProps = {
-    seasonPath: string
-    tournmentsSubPath: string
-    scoutersSubPath: string
+    seasonYear: string
+    tournament: string
 }
 
 
@@ -156,13 +155,15 @@ const columns: ColumnsType<QualsTableDataType> = [
 
 ];
 
-export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath}: QualTableProps) => {
+export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
     const [data, setdata] = useState<QualsTableDataType[]>([]);
     const [isFinishedLoading, setIsFinishedLoading] = useState<boolean>(false)
     const [form] = Form.useForm();
+    const seasonPath = `seasons/${seasonYear}`
+    const tournementSubPath = `/${tournament}`
 
     const updateFirebase = async (qualsnum: string, scouterkeys: string[]) => {
-        await updateData(seasonPath + tournmentsSubPath + "/" + qualsnum, {
+        await updateData(`${seasonPath}${tournementSubPath}/${qualsnum}`, {
             0: [scouterkeys[0],
             data[0].allScouters.find(function (scouter) { return scouter.key === scouterkeys[0] })?.firstname,
             data[0].allScouters.find(function (scouter) { return scouter.key === scouterkeys[0] })?.lastname],
@@ -216,15 +217,21 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath}: Qu
         setIsFinishedLoading(false)
 
         async function getScoutes() {
-            const scouters = await getScouters(seasonPath + scoutersSubPath /*teams/6969/scouters`*/)
-            const matches = await getquals(seasonPath + tournmentsSubPath)
+            const teams = await getFieldValue(`seasons/${seasonYear}/scouting-teams`, "name")
+            let scouters: { key: string, firstname: string, lastname: string }[] = []
+            teams.forEach(async (team) => {
+                let teamScouters = await getScouters(`${seasonPath}/scouting-teams/${team.fieldlvalue}/scouters`)
+                scouters = scouters.concat(teamScouters)
+            })
+            console.log(scouters)
+            const matches = await getquals(`${seasonPath}${tournementSubPath}`)
             let tableData = matches.map((match) => {
                 return ({ key: match.qual, match: match.qual, chosenScouters: match.scouters, allScouters: scouters })
             })
             setdata(tableData)
         }
         getScoutes()
-    }, [tournmentsSubPath]);
+    }, [tournementSubPath]);
 
     useEffect(() => {
         if (data.length != 0) {

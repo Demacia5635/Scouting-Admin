@@ -136,7 +136,7 @@ export const UsersManager = ({ year, mode }: UsersManagerProps) => {
             key: 'edit',
             render: (text: string, record: UsersDataType) => (
                 <Space size="middle">
-                    <UserEditor userData={record} newUser={false} onSave={saveUser}/>
+                    <UserEditor userData={record} newUser={false} onSave={saveUser} seasonYear={year}/>
                 </Space>
             ),
         },
@@ -191,7 +191,7 @@ export const UsersManager = ({ year, mode }: UsersManagerProps) => {
         <div>
             {contextHolder}
             <Space>
-                <UserEditor userData={
+                <UserEditor seasonYear={year} userData={
                     {
                         username: '',
                         password: '',

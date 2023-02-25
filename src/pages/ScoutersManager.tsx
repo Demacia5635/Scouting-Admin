@@ -11,15 +11,16 @@ export const ScoutersManager = () => {
     const { year: seasonYear, name: seasonName } = getSelectedSeason();
     const [teams, setTeams] = useState<Array<Fields>>([]);
     const [currentTeamNum, setCurrentTeamNum] = useState<string>("5635")
-
-    const optionslist = teams.map((team) => {
-        return (<option key={team.fieldid} label={team.fieldid} value={team.fieldid}></option>)
-    })
+    const [optionsList, setOptionsList] = useState<{ value: string, label: string }[]>([])
 
     useEffect(() => {
         async function name() {
-            const teams = await getFieldValue(`seasons/${seasonYear}/teams`, "name")
+            const teams = await getFieldValue(`seasons/${seasonYear}/scouting-teams`, "name")
             setTeams(teams)
+            const optionslist = teams.map((team) => {
+                return { value: team.fieldid, label: team.fieldid }
+            })
+            setOptionsList(optionslist)
         }
         name()
     }, []);
@@ -27,16 +28,12 @@ export const ScoutersManager = () => {
         <div>
             <h1>Scouters Manager</h1>
             <Select
-                onChange={(value: { value: string, label: string }) => {
-                    console.log("team num chosen " + value)
-                    setCurrentTeamNum(value.value)
-
+                onChange={value => {
+                    setCurrentTeamNum(`${value}`)
                 }}
-                defaultValue={{ value: 'demacia', label: '5635' }}
-            >
-                {optionslist}
-
-            </Select>
+                defaultValue={{ value: '5635', label: '5635' }}
+                options={optionsList}
+            />
             <ScoutersTable currenteamnum={currentTeamNum} seasonYear={seasonYear} seasonName={seasonName} />
         </div>
     );
