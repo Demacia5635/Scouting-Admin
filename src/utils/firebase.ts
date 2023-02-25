@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { collection, doc, getDoc, getDocs, getFirestore, updateDoc, deleteDoc, setDoc } from 'firebase/firestore/lite';
+import { getAuth, signInAnonymously } from 'firebase/auth';
 import { userToFirebase, User } from "../components/types/User";
 import { DataParamsModes, ParamItem } from "./params/ParamItem";
 
@@ -15,6 +16,12 @@ const firebaseConfig = {
 
 export const firebase = initializeApp(firebaseConfig);
 export const firestore = getFirestore(firebase);
+const auth = getAuth(firebase);
+signInAnonymously(auth).then((userCredential) => {
+    console.log("Signed in anonymously");
+}).catch((error) => {
+    console.log(error);
+});
 
 export async function updateData(docPath: string, data: any) {
     await setDoc(doc(firestore, docPath), data);
