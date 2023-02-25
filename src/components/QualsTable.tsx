@@ -156,7 +156,7 @@ const columns: ColumnsType<QualsTableDataType> = [
 
 ];
 
-export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: QualTableProps) => {
+export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath}: QualTableProps) => {
     const [data, setdata] = useState<QualsTableDataType[]>([]);
     const [isFinishedLoading, setIsFinishedLoading] = useState<boolean>(false)
     const [form] = Form.useForm();
@@ -216,7 +216,7 @@ export const QualsTable = ({ seasonPath, tournmentsSubPath, scoutersSubPath }: Q
         setIsFinishedLoading(false)
 
         async function getScoutes() {
-            const scouters = await getScouters(/*seasonPath + scoutersSubPath*/"seasons/2019/teams/6969/scouters")
+            const scouters = await getScouters(seasonPath + scoutersSubPath /*teams/6969/scouters`*/)
             const matches = await getquals(seasonPath + tournmentsSubPath)
             let tableData = matches.map((match) => {
                 return ({ key: match.qual, match: match.qual, chosenScouters: match.scouters, allScouters: scouters })

@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
-import { resetSeason } from "../utils/season-handler";
-import { Buffer } from 'buffer'
-import { type } from "os";
 import { Select } from "antd";
-import { getDocumentRef, updateData } from "../utils/firebase";
+import { useEffect, useState } from "react";
 import { QualsTable } from "../components/QualsTable";
+import { updateData } from "../utils/firebase";
+import { getSelectedSeason } from "../utils/season-handler";
 
 type Team = {
     teamNumber: number
@@ -57,8 +55,8 @@ type JSONResponse = {
     errors?: Array<{ message: string }>
 }
 
-function addData(Events: Events[]) {
-    const partialURL = 'http://localhost:3000/frcapi/v3.0/2022/schedule/'
+function addData(Events: Events[], seasonYear: string) {
+    const partialURL = `http://localhost:3000/frcapi/v3.0/${seasonYear}/schedule/`
     const myHeaders = new Headers();
     myHeaders.append("If-Modified-Since", "");
     const requestOptions = {
@@ -79,6 +77,7 @@ function addData(Events: Events[]) {
 }
 
 export const TimetableManager = () => {
+    const { year: seasonYear, name: seasonName } = getSelectedSeason();
     const [events, setEvents] = useState<Events[]>([]);
     const [currentTournment, setCurrentTournment] = useState("didnt choose")
 
@@ -87,9 +86,9 @@ export const TimetableManager = () => {
     })
     useEffect(() => {
         async function getCompetitionData() {
-            const israelCompetitionsUrl = `http://localhost:3000/frcapi/v3.0/2022/events?districtCode=ISR`;
-            const worldChampionshipUrl = `http://localhost:3000/frcapi/v3.0/2022/events?tournamentType=Championship`
-            const tournementScheduleUrl = 'http://localhost:3000/frcapi/v3.0/2022/schedule/ISDE1?tournamentLevel=qual'
+            const israelCompetitionsUrl = `http://localhost:3000/frcapi/v3.0/${seasonYear}/events?districtCode=ISR`;
+            const worldChampionshipUrl = `http://localhost:3000/frcapi/v3.0/${seasonYear}/events?tournamentType=Championship`;
+            const tournementScheduleUrl = `http://localhost:3000/frcapi/v3.0/${seasonYear}/schedule/ISDE1?tournamentLevel=qual`;
 
             const myHeaders = new Headers();
             myHeaders.append("If-Modified-Since", "");
@@ -110,7 +109,6 @@ export const TimetableManager = () => {
             const dataSchedule: CompetitionSchedule = JSON.parse(responseSchedule)
         }
         getCompetitionData()
-        resetSeason();
     }, []);
 
     return (
@@ -126,7 +124,7 @@ export const TimetableManager = () => {
                 //scoutersubpath will be changed after we do the login page because then we will put the curren team number in the session storage
             }
 
-            <QualsTable seasonPath="seasons/2022" tournmentsSubPath={currentTournment} scoutersSubPath="tbd" />
+            <QualsTable seasonPath={`seasons/${seasonYear}`} tournmentsSubPath={currentTournment} scoutersSubPath="tbd" />
         </div>
     );
 };

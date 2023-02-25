@@ -6,14 +6,13 @@ import SeasonButton from '../components/SeasonButton';
 import { SeasonButtonProps } from '../components/types/Season';
 import '../styles/home/seasonbuttonlist.css';
 import { getSeasons } from '../utils/firebase';
-import { moveToSeasonEditor, resetSeason } from '../utils/season-handler';
+import { moveToSeasonEditor } from '../utils/season-handler';
 
 export const Home = () => {
     const [seasons, setSeasons] = useState<SeasonButtonProps[]>([]);
     const navigator = useNavigate();
 
     useEffect(() => {
-        resetSeason();
         async function updateSeasons() {
             const seasons = await getSeasons();
             setSeasons(seasons);

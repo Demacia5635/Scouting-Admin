@@ -4,7 +4,7 @@ import ScoutersTable from "../components/ScoutersTable";
 import { Fields } from "../components/types/Fields";
 import "../utils/firebase";
 import { getFieldValue } from "../utils/firebase";
-import { getSelectedSeason, resetSeason } from "../utils/season-handler";
+import { getSelectedSeason } from "../utils/season-handler";
 
 
 export const ScoutersManager = () => {
@@ -17,7 +17,6 @@ export const ScoutersManager = () => {
     })
 
     useEffect(() => {
-        resetSeason();
         async function name() {
             const teams = await getFieldValue(`seasons/${seasonYear}/teams`, "name")
             setTeams(teams)
