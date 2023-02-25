@@ -1,8 +1,9 @@
 import { initializeApp } from "firebase/app";
 import { ScouterDataType } from "../components/types/TableDataTypes"
-import { collection, doc, getDoc, getDocs, getFirestore, updateDoc, deleteDoc, setDoc, DocumentData, DocumentReference, QueryDocumentSnapshot } from 'firebase/firestore/lite';
+import { collection, doc, getDoc, getDocs, getFirestore, updateDoc, deleteDoc, setDoc, DocumentData, DocumentReference, QueryDocumentSnapshot, addDoc } from 'firebase/firestore/lite';
 import { getAuth, signInAnonymously } from 'firebase/auth';
 import { userToFirebase, User } from "../components/types/User";
+import { UserTags } from "../components/UsersManager";
 import { DataParamsModes, ParamItem } from "./params/ParamItem";
 
 const firebaseConfig = {
@@ -117,4 +118,36 @@ export async function updateUserInFirebase(seasonYear: string, user: User) {
 
 export async function addUserToFirebase(seasonYear: string, user: User) {
     await setDoc(doc(firestore, 'seasons', seasonYear, 'users', user.username), userToFirebase(user));
+}
+
+export async function createSeason(seasonYear: string, seasonName: string) {
+    await setDoc(doc(firestore, 'seasons', seasonYear), { name: seasonName });
+    await createSeasonEmptyDataParams(seasonYear);
+    await createDefaultAdminUser(seasonYear);
+    await createDefaultScoutingTeams(seasonYear);
+}
+
+async function createSeasonEmptyDataParams(seasonYear: string) {
+    await setDoc(doc(firestore, 'seasons', seasonYear, 'data-params', DataParamsModes.AUTONOMOUS), {});
+    await setDoc(doc(firestore, 'seasons', seasonYear, 'data-params', DataParamsModes.TELEOP), {});
+    await setDoc(doc(firestore, 'seasons', seasonYear, 'data-params', DataParamsModes.ENDGAME), {});
+    await setDoc(doc(firestore, 'seasons', seasonYear, 'data-params', DataParamsModes.SUMMARY), {});
+}
+
+async function createDefaultAdminUser(seasonYear: string) {
+    const username = process.env.REACT_APP_DEFAULT_ADMIN_USERNAME!;
+    const password = process.env.REACT_APP_DEFAULT_ADMIN_PASSWORD!;
+    const teamNumber = process.env.REACT_APP_DEFAULT_ADMIN_TEAM_NUMBER!;
+    const teamName = process.env.REACT_APP_DEFAULT_ADMIN_TEAM_NAME!;
+    const tags = [UserTags.TEAM, UserTags.ADMIN];
+
+    const user = { username, password, teamNumber, teamName, tags };
+    await setDoc(doc(firestore, 'seasons', seasonYear, 'users', username), userToFirebase(user));
+}
+
+async function createDefaultScoutingTeams(seasonYear: string) {
+    const defaultTeamNumber = process.env.REACT_APP_DEFAULT_ADMIN_TEAM_NUMBER!;
+    const defaultTeamName = process.env.REACT_APP_DEFAULT_ADMIN_TEAM_NAME!;
+
+    await setDoc(doc(firestore, 'seasons', seasonYear, 'scouting-teams', defaultTeamNumber), { name: defaultTeamName });
 }

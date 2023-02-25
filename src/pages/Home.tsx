@@ -2,6 +2,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider } from 'antd';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { NewSeason } from '../components/popups/NewSeason';
 import SeasonButton from '../components/SeasonButton';
 import { SeasonButtonProps } from '../components/types/Season';
 import '../styles/home/seasonbuttonlist.css';
@@ -38,9 +39,7 @@ export const Home = () => {
                 }
             >
                 <h1 className='title'>Select Season</h1>
-                <Button className='plusbutton' size='large' type='primary' icon={<PlusOutlined />} onClick={() => {
-                    moveToSeasonEditor({name: 'undefined', year: 'undefined'}, navigator);
-                }} />
+                <NewSeason seasons={seasons} navigator={navigator}/>
                 {seasonsComponents}
             </ConfigProvider>
         </div>
