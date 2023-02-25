@@ -120,9 +120,6 @@ export const TimetableManager = () => {
             >
                 {frcEventsOptions}
             </Select>
-            {
-                //scoutersubpath will be changed after we do the login page because then we will put the curren team number in the session storage
-            }
 
             <QualsTable seasonYear={seasonYear} tournament={currentTournment}/>
         </div>
