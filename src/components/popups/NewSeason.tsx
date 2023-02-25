@@ -36,7 +36,7 @@ export const NewSeason = ({seasons, navigator}: NewSeasonProps) => {
             form.resetFields();
         }
         closePopup();
-        await createSeason(values.year, values.name);
+        await createSeason(values.year.toString(), values.name);
         moveToSeasonEditor({name: values.name, year: values.year}, navigator);
     };
 
