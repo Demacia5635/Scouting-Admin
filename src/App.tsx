@@ -13,9 +13,9 @@ function App() {
       <NavBar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/scouters" element={<ScoutersManager />} />
-        <Route path="/timetable" element={<TimetableManager />} />
         <Route element={<SeasonRoutes />}>
+          <Route path="/scouters" element={<ScoutersManager />} />
+          <Route path="/timetable" element={<TimetableManager />} />
           <Route path="/editor" element={<SeasonEditor />} />
         </Route>
 

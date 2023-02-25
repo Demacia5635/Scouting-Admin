@@ -4,10 +4,11 @@ import ScoutersTable from "../components/ScoutersTable";
 import { Fields } from "../components/types/Fields";
 import "../utils/firebase";
 import { getFieldValue } from "../utils/firebase";
-import { resetSeason } from "../utils/season-handler";
+import { getSelectedSeason, resetSeason } from "../utils/season-handler";
 
 
 export const ScoutersManager = () => {
+    const { year: seasonYear, name: seasonName } = getSelectedSeason();
     const [teams, setTeams] = useState<Array<Fields>>([]);
     const [currentTeamNum, setCurrentTeamNum] = useState<string>("5635")
 
@@ -18,10 +19,8 @@ export const ScoutersManager = () => {
     useEffect(() => {
         resetSeason();
         async function name() {
-            const teams = await getFieldValue("seasons/2019/teams", "name")
+            const teams = await getFieldValue(`seasons/${seasonYear}/teams`, "name")
             setTeams(teams)
-
-
         }
         name()
     }, []);
@@ -39,7 +38,7 @@ export const ScoutersManager = () => {
                 {optionslist}
 
             </Select>
-            <ScoutersTable currenteamnum={currentTeamNum} />
+            <ScoutersTable currenteamnum={currentTeamNum} seasonYear={seasonYear} seasonName={seasonName} />
         </div>
     );
 }

@@ -26,9 +26,12 @@ const columns: ColumnsType<ScouterDataType> = [
 
 ];
 
+type ScoutersTableProps = {
+    seasonYear: string;
+    seasonName: string;
+} & currentteam
 
-
-const ScoutersTable = ({ currenteamnum }: currentteam) => {
+const ScoutersTable = ({ currenteamnum, seasonYear, seasonName }: ScoutersTableProps) => {
     const [data, setdata] = useState<ScouterDataType[]>();
     const [scoutersNum, setScoutersNum] = useState<number>(0)
     const [selcetdScouters, setSelelcetdScouters] = useState<string[]>([])
@@ -49,7 +52,7 @@ const ScoutersTable = ({ currenteamnum }: currentteam) => {
 
     useEffect(() => {
         async function setscouters() {
-            const scouters = await getScouters("seasons/2019/teams/" + currenteamnum + "/scouters")
+            const scouters = await getScouters(`seasons/${seasonYear}/teams/${currenteamnum}/scouters`)
             setdata(scouters)
 
             console.log("setting length")
@@ -63,12 +66,12 @@ const ScoutersTable = ({ currenteamnum }: currentteam) => {
         <div>
             <Divider />
             <Space>
-                <NewScouterForm docPathToAdd={"seasons/2019/teams/" + currenteamnum + "/scouters/"} updateNumberOfScouts={updateScoutersNum}
+                <NewScouterForm docPathToAdd={`seasons/${seasonYear}/teams/${currenteamnum}/scouters/`} updateNumberOfScouts={updateScoutersNum}
                     numOfScouters={currenteamnum} chosenScouters={selcetdScouters} />
-                <FileUploader scouterDocPath={"seasons/2019/teams/" + currenteamnum + "/scouters/"} numOfScouters={scoutersNum} updateNumberOfScouts={updateScoutersNum} scoutersToBeDeleted={selcetdScouters} />
+                <FileUploader scouterDocPath={`seasons/${seasonYear}/teams/${currenteamnum}/scouters/`} numOfScouters={scoutersNum} updateNumberOfScouts={updateScoutersNum} scoutersToBeDeleted={selcetdScouters} />
                 <Button icon={<DeleteOutlined />} onClick={() => {
                     for (const scouter of selcetdScouters) {
-                        deleteDocument("seasons/2019/teams/" + currenteamnum + "/scouters/" + scouter)
+                        deleteDocument(`seasons/${seasonYear}/teams/${currenteamnum}/scouters/${scouter}`)
                     }
                     setScoutersNum(scoutersNum - selcetdScouters.length)
                 }}>
