@@ -20,7 +20,6 @@ export const NewSeason = ({seasons, navigator}: NewSeasonProps) => {
 
     const openPopup = () => {
         setShow(true);
-        console.log("openPopup")
     }
 
     const closePopup = () => {

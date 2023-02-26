@@ -1,16 +1,16 @@
 import { Select } from "antd";
 import { useEffect, useState } from "react";
 import { QualsTable } from "../components/QualsTable";
-import { updateData } from "../utils/firebase";
+import { addCompetitionData, getExistingCompetitions, updateData } from "../utils/firebase";
 import { getSelectedSeason } from "../utils/season-handler";
 
-type Team = {
+export type Team = {
     teamNumber: number
     station: string
     surrogate: boolean
 }
 
-type Schedule = {
+export type Schedule = {
     field: string
     tournamentLevel: string
     description: string
@@ -19,11 +19,11 @@ type Schedule = {
     teams: Team[]
 }
 
-type CompetitionSchedule = {
+export type CompetitionSchedule = {
     Schedule: Schedule[]
 }
 
-type Events = {
+export type Events = {
     address: string
     allianceCount: string
     city: string
@@ -43,37 +43,9 @@ type Events = {
     weekNumber: number
 }
 
-type frcEvents = {
+export type FRCEvents = {
     eventCount: number
     Events: Events[]
-}
-
-type JSONResponse = {
-    data?: {
-        frcEvents: frcEvents
-    }
-    errors?: Array<{ message: string }>
-}
-
-function addData(Events: Events[], seasonYear: string) {
-    const partialURL = `http://localhost:3000/frcapi/v3.0/${seasonYear}/schedule/`
-    const myHeaders = new Headers();
-    myHeaders.append("If-Modified-Since", "");
-    const requestOptions = {
-        method: 'GET',
-        headers: myHeaders,
-        redirect: 'follow'
-    } as RequestInit;
-
-    Events.forEach(async event => {
-        const responseSchedule = await (await fetch(partialURL + event.code + "?tournamentLevel=qual", requestOptions)).text()
-        const dataSchedule: CompetitionSchedule = JSON.parse(responseSchedule)
-        let id = event.code
-        dataSchedule.Schedule.forEach(async qual => {
-
-            await updateData(`seasons/${seasonYear}/${id}/Qual${qual.matchNumber}`, {})
-        })
-    })
 }
 
 export const TimetableManager = () => {
@@ -99,10 +71,10 @@ export const TimetableManager = () => {
             } as RequestInit;
 
             const response = await (await fetch(israelCompetitionsUrl, requestOptions)).text()
-            const data: frcEvents = JSON.parse(response)
+            const data: FRCEvents = JSON.parse(response)
             const eventsfrc = data.Events
             const responseChamp = await (await fetch(worldChampionshipUrl, requestOptions)).text()
-            const dataChamp: frcEvents = JSON.parse(responseChamp)
+            const dataChamp: FRCEvents = JSON.parse(responseChamp)
             eventsfrc.push(dataChamp.Events[0])
             setEvents(eventsfrc)
             const responseSchedule = await (await fetch(tournementScheduleUrl, requestOptions)).text()
@@ -115,7 +87,13 @@ export const TimetableManager = () => {
         <div>
             <h1>Timetable Manager</h1>
             <Select
-                onChange={(value) => setCurrentTournment(value.value)}
+                onChange={async (value) => {
+                    setCurrentTournment(`${value}`)
+                    const existingTournments = await getExistingCompetitions(seasonYear);
+                    if (!existingTournments.includes(`${value}`)) {
+                        await addCompetitionData(`${value}`, seasonYear)
+                    }
+                }}
                 defaultValue={{ value: "default", label: "please choose a competition" }}
             >
                 {frcEventsOptions}

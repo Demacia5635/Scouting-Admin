@@ -160,7 +160,7 @@ export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
     const [isFinishedLoading, setIsFinishedLoading] = useState<boolean>(false)
     const [form] = Form.useForm();
     const seasonPath = `seasons/${seasonYear}`
-    const tournementSubPath = `/${tournament}`
+    const tournementSubPath = `/competitions/${tournament}`
 
     const updateFirebase = async (qualsnum: string, scouterkeys: string[]) => {
         await updateData(`${seasonPath}${tournementSubPath}/${qualsnum}`, {
@@ -223,8 +223,7 @@ export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
                 let teamScouters = await getScouters(`${seasonPath}/scouting-teams/${team.fieldlvalue}/scouters`)
                 scouters = scouters.concat(teamScouters)
             })
-            console.log(scouters)
-            const matches = await getquals(`${seasonPath}${tournementSubPath}`)
+            const matches = await getquals(`${seasonPath}${tournementSubPath}/Quals`)
             let tableData = matches.map((match) => {
                 return ({ key: match.qual, match: match.qual, chosenScouters: match.scouters, allScouters: scouters })
             })

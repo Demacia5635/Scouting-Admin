@@ -10,7 +10,6 @@ import { getSelectedSeason } from "../utils/season-handler";
 
 export const SeasonEditor = () => {
     const { year, name } = getSelectedSeason();
-    console.log(year, name);
 
     const [allParams, setAllParams] = useState<(ParamItem[])[]>([]);
     const [params, setParams] = useState<(ReactElement | null | undefined)[]>([]);

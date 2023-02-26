@@ -67,12 +67,10 @@ export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScou
                     listType="text"
                     maxCount={1}
                     beforeUpload={file => {
-                        console.log("started")
                         const fileReader = new FileReader();
                         fileReader.onload = (e) => {
                             const bufferArray = e.target?.result;
                             const workBook = read(bufferArray, { type: "buffer" })
-                            console.log("read file")
                             const workSheet = workBook.Sheets[workBook.SheetNames[0]]
                             const data = utils.sheet_to_json<Names>(workSheet)
                             let i = 0;
@@ -84,8 +82,6 @@ export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScou
                             })
 
                             scoutersToBeDeleted.map(async (scouter) => {
-                                console.log("scouter: " + scouter)
-                                console.log("scouter path: " + scouterDocPath)
                                 await deleteDocument(scouterDocPath + scouter)
                             })
                             i -= scoutersToBeDeleted.length

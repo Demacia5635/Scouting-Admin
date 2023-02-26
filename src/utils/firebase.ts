@@ -1,9 +1,10 @@
 import { initializeApp } from "firebase/app";
-import { ScouterDataType } from "../components/types/TableDataTypes"
-import { collection, doc, getDoc, getDocs, getFirestore, updateDoc, deleteDoc, setDoc, DocumentData, DocumentReference, QueryDocumentSnapshot, addDoc } from 'firebase/firestore/lite';
 import { getAuth, signInAnonymously } from 'firebase/auth';
-import { userToFirebase, User } from "../components/types/User";
+import { collection, deleteDoc, doc, DocumentData, DocumentReference, getDoc, getDocs, getFirestore, QueryDocumentSnapshot, setDoc, updateDoc } from 'firebase/firestore/lite';
+import { ScouterDataType } from "../components/types/TableDataTypes";
+import { User, userToFirebase } from "../components/types/User";
 import { UserTags } from "../components/UsersManager";
+import { CompetitionSchedule } from "../pages/TimetableManager";
 import { DataParamsModes, ParamItem } from "./params/ParamItem";
 
 const firebaseConfig = {
@@ -124,7 +125,7 @@ export async function updateUserInFirebase(seasonYear: string, user: User) {
 export async function addUserToFirebase(seasonYear: string, user: User) {
     await setDoc(doc(firestore, 'seasons', seasonYear, 'users', user.username), userToFirebase(user));
     const scoutingTeams = await getScoutingTeams(seasonYear);
-    console.log(scoutingTeams);
+    
     if (!scoutingTeams.includes(user.teamNumber.toString())) {
         await addUserToScoutingTeams(seasonYear, user.teamNumber.toString(), user.teamName);
     }
@@ -169,4 +170,40 @@ async function createDefaultScoutingTeams(seasonYear: string) {
     const defaultTeamName = process.env.REACT_APP_DEFAULT_ADMIN_TEAM_NAME!;
 
     await setDoc(doc(firestore, 'seasons', seasonYear, 'scouting-teams', defaultTeamNumber), { name: defaultTeamName });
+}
+
+export async function getExistingCompetitions(seasonYear: string) {
+    const competitions = await getDocs(collection(firestore, 'seasons', seasonYear, 'competitions'));
+    return competitions.docs.map((doc) => { return doc.id });
+}
+
+export async function addCompetitionData(eventCode: string, seasonYear: string) {
+    const partialURL = `http://localhost:3000/frcapi/v3.0/${seasonYear}/schedule/`
+    const eventNameURL = `http://localhost:3000/frcapi/v3.0/${seasonYear}/events?eventCode=${eventCode}`
+    const eventName = (await (await fetch(eventNameURL)).json()).Events[0].name
+
+    const myHeaders = new Headers();
+    myHeaders.append("If-Modified-Since", "");
+    const requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+    } as RequestInit;
+    const responseSchedule = await (await fetch(partialURL + eventCode + "?tournamentLevel=qual", requestOptions)).text()
+    const dataSchedule: CompetitionSchedule = JSON.parse(responseSchedule)
+    if (dataSchedule.Schedule.length === 0) {
+        return false
+    }
+    await setDoc(doc(firestore, 'seasons', seasonYear, 'competitions', eventCode), { name: eventName })
+    dataSchedule.Schedule.forEach(async qual => {
+        await updateData(`seasons/${seasonYear}/competitions/${eventCode}/Quals/Qual${qual.matchNumber}`, {
+            0: ['undefined', 'undefined', 'undefined'],
+            1: ['undefined', 'undefined', 'undefined'],
+            2: ['undefined', 'undefined', 'undefined'],
+            3: ['undefined', 'undefined', 'undefined'],
+            4: ['undefined', 'undefined', 'undefined'],
+            5: ['undefined', 'undefined', 'undefined'],
+        })
+    })
+    return true
 }
