@@ -26,8 +26,8 @@ signInAnonymously(auth).then((userCredential) => {
     console.log(error);
 });
 
-export async function updateData(docPath: string, data: any) {
-    await setDoc(doc(firestore, docPath), data);
+export async function updateData(docPath: string, data: any, merge: boolean = false) {
+    await setDoc(doc(firestore, docPath), data, { merge: merge });
 }
 
 export function getDocumentRef(docPath: string): DocumentReference {
@@ -46,18 +46,20 @@ export async function getFieldValue(collectionName: any, fieldid: string): Promi
 export async function getScouters(collectionName: any): Promise<{ key: string, firstname: string, lastname: string }[]> {
     const seasons = await getDocs(collection(firestore, collectionName));
     return seasons.docs.map((doc) => {
-        return { key: doc.id + "", firstname: doc.get("firstname"), lastname: doc.get("lastname") }
+        return { key: doc.id, firstname: doc.get("firstname"), lastname: doc.get("lastname") }
     });
 }
 
 function getScouterDataTypeFromDocRef(docRef: string[]): ScouterDataType {
-    let data = { key: (docRef[0] || 'undefined'), firstname: (docRef[1] || 'undefined'), lastname: (docRef[2] || 'undefined') }
+    if (docRef[0] == null) return { key: "", firstname: "", lastname: ""}
+    let data = { key: docRef[0], firstname: docRef[1], lastname: docRef[2] }
     return data
 }
-function getScouterDataTypeArrayFromDocumentSnapshot(doc: QueryDocumentSnapshot<DocumentData>): ScouterDataType[] {
+function getScouterDataTypeArrayFromDocumentSnapshot(doc: QueryDocumentSnapshot<DocumentData>): (ScouterDataType)[] {
     let scouters: ScouterDataType[] = []
     for (let index = 0; index < 6; index++) {
-        scouters.push(getScouterDataTypeFromDocRef(doc.get("" + index)))
+        const scouter = getScouterDataTypeFromDocRef(doc.get(index.toString()))
+        scouters.push(scouter)
     }
     return scouters
 }
@@ -65,7 +67,6 @@ function getScouterDataTypeArrayFromDocumentSnapshot(doc: QueryDocumentSnapshot<
 export async function getquals(qualPath: any): Promise<{ qual: string, scouters: { key: string, firstname: string, lastname: string }[] }[]> {
     const seasons = await getDocs(collection(firestore, qualPath));
     return seasons.docs.map((doc) => {
-
         return {
             qual: doc.id + "", scouters: getScouterDataTypeArrayFromDocumentSnapshot(doc)
         }
@@ -196,14 +197,17 @@ export async function addCompetitionData(eventCode: string, seasonYear: string) 
     }
     await setDoc(doc(firestore, 'seasons', seasonYear, 'competitions', eventCode), { name: eventName })
     dataSchedule.Schedule.forEach(async qual => {
-        await updateData(`seasons/${seasonYear}/competitions/${eventCode}/Quals/Qual${qual.matchNumber}`, {
-            0: ['undefined', 'undefined', 'undefined'],
-            1: ['undefined', 'undefined', 'undefined'],
-            2: ['undefined', 'undefined', 'undefined'],
-            3: ['undefined', 'undefined', 'undefined'],
-            4: ['undefined', 'undefined', 'undefined'],
-            5: ['undefined', 'undefined', 'undefined'],
-        })
+        const fbQual = await getDoc(doc(firestore, 'seasons', seasonYear, 'competitions', eventCode, 'Quals', `Qual${qual.matchNumber}`))
+        if (!fbQual.exists()) {
+            await updateData(`seasons/${seasonYear}/competitions/${eventCode}/Quals/Qual${qual.matchNumber}`, {
+                0: [null, null, null],
+                1: [null, null, null],
+                2: [null, null, null],
+                3: [null, null, null],
+                4: [null, null, null],
+                5: [null, null, null],
+            }, true)
+        }
     })
     return true
 }

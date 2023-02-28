@@ -30,7 +30,7 @@ const ScoutersTable = ({ currenteamnum, seasonYear, seasonName }: ScoutersTableP
     const [data, setdata] = useState<ScouterDataType[]>();
     const [scoutersNum, setScoutersNum] = useState<number>(0)
     const [selcetdScouters, setSelelcetdScouters] = useState<string[]>([])
-    
+
     const updateScoutersNum = (num: number) => {
         setScoutersNum(num)
     }

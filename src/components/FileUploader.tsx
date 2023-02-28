@@ -78,7 +78,7 @@ export const FileUploader = ({ scouterDocPath, numOfScouters, updateNumberOfScou
                                 i = numOfScouters;
                             }
                             data.map(async (dat) => {
-                                await updateData(scouterDocPath + "scouter" + uuid(), { firstname: dat.scoutersnames, lastname: dat.scouterslastname })
+                                await updateData(scouterDocPath + uuid(), { firstname: dat.scoutersnames, lastname: dat.scouterslastname })
                             })
 
                             scoutersToBeDeleted.map(async (scouter) => {

@@ -14,7 +14,7 @@ type QualTableProps = {
 
 function getScoutersSelectOptions(scouters: ScouterDataType[]): any[] {
     const options = scouters.map((scouter) => {
-        return (<Option key={scouter.key} value={scouter.key}>{scouter.firstname + " " + scouter.lastname}</Option>)
+        return <Select.Option key={scouter.key} value={scouter.key}>{scouter.firstname + " " + scouter.lastname}</Select.Option>
     })
     return options
 }
@@ -33,12 +33,17 @@ const columns: ColumnsType<QualsTableDataType> = [
         render: (_, record) => (
             <>
                 <Form.Item
-                    name={record.key + "0"}
+                    name={record.key + "-0"}
                 >
                     <Select
                         showSearch
+                        allowClear
                         style={{ width: "200px" }}
-                        defaultValue={record.chosenScouters[0].firstname + " " + record.chosenScouters[0].lastname}
+                        // defaultValue={
+                        //     record.chosenScouters[0].key != "" ? 
+                        //     `${record.chosenScouters[0].firstname} ${record.chosenScouters[0].lastname}` 
+                        //     : null
+                        // }
                         optionFilterProp="children"
 
                     >
@@ -54,12 +59,17 @@ const columns: ColumnsType<QualsTableDataType> = [
         render: (_, record) => (
             <>
                 <Form.Item
-                    name={record.key + "1"}
+                    name={record.key + "-1"}
                 >
                     <Select
                         showSearch
+                        allowClear
                         style={{ width: "200px" }}
-                        defaultValue={record.chosenScouters[1].firstname + " " + record.chosenScouters[1].lastname}
+                        // defaultValue={
+                        //     record.chosenScouters[1].key != "" ? 
+                        //     `${record.chosenScouters[1].firstname} ${record.chosenScouters[1].lastname}` 
+                        //     : null
+                        // }
                         optionFilterProp="children"
 
                     >
@@ -75,12 +85,17 @@ const columns: ColumnsType<QualsTableDataType> = [
         render: (_, record) => (
             <>
                 <Form.Item
-                    name={record.key + "2"}
+                    name={record.key + "-2"}
                 >
                     <Select
                         showSearch
+                        allowClear
                         style={{ width: "200px" }}
-                        defaultValue={record.chosenScouters[2].firstname + " " + record.chosenScouters[2].lastname}
+                        // defaultValue={
+                        //     record.chosenScouters[2].key != "" ? 
+                        //     `${record.chosenScouters[2].firstname} ${record.chosenScouters[2].lastname}` 
+                        //     : null
+                        // }
                         optionFilterProp="children"
 
                     >
@@ -96,12 +111,17 @@ const columns: ColumnsType<QualsTableDataType> = [
         render: (_, record) => (
             <>
                 <Form.Item
-                    name={record.key + "3"}
+                    name={record.key + "-3"}
                 >
                     <Select
                         showSearch
+                        allowClear
                         style={{ width: "200px" }}
-                        defaultValue={record.chosenScouters[3].firstname + " " + record.chosenScouters[3].lastname}
+                        // defaultValue={
+                        //     record.chosenScouters[3].key != "" ? 
+                        //     `${record.chosenScouters[3].firstname} ${record.chosenScouters[3].lastname}` 
+                        //     : null
+                        // }
                         optionFilterProp="children"
 
                     >
@@ -117,12 +137,17 @@ const columns: ColumnsType<QualsTableDataType> = [
         render: (_, record) => (
             <>
                 <Form.Item
-                    name={record.key + "4"}
+                    name={record.key + "-4"}
                 >
                     <Select
                         showSearch
+                        allowClear
                         style={{ width: "200px" }}
-                        defaultValue={record.chosenScouters[4].firstname + " " + record.chosenScouters[4].lastname}
+                        // defaultValue={
+                        //     record.chosenScouters[4].key != "" ? 
+                        //     `${record.chosenScouters[4].firstname} ${record.chosenScouters[4].lastname}` 
+                        //     : null
+                        // }
                         optionFilterProp="children"
 
                     >
@@ -138,12 +163,17 @@ const columns: ColumnsType<QualsTableDataType> = [
         render: (_, record) => (
             <>
                 <Form.Item
-                    name={record.key + "5"}
+                    name={record.key + "-5"}
                 >
                     <Select
                         showSearch
+                        allowClear
                         style={{ width: "200px" }}
-                        defaultValue={record.chosenScouters[5].firstname + " " + record.chosenScouters[5].lastname}
+                        // defaultValue={
+                        //     record.chosenScouters[5].key != "" ? 
+                        //     `${record.chosenScouters[5].firstname} ${record.chosenScouters[5].lastname}` 
+                        //     : null
+                        // }
                         optionFilterProp="children"
 
                     >
@@ -157,39 +187,33 @@ const columns: ColumnsType<QualsTableDataType> = [
 
 export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
     const [data, setdata] = useState<QualsTableDataType[]>([]);
+    const [initialValues, setInitialValues] = useState<any>([]);
     const [isFinishedLoading, setIsFinishedLoading] = useState<boolean>(false)
-    const [form] = Form.useForm();
+    const [form] = Form.useForm<QualsTableDataType>();
     const seasonPath = `seasons/${seasonYear}`
     const tournementSubPath = `/competitions/${tournament}`
 
     const updateFirebase = async (qualsnum: string, scouterkeys: string[]) => {
-        await updateData(`${seasonPath}${tournementSubPath}/${qualsnum}`, {
-            0: [scouterkeys[0],
-            data[0].allScouters.find(function (scouter) { return scouter.key === scouterkeys[0] })?.firstname,
-            data[0].allScouters.find(function (scouter) { return scouter.key === scouterkeys[0] })?.lastname],
-            1: [scouterkeys[1],
-            data[1].allScouters.find(function (scouter) { return scouter.key === scouterkeys[1] })?.firstname,
-            data[1].allScouters.find(function (scouter) { return scouter.key === scouterkeys[1] })?.lastname],
-            2: [scouterkeys[2],
-            data[2].allScouters.find(function (scouter) { return scouter.key === scouterkeys[2] })?.firstname,
-            data[2].allScouters.find(function (scouter) { return scouter.key === scouterkeys[2] })?.lastname],
-            3: [scouterkeys[3],
-            data[3].allScouters.find(function (scouter) { return scouter.key === scouterkeys[3] })?.firstname,
-            data[3].allScouters.find(function (scouter) { return scouter.key === scouterkeys[3] })?.lastname],
-            4: [scouterkeys[4],
-            data[4].allScouters.find(function (scouter) { return scouter.key === scouterkeys[4] })?.firstname,
-            data[4].allScouters.find(function (scouter) { return scouter.key === scouterkeys[4] })?.lastname],
-            5: [scouterkeys[0],
-            data[5].allScouters.find(function (scouter) { return scouter.key === scouterkeys[5] })?.firstname,
-            data[5].allScouters.find(function (scouter) { return scouter.key === scouterkeys[5] })?.lastname]
-        })
+        console.log(scouterkeys)
+        const filteredScouters = Object.assign({}, scouterkeys.map((scouter, index) => {
+            if (scouter) {
+                return [
+                    scouter,
+                    data[index].allScouters.find(function (scouter) { return scouter.key === scouterkeys[index] })?.firstname,
+                    data[index].allScouters.find(function (scouter) { return scouter.key === scouterkeys[index] })?.lastname
+                ]
+            } else {
+                return [null, null, null]
+            }
+        }));
+        await updateData(`${seasonPath}${tournementSubPath}/Quals/${qualsnum}`, filteredScouters)
     }
 
     const finishHandler = () => {
         data.forEach((qualsTableData) => {
             let scouterKeys: string[] = []
             for (let i = 0; i < 6; i++) {
-                scouterKeys.push(form.getFieldValue([qualsTableData.key + i]))
+                scouterKeys.push(form.getFieldValue([`${qualsTableData.key}-${i}`]))
             }
             updateFirebase(qualsTableData.key, scouterKeys)
         })
@@ -206,7 +230,9 @@ export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
         const slices = shuffledArray.length;
         data.forEach((qualsTableData) => {
             for (let i = 0; i < 6; i++) {
-                resetValues(qualsTableData.key + "" + i, shuffledArray[i].key)
+                if (shuffledArray[i].key != null) {
+                    resetValues(`${qualsTableData.key}-${i}`, shuffledArray[i].key!)
+                }
             }
             shuffledArray = arrayShuffle(data[0].allScouters)
         })
@@ -220,15 +246,29 @@ export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
             const teams = await getFieldValue(`seasons/${seasonYear}/scouting-teams`, "name")
             let scouters: { key: string, firstname: string, lastname: string }[] = []
             teams.forEach(async (team) => {
-                let teamScouters = await getScouters(`${seasonPath}/scouting-teams/${team.fieldlvalue}/scouters`)
+                let teamScouters = await getScouters(`${seasonPath}/scouting-teams/${team.fieldid}/scouters`)
                 scouters = scouters.concat(teamScouters)
             })
             const matches = await getquals(`${seasonPath}${tournementSubPath}/Quals`)
             let tableData = matches.map((match) => {
                 return ({ key: match.qual, match: match.qual, chosenScouters: match.scouters, allScouters: scouters })
             })
+            tableData.sort((a, b) => parseInt(a.key.replace(/\D/g, '')) - parseInt(b.key.replace(/\D/g, '')))
             setdata(tableData)
+            updateInitialValues(tableData)
         }
+
+        async function updateInitialValues(data: QualsTableDataType[]) {
+            let initialValues: any = {}
+            data.forEach((qualsTableData) => {
+                for (let i = 0; i < 6; i++) {
+                    initialValues[`${qualsTableData.key}-${i}`] = qualsTableData.chosenScouters[i].key
+                }
+            })
+            setInitialValues(initialValues)
+            console.log(initialValues)
+        }
+
         getScoutes()
     }, [tournementSubPath]);
 
@@ -248,6 +288,7 @@ export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
                         name="basic"
                         autoComplete="off"
                         onFinish={finishHandler}
+                        initialValues={initialValues}
                     >
                         <Space>
                             <Form.Item>

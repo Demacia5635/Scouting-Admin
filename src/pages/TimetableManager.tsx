@@ -1,7 +1,7 @@
 import { Select } from "antd";
 import { useEffect, useState } from "react";
 import { QualsTable } from "../components/QualsTable";
-import { addCompetitionData, getExistingCompetitions, updateData } from "../utils/firebase";
+import { addCompetitionData } from "../utils/firebase";
 import { getSelectedSeason } from "../utils/season-handler";
 
 export type Team = {
@@ -88,11 +88,8 @@ export const TimetableManager = () => {
             <h1>Timetable Manager</h1>
             <Select
                 onChange={async (value) => {
+                    await addCompetitionData(`${value}`, seasonYear)
                     setCurrentTournment(`${value}`)
-                    const existingTournments = await getExistingCompetitions(seasonYear);
-                    if (!existingTournments.includes(`${value}`)) {
-                        await addCompetitionData(`${value}`, seasonYear)
-                    }
                 }}
                 defaultValue={{ value: "default", label: "please choose a competition" }}
             >
