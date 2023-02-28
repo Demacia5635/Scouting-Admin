@@ -202,7 +202,7 @@ export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
                     data[index].allScouters.find(function (scouter) { return scouter.key === scouterkeys[index] })?.lastname
                 ]
             } else {
-                return [null, null, null]
+                return [null, null, null, null]
             }
         }));
         await updateData(`${seasonPath}${tournementSubPath}/Quals/${qualsnum}`, filteredScouters)

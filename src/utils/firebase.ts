@@ -200,12 +200,12 @@ export async function addCompetitionData(eventCode: string, seasonYear: string) 
         const fbQual = await getDoc(doc(firestore, 'seasons', seasonYear, 'competitions', eventCode, 'Quals', `Qual${qual.matchNumber}`))
         if (!fbQual.exists()) {
             await updateData(`seasons/${seasonYear}/competitions/${eventCode}/Quals/Qual${qual.matchNumber}`, {
-                0: [null, null, null],
-                1: [null, null, null],
-                2: [null, null, null],
-                3: [null, null, null],
-                4: [null, null, null],
-                5: [null, null, null],
+                0: [null, null, null, null],
+                1: [null, null, null, null],
+                2: [null, null, null, null],
+                3: [null, null, null, null],
+                4: [null, null, null, null],
+                5: [null, null, null, null],
             }, true)
         }
     })
