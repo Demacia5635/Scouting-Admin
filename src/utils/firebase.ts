@@ -52,7 +52,7 @@ export async function getScouters(collectionName: any): Promise<{ key: string, f
 
 function getScouterDataTypeFromDocRef(docRef: string[]): ScouterDataType {
     if (docRef[0] == null) return { key: "", firstname: "", lastname: ""}
-    let data = { key: docRef[0], firstname: docRef[1], lastname: docRef[2] }
+    let data = { key: docRef[0], firstname: docRef[1], lastname: docRef[2]}
     return data
 }
 function getScouterDataTypeArrayFromDocumentSnapshot(doc: QueryDocumentSnapshot<DocumentData>): (ScouterDataType)[] {
@@ -200,12 +200,18 @@ export async function addCompetitionData(eventCode: string, seasonYear: string) 
         const fbQual = await getDoc(doc(firestore, 'seasons', seasonYear, 'competitions', eventCode, 'Quals', `Qual${qual.matchNumber}`))
         if (!fbQual.exists()) {
             await updateData(`seasons/${seasonYear}/competitions/${eventCode}/Quals/Qual${qual.matchNumber}`, {
-                0: [null, null, null, null],
-                1: [null, null, null, null],
-                2: [null, null, null, null],
-                3: [null, null, null, null],
-                4: [null, null, null, null],
-                5: [null, null, null, null],
+                0: [null, null, null],
+                1: [null, null, null],
+                2: [null, null, null],
+                3: [null, null, null],
+                4: [null, null, null],
+                5: [null, null, null],
+                ['0-path']: "",
+                ['1-path']: "",
+                ['2-path']: "",
+                ['3-path']: "",
+                ['4-path']: "",
+                ['5-path']: "",
             }, true)
         }
     })

@@ -1,4 +1,5 @@
 import { Button, Form, Select, Space, Spin, Table } from "antd";
+import { StoreValue } from "antd/es/form/interface";
 import { Option } from "antd/es/mentions";
 import { ColumnsType } from "antd/es/table";
 import arrayShuffle from 'array-shuffle';
@@ -195,24 +196,25 @@ export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
 
     const updateFirebase = async (qualsnum: string, scouterkeys: string[]) => {
         const filteredScouters = Object.assign({}, scouterkeys.map((scouter, index) => {
-            if (scouter) {
+            if (scouter != "") {
                 return [
                     scouter,
                     data[index].allScouters.find(function (scouter) { return scouter.key === scouterkeys[index] })?.firstname,
                     data[index].allScouters.find(function (scouter) { return scouter.key === scouterkeys[index] })?.lastname
                 ]
             } else {
-                return [null, null, null, null]
+                return [null, null, null]
             }
         }));
-        await updateData(`${seasonPath}${tournementSubPath}/Quals/${qualsnum}`, filteredScouters)
+        await updateData(`${seasonPath}${tournementSubPath}/Quals/${qualsnum}`, filteredScouters, true);
     }
 
     const finishHandler = () => {
         data.forEach((qualsTableData) => {
             let scouterKeys: string[] = []
             for (let i = 0; i < 6; i++) {
-                scouterKeys.push(form.getFieldValue([`${qualsTableData.key}-${i}`]))
+                const value = form.getFieldValue([`${qualsTableData.key}-${i}`])
+                scouterKeys.push(value == " " || value == undefined ? "" : value)
             }
             updateFirebase(qualsTableData.key, scouterKeys)
         })
@@ -243,7 +245,7 @@ export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
 
         async function getScoutes() {
             const teams = await getFieldValue(`seasons/${seasonYear}/scouting-teams`, "name")
-            let scouters: { key: string, firstname: string, lastname: string }[] = []
+            let scouters: ScouterDataType[] = []
             teams.forEach(async (team) => {
                 let teamScouters = await getScouters(`${seasonPath}/scouting-teams/${team.fieldid}/scouters`)
                 scouters = scouters.concat(teamScouters)
@@ -261,7 +263,13 @@ export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
             let initialValues: any = {}
             data.forEach((qualsTableData) => {
                 for (let i = 0; i < 6; i++) {
-                    initialValues[`${qualsTableData.key}-${i}`] = qualsTableData.chosenScouters[i].key
+                    const scouter = qualsTableData.chosenScouters[i]
+                    // const value = {
+                    //     key: 
+                    //     // label: scouter ? `${scouter.firstname} ${scouter.lastname}` : null,
+                    //     // value: scouter ? scouter.key : null
+                    // }
+                    initialValues[`${qualsTableData.key}-${i}`] = scouter ? scouter.key : null
                 }
             })
             setInitialValues(initialValues)
@@ -271,7 +279,7 @@ export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
     }, [tournementSubPath]);
 
     useEffect(() => {
-        if (data.length != 0) {
+        if (data.length !== 0) {
             setIsFinishedLoading(true)
         }
     }, [data])
