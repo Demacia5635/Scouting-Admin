@@ -110,6 +110,22 @@ export async function getUsers(seasonYear: string) {
     return users.docs.map((doc) => { return { ...doc.data(), username: doc.id } as User });
 }
 
+export async function getUserFromDB(seasonYear: string, username: string) {
+    const user = await getDoc(doc(firestore, 'seasons', seasonYear, 'users', username));
+    return { ...user.data(), username: user.id } as User;
+}
+
+export async function isUserExists(username: string, password: string) {
+    const seasons = await getSeasons();
+    for (const season of seasons) {
+        const users = await getUsers(season.year);
+        if (users.some((user) => user.username === username && user.password === password)) {
+            return season.year;
+        }
+    }
+    return undefined;
+}
+
 export async function getUsernames(seasonYear: string) {
     const users = getUsers(seasonYear);
     return (await users).map((user) => user.username);

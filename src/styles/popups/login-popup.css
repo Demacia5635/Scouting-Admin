@@ -1,0 +1,22 @@
+.ant-form {
+    margin-top: 10px;
+}
+
+.login-form input, .login-form .tags-select, .login-form .ant-input-password, .login-form .ant-input-number{
+    text-align: left;
+    width: 250px;
+}
+
+.login-form .ant-form-item {
+    margin-bottom: 10px;
+}
+
+.login-form .ant-form-item-label {
+    text-align: left;
+    height: fit-content;
+}
+
+/* Make the form items align to the right */
+.login-form .ant-form-item-control {
+    text-align: right;
+}

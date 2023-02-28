@@ -1,4 +1,4 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { LogoutOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider } from 'antd';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,9 +8,12 @@ import { SeasonButtonProps } from '../components/types/Season';
 import '../styles/home/seasonbuttonlist.css';
 import { getSeasons } from '../utils/firebase';
 import { moveToSeasonEditor } from '../utils/season-handler';
+import { isLoggedIn, logout } from '../utils/user-handler';
+import { Login } from './Login';
 
 export const Home = () => {
     const [seasons, setSeasons] = useState<SeasonButtonProps[]>([]);
+    const [loggedIn, setLoggedIn] = useState<boolean>(isLoggedIn());
     const navigator = useNavigate();
 
     useEffect(() => {
@@ -29,6 +32,12 @@ export const Home = () => {
 
     return (
         <div className='seasonbuttonlist'>
+            <Login loggedIn={loggedIn}></Login>
+            {/* loggout button */}
+            <Button className='logout-button' icon={<LogoutOutlined />} onClick={() => {
+                logout();
+                setLoggedIn(false);
+            }}>Logout</Button>
             <ConfigProvider
                 theme={
                     {
