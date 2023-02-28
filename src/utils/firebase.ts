@@ -79,6 +79,11 @@ export async function getSeasons(): Promise<{ year: string, name: string }[]> {
     return seasons.docs.map((doc) => { return { year: doc.id, name: doc.get('name') } });
 }
 
+export async function getSeason(seasonYear: string) {
+    const season = await getDoc(doc(firestore, 'seasons', seasonYear));
+    return { year: season.id, name: season.get('name') };
+}
+
 export async function getAllParams(seasonYear: string) {
     console.log(`Loading data for ${seasonYear}`)
     return [
@@ -112,7 +117,7 @@ export async function getUsers(seasonYear: string) {
 
 export async function getUserFromDB(seasonYear: string, username: string) {
     const user = await getDoc(doc(firestore, 'seasons', seasonYear, 'users', username));
-    return { ...user.data(), username: user.id } as User;
+    return { ...user.data(), username: user.id, seasonYear: seasonYear} as User;
 }
 
 export async function isUserExists(username: string, password: string) {

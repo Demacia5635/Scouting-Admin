@@ -6,9 +6,10 @@ import { isLoggedIn, login } from "../utils/user-handler";
 
 type LoginProps = {
     loggedIn: boolean
+    handleOnLogin: () => void
 }
 
-export const Login = ({ loggedIn }: LoginProps) => {
+export const Login = ({ loggedIn, handleOnLogin }: LoginProps) => {
     const [form] = Form.useForm();
     const [show, setShow] = useState(!loggedIn);
 
@@ -18,6 +19,7 @@ export const Login = ({ loggedIn }: LoginProps) => {
         if (seasonYear) {
             const user = await getUserFromDB(seasonYear, values.username);
             login(user);
+            handleOnLogin();
             setShow(false);
         }
         else {
@@ -46,7 +48,7 @@ export const Login = ({ loggedIn }: LoginProps) => {
             centered
             className="login-form"
             title="Login"
-            okText="Save" onOk={() => form.submit()}
+            okText="Login" onOk={() => form.submit()}
             cancelButtonProps={{style: {display: 'none'}}}
         >
             <Form

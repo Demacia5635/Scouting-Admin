@@ -4,6 +4,7 @@ export interface User {
     username: string;
     password: string;
     tags: string[];
+    seasonYear?: string;
 }
 
 export function userToFirebase(user: User): any {

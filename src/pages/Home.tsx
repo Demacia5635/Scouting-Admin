@@ -1,14 +1,13 @@
 import { LogoutOutlined } from '@ant-design/icons';
-import { Button, ConfigProvider } from 'antd';
+import { Button, ConfigProvider, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NewSeason } from '../components/popups/NewSeason';
 import SeasonButton from '../components/SeasonButton';
 import { SeasonButtonProps } from '../components/types/Season';
 import '../styles/home/seasonbuttonlist.css';
-import { getSeasons } from '../utils/firebase';
-import { moveToSeasonEditor } from '../utils/season-handler';
-import { isLoggedIn, logout } from '../utils/user-handler';
+import { getSeason, getSeasons } from '../utils/firebase';
+import { getUser, isLoggedIn, isUserAdmin, logout } from '../utils/user-handler';
 import { Login } from './Login';
 
 export const Home = () => {
@@ -18,11 +17,12 @@ export const Home = () => {
 
     useEffect(() => {
         async function updateSeasons() {
-            const seasons = await getSeasons();
-            setSeasons(seasons);
+            if (!loggedIn) return setSeasons([]);
+            if (!isUserAdmin()) return setSeasons([await getSeason(getUser().seasonYear!)]);
+            return setSeasons(await getSeasons());
         }
         updateSeasons();
-    }, []);
+    }, [loggedIn]);
 
 
     const seasonsComponents = seasons.map((season) => {
@@ -32,12 +32,14 @@ export const Home = () => {
 
     return (
         <div className='seasonbuttonlist'>
-            <Login loggedIn={loggedIn}></Login>
-            {/* loggout button */}
-            <Button className='logout-button' icon={<LogoutOutlined />} onClick={() => {
-                logout();
-                setLoggedIn(false);
-            }}>Logout</Button>
+            <Login loggedIn={loggedIn} handleOnLogin={() => setLoggedIn(true)}/>
+            <Space>
+                <h2 className='welcome'>{loggedIn ? `Welcome @${getUser().username}` : ''}</h2>
+                <Button className='logout-button' icon={<LogoutOutlined />} onClick={() => {
+                    logout();
+                    setLoggedIn(false);
+                }}>Logout</Button>
+            </Space>
             <ConfigProvider
                 theme={
                     {
