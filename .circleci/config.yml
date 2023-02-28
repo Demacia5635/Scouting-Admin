@@ -22,6 +22,8 @@ jobs:
       - run:
           name: Build application for production
           command: npm run build 
+          environment:
+            CI: "false"
       - run:
           name: Deploy app to Firebase
           command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN  
