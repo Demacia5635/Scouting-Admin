@@ -194,7 +194,6 @@ export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
     const tournementSubPath = `/competitions/${tournament}`
 
     const updateFirebase = async (qualsnum: string, scouterkeys: string[]) => {
-        console.log(scouterkeys)
         const filteredScouters = Object.assign({}, scouterkeys.map((scouter, index) => {
             if (scouter) {
                 return [
@@ -266,7 +265,6 @@ export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
                 }
             })
             setInitialValues(initialValues)
-            console.log(initialValues)
         }
 
         getScoutes()
