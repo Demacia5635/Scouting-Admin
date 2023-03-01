@@ -51,8 +51,8 @@ export async function getScouters(collectionName: any): Promise<{ key: string, f
 }
 
 function getScouterDataTypeFromDocRef(docRef: string[]): ScouterDataType {
-    if (docRef[0] == null) return { key: "", firstname: "", lastname: ""}
-    let data = { key: docRef[0], firstname: docRef[1], lastname: docRef[2]}
+    if (docRef[0] == null) return { key: "", firstname: "", lastname: "" }
+    let data = { key: docRef[0], firstname: docRef[1], lastname: docRef[2] }
     return data
 }
 function getScouterDataTypeArrayFromDocumentSnapshot(doc: QueryDocumentSnapshot<DocumentData>): (ScouterDataType)[] {
@@ -117,7 +117,7 @@ export async function getUsers(seasonYear: string) {
 
 export async function getUserFromDB(seasonYear: string, username: string) {
     const user = await getDoc(doc(firestore, 'seasons', seasonYear, 'users', username));
-    return { ...user.data(), username: user.id, seasonYear: seasonYear} as User;
+    return { ...user.data(), username: user.id, seasonYear: seasonYear } as User;
 }
 
 export async function isUserExists(username: string, password: string) {
@@ -147,7 +147,7 @@ export async function updateUserInFirebase(seasonYear: string, user: User) {
 export async function addUserToFirebase(seasonYear: string, user: User) {
     await setDoc(doc(firestore, 'seasons', seasonYear, 'users', user.username), userToFirebase(user));
     const scoutingTeams = await getScoutingTeams(seasonYear);
-    
+
     if (!scoutingTeams.includes(user.teamNumber.toString())) {
         await addUserToScoutingTeams(seasonYear, user.teamNumber.toString(), user.teamName);
     }
@@ -227,12 +227,12 @@ export async function addCompetitionData(eventCode: string, seasonYear: string) 
                 3: [null, null, null],
                 4: [null, null, null],
                 5: [null, null, null],
-                ['0-path']: "",
-                ['1-path']: "",
-                ['2-path']: "",
-                ['3-path']: "",
-                ['4-path']: "",
-                ['5-path']: "",
+                ['0-path']: (qual.teams[0].teamNumber + eventCode + seasonYear),
+                ['1-path']: (qual.teams[1].teamNumber + eventCode + seasonYear),
+                ['2-path']: (qual.teams[2].teamNumber + eventCode + seasonYear),
+                ['3-path']: (qual.teams[3].teamNumber + eventCode + seasonYear),
+                ['4-path']: (qual.teams[4].teamNumber + eventCode + seasonYear),
+                ['5-path']: (qual.teams[5].teamNumber + eventCode + seasonYear),
             }, true)
         }
     })
