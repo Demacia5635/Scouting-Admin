@@ -7,6 +7,7 @@ import "../styles/editor/seasoneditor.css";
 import { getAllParams, setParamInFirebase } from "../utils/firebase";
 import { dataOrder, DataParamsModes, ParamItem } from "../utils/params/ParamItem";
 import { getSelectedSeason } from "../utils/season-handler";
+import { isUserAdmin } from "../utils/user-handler";
 
 export const SeasonEditor = () => {
     const { year, name } = getSelectedSeason();
@@ -136,7 +137,7 @@ export const SeasonEditor = () => {
                     <Button className="teleop-button mode-button" onClick={() => setMode(DataParamsModes.TELEOP)}>Teleop</Button>
                     <Button className="endgame-button mode-button" onClick={() => setMode(DataParamsModes.ENDGAME)}>End Game</Button>
                     <Button className="summary-button mode-button" onClick={() => setMode(DataParamsModes.SUMMARY)}>Summary</Button>
-                    <Button className="users-button mode-button" onClick={() => setMode(DataParamsModes.USERS)}>Users</Button>
+                    <Button disabled={!isUserAdmin()} className="users-button mode-button" onClick={() => setMode(DataParamsModes.USERS)}>Users</Button>
                 </Space>
                 <Space className="params-search-bar" style={{display: mode === DataParamsModes.USERS ? 'none' : 'flex-inline'}}>
                     <i className="fa fa-search"></i>
@@ -165,7 +166,7 @@ export const SeasonEditor = () => {
                 <Space direction="vertical">
                     {selectedParams}
                     {createParamElement(undefined, mode)}
-                    <UsersManager year={year} mode={mode} />
+                    {isUserAdmin() ? <UsersManager year={year} mode={mode} /> : <></>}
                 </Space>
             </div>
         </div >
