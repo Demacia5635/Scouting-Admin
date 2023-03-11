@@ -5,6 +5,7 @@ import { ColumnsType } from "antd/es/table";
 import arrayShuffle from 'array-shuffle';
 import { useEffect, useState } from "react";
 import { getFieldValue, getquals, getScouters, updateData } from "../utils/firebase";
+import { QualsFileUploader } from "./QualsFileUploader";
 import { QualsTableDataType, ScouterDataType } from "./types/TableDataTypes";
 
 type QualTableProps = {
@@ -186,13 +187,17 @@ const columns: ColumnsType<QualsTableDataType> = [
 
 ];
 
-export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
+export const QualsTable = ({ seasonYear, tournament }: QualTableProps) => {
     const [data, setdata] = useState<QualsTableDataType[]>([]);
     const [initialValues, setInitialValues] = useState<any>([]);
     const [isFinishedLoading, setIsFinishedLoading] = useState<boolean>(false)
     const [form] = Form.useForm<QualsTableDataType>();
+    const [reLoadData, setReLoadData] = useState<boolean>(false)
     const seasonPath = `seasons/${seasonYear}`
     const tournementSubPath = `/competitions/${tournament}`
+    const updateTable = () => {
+        setReLoadData(!reLoadData)
+    }
 
     const updateFirebase = async (qualsnum: string, scouterkeys: string[]) => {
         const filteredScouters = Object.assign({}, scouterkeys.map((scouter, index) => {
@@ -301,7 +306,9 @@ export const QualsTable = ({ seasonYear, tournament}: QualTableProps) => {
                                 <Button type="primary" htmlType="submit">
                                     Submit
                                 </Button>
-                            </Form.Item><Button onClick={clickHandler}>shuffle</Button>
+                            </Form.Item>
+                            <Button onClick={clickHandler}>shuffle</Button>
+                            <QualsFileUploader data={data} seasonPath={seasonPath} tournementSubPath={tournementSubPath} updateTable={updateTable} />
                         </Space>
                         <Table dataSource={data} columns={columns} />
                     </Form>
