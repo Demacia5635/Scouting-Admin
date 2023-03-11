@@ -11,76 +11,76 @@ type Props = {
     tournementSubPath: string
     updateTable: () => void
 }
-type scouterFullName = {
-    firstName: string
-    lastName: string
-}
-const [isFirstTime, setFirstTime] = useState(false);
-const [isModelOpened, setIsModalOpen] = useState(false)
 
-useEffect(() => {
-    setFirstTime(true)
-}, [])
-
-const showModal = () => {
-    setIsModalOpen(isFirstTime);
-    setFirstTime(false)
-};
-
-const handleOk = () => {
-    setIsModalOpen(false);
-};
-
-const handleCancel = () => {
-    setIsModalOpen(false);
-};
-
-interface Names {
-    firstScouterFirstName: string
-    firstScouterLastName: string
-    secondScouterFirstName: string
-    secondScouterLastName: string
-    thirdScouterFirstName: string
-    thirdScouterLastName: string
-    fourthScouterFirstName: string
-    fourthScouterLastName: string
-    fifthScouterFirstName: string
-    fifthScouterLastName: string
-    sixthcouterFirstName: string
-    sixthScouterLastName: string
-}
-const descriptionElement = (
-    <code>
-        Please upload an exel file (.xslx) in the following format:
-        <br />
-        First column (will include the first scouters first name) title: "scoutersnames"
-        <br />
-        Second column (will include the second scouters last name) title: "scouterslastname"
-        <br />
-        third column (will include the first scouters first name) title: "scoutersnames"
-        <br />
-        4th column (will include the second scouters last name) title: "scouterslastname"
-        <br />
-        5th column (will include the first scouters first name) title: "scoutersnames"
-        <br />
-        6th column (will include the second scouters last name) title: "scouterslastname"
-        <br />
-        7th column (will include the first scouters first name) title: "scoutersnames"
-        <br />
-        8th column (will include the second scouters last name) title: "scouterslastname"
-        <br />
-        9th column (will include the first scouters first name) title: "scoutersnames"
-        <br />
-        10th column (will include the second scouters last name) title: "scouterslastname"
-        <br />
-        11th column (will include the first scouters first name) title: "scoutersnames"
-        <br />
-        12th column (will include the second scouters last name) title: "scouterslastname"
-    </code>
-)
 
 export const QualsFileUploader = ({ data, seasonPath, tournementSubPath, updateTable }: Props) => {
+    type scouterFullName = {
+        firstName: string
+        lastName: string
+    }
+    const [isFirstTime, setFirstTime] = useState(false);
+    const [isModelOpened, setIsModalOpen] = useState(false)
 
+    useEffect(() => {
+        setFirstTime(true)
+    }, [])
+
+    const showModal = () => {
+        setIsModalOpen(isFirstTime);
+        setFirstTime(false)
+    };
+
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
+    interface Names {
+        firstScouterFirstName: string
+        firstScouterLastName: string
+        secondScouterFirstName: string
+        secondScouterLastName: string
+        thirdScouterFirstName: string
+        thirdScouterLastName: string
+        fourthScouterFirstName: string
+        fourthScouterLastName: string
+        fifthScouterFirstName: string
+        fifthScouterLastName: string
+        sixthcouterFirstName: string
+        sixthScouterLastName: string
+    }
+    const descriptionElement = (
+        <code>
+            Please upload an exel file (.xslx) in the following format:
+            <br />
+            First column (will include the first scouters first name) title: "scoutersnames"
+            <br />
+            Second column (will include the second scouters last name) title: "scouterslastname"
+            <br />
+            third column (will include the first scouters first name) title: "scoutersnames"
+            <br />
+            4th column (will include the second scouters last name) title: "scouterslastname"
+            <br />
+            5th column (will include the first scouters first name) title: "scoutersnames"
+            <br />
+            6th column (will include the second scouters last name) title: "scouterslastname"
+            <br />
+            7th column (will include the first scouters first name) title: "scoutersnames"
+            <br />
+            8th column (will include the second scouters last name) title: "scouterslastname"
+            <br />
+            9th column (will include the first scouters first name) title: "scoutersnames"
+            <br />
+            10th column (will include the second scouters last name) title: "scouterslastname"
+            <br />
+            11th column (will include the first scouters first name) title: "scoutersnames"
+            <br />
+            12th column (will include the second scouters last name) title: "scouterslastname"
+        </code>
+    )
     const updateFirebase = async (qualsnum: string, scouterkeys: scouterFullName[]) => {
         const filteredScouters = Object.assign({}, scouterkeys.map((scouter, index) => {
             if (scouter.firstName != "" && scouter.lastName != "") {
