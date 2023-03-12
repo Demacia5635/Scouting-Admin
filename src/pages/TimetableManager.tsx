@@ -1,4 +1,5 @@
 import { Select } from "antd";
+import { env } from "process";
 import { useEffect, useState } from "react";
 import { QualsTable } from "../components/QualsTable";
 import { addCompetitionData } from "../utils/firebase";
@@ -61,12 +62,13 @@ export const TimetableManager = () => {
             const israelCompetitionsUrl = `/frcapi/v3.0/${seasonYear}/events?districtCode=ISR`;
             const worldChampionshipUrl = `/frcapi/v3.0/${seasonYear}/events?tournamentType=Championship`;
             const tournementScheduleUrl = `/frcapi/v3.0/${seasonYear}/schedule/ISDE1?tournamentLevel=qual`;
-
-            const myHeaders = new Headers();
-            myHeaders.append("If-Modified-Since", "");
+            
+            const headers = new Headers();
+            headers.append("If-Modified-Since", "");
+            headers.set('Authorization', 'Basic ' + Buffer.from(env.REACT_APP_FRC_API_TOKEN!).toString('base64'));
             const requestOptions = {
                 method: 'GET',
-                headers: myHeaders,
+                headers: headers,
                 redirect: 'follow'
             } as RequestInit;
 

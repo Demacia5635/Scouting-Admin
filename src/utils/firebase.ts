@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, signInAnonymously } from 'firebase/auth';
 import { collection, deleteDoc, doc, DocumentData, DocumentReference, getDoc, getDocs, getFirestore, QueryDocumentSnapshot, setDoc, updateDoc } from 'firebase/firestore/lite';
+import { env } from "process";
 import { ScouterDataType } from "../components/types/TableDataTypes";
 import { User, userToFirebase } from "../components/types/User";
 import { UserTags } from "../components/UsersManager";
@@ -202,15 +203,17 @@ export async function getExistingCompetitions(seasonYear: string) {
 export async function addCompetitionData(eventCode: string, seasonYear: string) {
     const partialURL = `/frcapi/v3.0/${seasonYear}/schedule/`
     const eventNameURL = `/frcapi/v3.0/${seasonYear}/events?eventCode=${eventCode}`
-    const eventName = (await (await fetch(eventNameURL)).json()).Events[0].name
-
-    const myHeaders = new Headers();
-    myHeaders.append("If-Modified-Since", "");
+    
+    const headers = new Headers();
+    headers.append("If-Modified-Since", "");
+    headers.set('Authorization', 'Basic ' + Buffer.from(env.REACT_APP_FRC_API_TOKEN!).toString('base64'));
     const requestOptions = {
         method: 'GET',
-        headers: myHeaders,
+        headers: headers,
         redirect: 'follow'
     } as RequestInit;
+
+    const eventName = (await (await fetch(eventNameURL, requestOptions)).json()).Events[0].name
     const responseSchedule = await (await fetch(partialURL + eventCode + "?tournamentLevel=qual", requestOptions)).text()
     const dataSchedule: CompetitionSchedule = JSON.parse(responseSchedule)
     if (dataSchedule.Schedule.length === 0) {
