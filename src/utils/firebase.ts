@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, signInAnonymously } from 'firebase/auth';
 import { collection, deleteDoc, doc, DocumentData, DocumentReference, getDoc, getDocs, getFirestore, QueryDocumentSnapshot, setDoc, updateDoc } from 'firebase/firestore/lite';
-import { env } from "process";
 import { ScouterDataType } from "../components/types/TableDataTypes";
 import { User, userToFirebase } from "../components/types/User";
 import { UserTags } from "../components/UsersManager";
@@ -208,7 +207,7 @@ export async function addCompetitionData(eventCode: string, seasonYear: string) 
     
     const headers = new Headers();
     headers.append("If-Modified-Since", "");
-    headers.set('Authorization', 'Basic ' + Buffer.from(env.REACT_APP_FRC_API_TOKEN!).toString('base64'));
+    headers.set('Authorization', 'Basic ' + Buffer.from(process.env.REACT_APP_FRC_API_TOKEN!).toString('base64'));
     const requestOptions = {
         method: 'GET',
         headers: headers,

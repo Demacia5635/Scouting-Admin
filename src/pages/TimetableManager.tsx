@@ -1,5 +1,4 @@
 import { Select } from "antd";
-import { env } from "process";
 import { useEffect, useState } from "react";
 import { QualsTable } from "../components/QualsTable";
 import { addCompetitionData } from "../utils/firebase";
@@ -67,7 +66,8 @@ export const TimetableManager = () => {
             
             const headers = new Headers();
             headers.append("If-Modified-Since", "");
-            headers.set('Authorization', 'Basic ' + Buffer.from(env.REACT_APP_FRC_API_TOKEN!).toString('base64'));
+            console.log(process.env.REACT_APP_FRC_API_TOKEN)
+            headers.set('Authorization', 'Basic ' + Buffer.from(process.env.REACT_APP_FRC_API_TOKEN!).toString('base64'));
             const requestOptions = {
                 method: 'GET',
                 headers: headers,
