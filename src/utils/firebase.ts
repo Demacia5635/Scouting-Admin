@@ -200,8 +200,8 @@ export async function getExistingCompetitions(seasonYear: string) {
 }
 
 export async function addCompetitionData(eventCode: string, seasonYear: string) {
-    const partialURL = `http://localhost:3000/frcapi/v3.0/${seasonYear}/schedule/`
-    const eventNameURL = `http://localhost:3000/frcapi/v3.0/${seasonYear}/events?eventCode=${eventCode}`
+    const partialURL = `/frcapi/v3.0/${seasonYear}/schedule/`
+    const eventNameURL = `/frcapi/v3.0/${seasonYear}/events?eventCode=${eventCode}`
     const eventName = (await (await fetch(eventNameURL)).json()).Events[0].name
 
     const myHeaders = new Headers();

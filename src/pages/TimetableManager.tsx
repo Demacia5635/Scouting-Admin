@@ -58,9 +58,9 @@ export const TimetableManager = () => {
     })
     useEffect(() => {
         async function getCompetitionData() {
-            const israelCompetitionsUrl = `http://localhost:3000/frcapi/v3.0/${seasonYear}/events?districtCode=ISR`;
-            const worldChampionshipUrl = `http://localhost:3000/frcapi/v3.0/${seasonYear}/events?tournamentType=Championship`;
-            const tournementScheduleUrl = `http://localhost:3000/frcapi/v3.0/${seasonYear}/schedule/ISDE1?tournamentLevel=qual`;
+            const israelCompetitionsUrl = `/frcapi/v3.0/${seasonYear}/events?districtCode=ISR`;
+            const worldChampionshipUrl = `/frcapi/v3.0/${seasonYear}/events?tournamentType=Championship`;
+            const tournementScheduleUrl = `/frcapi/v3.0/${seasonYear}/schedule/ISDE1?tournamentLevel=qual`;
 
             const myHeaders = new Headers();
             myHeaders.append("If-Modified-Since", "");
