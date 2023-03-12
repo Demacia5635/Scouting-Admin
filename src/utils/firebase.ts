@@ -7,6 +7,8 @@ import { User, userToFirebase } from "../components/types/User";
 import { UserTags } from "../components/UsersManager";
 import { CompetitionSchedule } from "../pages/TimetableManager";
 import { DataParamsModes, ParamItem } from "./params/ParamItem";
+import { Buffer } from 'buffer';
+
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,

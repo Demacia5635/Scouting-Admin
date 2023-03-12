@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { QualsTable } from "../components/QualsTable";
 import { addCompetitionData } from "../utils/firebase";
 import { getSelectedSeason } from "../utils/season-handler";
+import { Buffer } from 'buffer';
+
 
 export type Team = {
     teamNumber: number
