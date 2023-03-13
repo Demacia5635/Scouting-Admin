@@ -56,29 +56,29 @@ export const QualsFileUploader = ({ data, seasonPath, tournementSubPath, updateT
         <code>
             Please upload an exel file (.xslx) in the following format:
             <br />
-            First column (will include the first scouters first name) title: "scoutersnames"
+            First column (will include the first scouters first name) title: "firstScouterFirstName"
             <br />
-            Second column (will include the second scouters last name) title: "scouterslastname"
+            Second column (will include the second scouters last name) title: "firstScouterLastName"
             <br />
-            third column (will include the first scouters first name) title: "scoutersnames"
+            third column (will include the first scouters first name) title: "secondScouterFirstName"
             <br />
-            4th column (will include the second scouters last name) title: "scouterslastname"
+            4th column (will include the second scouters last name) title: "secondScouterLastName"
             <br />
-            5th column (will include the first scouters first name) title: "scoutersnames"
+            5th column (will include the first scouters first name) title: "thirdScouterFirstName"
             <br />
-            6th column (will include the second scouters last name) title: "scouterslastname"
+            6th column (will include the second scouters last name) title: "thirdScouterLastName"
             <br />
-            7th column (will include the first scouters first name) title: "scoutersnames"
+            7th column (will include the first scouters first name) title: "fourthScouterFirstName"
             <br />
-            8th column (will include the second scouters last name) title: "scouterslastname"
+            8th column (will include the second scouters last name) title: "fourthScouterLastName"
             <br />
-            9th column (will include the first scouters first name) title: "scoutersnames"
+            9th column (will include the first scouters first name) title: "fifthScouterFirstName"
             <br />
-            10th column (will include the second scouters last name) title: "scouterslastname"
+            10th column (will include the second scouters last name) title: "fifthScouterLastName"
             <br />
-            11th column (will include the first scouters first name) title: "scoutersnames"
+            11th column (will include the first scouters first name) title: "sixthcouterFirstName"
             <br />
-            12th column (will include the second scouters last name) title: "scouterslastname"
+            12th column (will include the second scouters last name) title: "sixthScouterLastName"
         </code>
     )
     const updateFirebase = async (qualsnum: string, scouterkeys: scouterFullName[]) => {
