@@ -1,19 +1,22 @@
-import { BgColorsOutlined, EditFilled } from "@ant-design/icons";
-import { Button, Form, Input, InputNumber, Modal, Select, Space } from "antd";
+import { BgColorsOutlined, DeleteOutlined, EditFilled } from "@ant-design/icons";
+import { Button, Form, Input, InputNumber, Modal, Select, Space, Popconfirm, notification } from "antd";
 import { InternalNamePath } from "antd/es/form/interface";
 import { useEffect, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import "../../styles/popups/forms-popup.css";
 import { getOpositeColor } from "../../utils/colors";
 import { DataParamsModes, isSpecialRequired, ParamItem, ParamType, paramTypeSelectOptions, SpecialVisibility } from "../../utils/params/ParamItem";
+import { deleteParamInFirebase } from "../../utils/firebase";
+import { sendNotification } from "../../utils/notification";
 
 export type ItemParamPopupProps = {
     param?: ParamItem;
     onSave: (param: ParamItem, justCreated: boolean, mode: DataParamsModes) => void;
+    onDelete: (param: ParamItem, mode: DataParamsModes) => Promise<void>;
     mode: DataParamsModes;
 }
 
-export const ItemParamEditor = ({ param, onSave: handleSave, mode}: ItemParamPopupProps) => {
+export const ItemParamEditor = ({ param, onSave: handleSave, onDelete: handleDelete, mode}: ItemParamPopupProps) => {
     const [form] = Form.useForm<ParamItem>();
     const [buttonTitle, setButtonTitle] = useState(param ? param.displayName : 'Add New Param');
     const [buttonBackground, setButtonBackground] = useState(param ? param.color : '#FFFFFF');
@@ -24,6 +27,8 @@ export const ItemParamEditor = ({ param, onSave: handleSave, mode}: ItemParamPop
     const [stepRequired, setStepRequired] = useState(paramItem?.type === ParamType.SLIDER);
     const [minRequired, setMinRequired] = useState(paramItem?.type === ParamType.SLIDER || paramItem?.type === ParamType.NUMBER)
     const [maxRequired, setMaxRequired] = useState(paramItem?.type === ParamType.SLIDER || paramItem?.type === ParamType.NUMBER)
+
+    const [api, contextHolder] = notification.useNotification();
 
 
     const [colorPicker, setColorPicker] = useState(false);
@@ -92,10 +97,34 @@ export const ItemParamEditor = ({ param, onSave: handleSave, mode}: ItemParamPop
 
     return (
         <div className="popup">
-            <Space style={{cursor: 'pointer'}} onClick={openPopup}>
-                <Button style={{backgroundColor: buttonBackground, border: '0px'}}>{buttonTitle}</Button>
-                <EditFilled className="edit-button"></EditFilled>
+            {contextHolder}
+            <Space size={"middle"}>
+                <Space style={{cursor: 'pointer'}} onClick={openPopup}>
+                    <Button style={{backgroundColor: buttonBackground, border: '0px'}}>{buttonTitle}</Button>
+                    <EditFilled className="edit-button"></EditFilled>
+                </Space>
+
+                {param ?
+                    <Space style={{cursor: 'pointer'}}>
+                        <Popconfirm
+                            title="Delete this param"
+                            description="Are you sure you want to delete this param?"
+                            onConfirm={async () => {
+                                await handleDelete(param, mode);
+                                sendNotification(api, 'success', 'Param Deleted', `Param ${param.name} has been deleted from the database.`,
+                                                'bottomRight');
+                            }}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <DeleteOutlined></DeleteOutlined>
+                        </Popconfirm>
+                    </Space>
+                    : null
+                }
             </Space>
+            
+            
             <Modal
                 title="Parameter"
                 open={show}

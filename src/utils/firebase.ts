@@ -1,12 +1,12 @@
+import { Buffer } from 'buffer';
 import { initializeApp } from "firebase/app";
 import { getAuth, signInAnonymously } from 'firebase/auth';
-import { collection, deleteDoc, doc, DocumentData, DocumentReference, getDoc, getDocs, getFirestore, QueryDocumentSnapshot, setDoc, updateDoc } from 'firebase/firestore/lite';
+import { DocumentData, DocumentReference, QueryDocumentSnapshot, collection, deleteDoc, deleteField, doc, getDoc, getDocs, getFirestore, setDoc, updateDoc } from 'firebase/firestore/lite';
+import { UserTags } from "../components/UsersManager";
 import { ScouterDataType } from "../components/types/TableDataTypes";
 import { User, userToFirebase } from "../components/types/User";
-import { UserTags } from "../components/UsersManager";
 import { CompetitionSchedule } from "../pages/TimetableManager";
 import { DataParamsModes, ParamItem } from "./params/ParamItem";
-import { Buffer } from 'buffer';
 
 
 const firebaseConfig = {
@@ -111,6 +111,10 @@ export async function getParams(mode: DataParamsModes, seasonYear: string) {
 
 export async function setParamInFirebase(param: ParamItem, mode: DataParamsModes, seasonYear: string) {
     await updateDoc(doc(firestore, 'seasons', seasonYear, 'data-params', mode), { [param.name]: param });
+}
+
+export async function deleteParamInFirebase(param: ParamItem, mode: DataParamsModes, seasonYear: string) {
+    await updateDoc(doc(firestore, 'seasons', seasonYear, 'data-params', mode), { [param.name]: deleteField() });
 }
 
 export async function getUsers(seasonYear: string) {

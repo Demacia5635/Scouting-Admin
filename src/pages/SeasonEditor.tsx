@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ItemParamEditor } from "../components/popups/ItemParamEditor";
 import { UsersManager } from "../components/UsersManager";
 import "../styles/editor/seasoneditor.css";
-import { getAllParams, setParamInFirebase } from "../utils/firebase";
+import { deleteParamInFirebase, getAllParams, setParamInFirebase } from "../utils/firebase";
 import { dataOrder, DataParamsModes, ParamItem } from "../utils/params/ParamItem";
 import { getSelectedSeason } from "../utils/season-handler";
 import { isUserAdmin } from "../utils/user-handler";
@@ -39,6 +39,20 @@ export const SeasonEditor = () => {
 
                     setParamInFirebase(param, mode, year);
                 }
+            }
+            onDelete={
+                async (param: ParamItem, mode: DataParamsModes) => {
+                    const index = dataOrder(mode);
+                    setAllParams((prev) => {
+                        const newParams = prev[index];
+                        const paramIndex = newParams.findIndex((paramItem) => paramItem.name === param.name);
+                        newParams.splice(paramIndex, 1);
+                        prev[index] = newParams.sort((a, b) => b.weight - a.weight);
+                        return prev;
+                    });
+                    await deleteParamInFirebase(param, mode, year)
+                    updateParams();
+                }
             }/>;
         } else {
             return <ItemParamEditor key={uuidv4()} mode={mode} onSave={
@@ -56,6 +70,8 @@ export const SeasonEditor = () => {
 
                     setParamInFirebase(param, mode, year);
                 }
+            } onDelete={
+                async (param: ParamItem, mode: DataParamsModes) => {}
             }/>;
         }
     }
