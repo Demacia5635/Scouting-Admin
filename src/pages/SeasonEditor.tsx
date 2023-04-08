@@ -31,6 +31,7 @@ export const SeasonEditor = () => {
                             const newParams = prev[index];
                             const paramIndex = newParams.findIndex((paramItem) => paramItem.name === param.name);
                             newParams[paramIndex] = param;
+                            prev[index] = newParams.sort((a, b) => b.weight - a.weight);
                             return prev;
                         });
                     }
@@ -46,6 +47,7 @@ export const SeasonEditor = () => {
                         setAllParams((prev) => {
                             const newParams = prev[index];
                             newParams.push(param);
+                            prev[index] = newParams.sort((a, b) => b.weight - a.weight);
                             return prev;
                         });
                         updateParams();

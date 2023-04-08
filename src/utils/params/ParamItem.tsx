@@ -2,6 +2,7 @@ export interface ParamItem {
     name: string;
     displayName: string;
     type: ParamType;
+    weight: number;
     color: string;
     step?: number;
     min?: number;
@@ -14,6 +15,7 @@ export const paramItemConverter = {
         return {
             displayName: item.displayName,
             type: item.type,
+            weight: item.weight,
             color: item.color,
             min: item.min,
             max: item.max,

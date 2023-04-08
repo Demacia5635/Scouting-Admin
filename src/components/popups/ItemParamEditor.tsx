@@ -64,6 +64,7 @@ export const ItemParamEditor = ({ param, onSave: handleSave, mode}: ItemParamPop
             name: '',
             displayName: '',
             type: ParamType.TEXT,
+            weight: 1,
             color: '#FFFFFF',
             step: 0,
             min: 0,
@@ -139,6 +140,13 @@ export const ItemParamEditor = ({ param, onSave: handleSave, mode}: ItemParamPop
                                 setMaxRequired(isSpecialRequired(newType, SpecialVisibility.MAX));
                             }
                         }></Select>
+                    </Form.Item>
+                    <Form.Item
+                        rules={[{ required: true, message: 'Please enter the weight'}]}
+                        className="param-weight"
+                        label="Weight" name="weight"
+                        >
+                        <InputNumber min={1} className="weight-input"></InputNumber>
                     </Form.Item>
                     <Form.Item
                         rules={[

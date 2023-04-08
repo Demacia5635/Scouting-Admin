@@ -104,6 +104,7 @@ export async function getParams(mode: DataParamsModes, seasonYear: string) {
         params.push({ ...data[param], name: param });
     }
     params = params.filter((param) => param != null);
+    params = params.sort((a, b) => b.weight - a.weight);
     return params;
 
 }
