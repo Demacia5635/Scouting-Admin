@@ -34,6 +34,7 @@ export const SeasonEditor = () => {
                             prev[index] = newParams.sort((a, b) => b.weight - a.weight);
                             return prev;
                         });
+                        updateParams();
                     }
 
                     setParamInFirebase(param, mode, year);
