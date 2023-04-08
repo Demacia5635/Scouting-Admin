@@ -8,15 +8,17 @@ import { getOpositeColor } from "../../utils/colors";
 import { DataParamsModes, isSpecialRequired, ParamItem, ParamType, paramTypeSelectOptions, SpecialVisibility } from "../../utils/params/ParamItem";
 import { deleteParamInFirebase } from "../../utils/firebase";
 import { sendNotification } from "../../utils/notification";
+import { NotificationInstance } from "antd/es/notification/interface";
 
 export type ItemParamPopupProps = {
     param?: ParamItem;
     onSave: (param: ParamItem, justCreated: boolean, mode: DataParamsModes) => void;
     onDelete: (param: ParamItem, mode: DataParamsModes) => Promise<void>;
     mode: DataParamsModes;
+    api: NotificationInstance;
 }
 
-export const ItemParamEditor = ({ param, onSave: handleSave, onDelete: handleDelete, mode}: ItemParamPopupProps) => {
+export const ItemParamEditor = ({ param, onSave: handleSave, onDelete: handleDelete, mode, api}: ItemParamPopupProps) => {
     const [form] = Form.useForm<ParamItem>();
     const [buttonTitle, setButtonTitle] = useState(param ? param.displayName : 'Add New Param');
     const [buttonBackground, setButtonBackground] = useState(param ? param.color : '#FFFFFF');
@@ -27,8 +29,6 @@ export const ItemParamEditor = ({ param, onSave: handleSave, onDelete: handleDel
     const [stepRequired, setStepRequired] = useState(paramItem?.type === ParamType.SLIDER);
     const [minRequired, setMinRequired] = useState(paramItem?.type === ParamType.SLIDER || paramItem?.type === ParamType.NUMBER)
     const [maxRequired, setMaxRequired] = useState(paramItem?.type === ParamType.SLIDER || paramItem?.type === ParamType.NUMBER)
-
-    const [api, contextHolder] = notification.useNotification();
 
 
     const [colorPicker, setColorPicker] = useState(false);
@@ -97,7 +97,6 @@ export const ItemParamEditor = ({ param, onSave: handleSave, onDelete: handleDel
 
     return (
         <div className="popup">
-            {contextHolder}
             <Space size={"middle"}>
                 <Space style={{cursor: 'pointer'}} onClick={openPopup}>
                     <Button style={{backgroundColor: buttonBackground, border: '0px'}}>{buttonTitle}</Button>

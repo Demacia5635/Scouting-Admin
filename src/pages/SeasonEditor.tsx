@@ -1,4 +1,4 @@
-import { Button, Input, Space } from "antd";
+import { Button, Input, Space, notification } from "antd";
 import { ReactElement, useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { ItemParamEditor } from "../components/popups/ItemParamEditor";
@@ -19,11 +19,13 @@ export const SeasonEditor = () => {
     const [mode, setMode] = useState(DataParamsModes.AUTONOMOUS);
     const [loadingData, setLoadingData] = useState(true);
     const [showLoading, setShowLoading] = useState('block');
+
+    const [api, contextHolder] = notification.useNotification();
     
     const createParamElement = (param: ParamItem | undefined, mode: DataParamsModes) => {
         if (mode === DataParamsModes.USERS) return <></>;
         if (param) {
-            return <ItemParamEditor key={uuidv4()} param={param} mode={mode} onSave={
+            return <ItemParamEditor key={uuidv4()} param={param} mode={mode} api={api} onSave={
                 (param: ParamItem, justCreated: boolean, mode: DataParamsModes) => {
                     const index = dataOrder(mode);
                     if (!justCreated) {
@@ -55,7 +57,7 @@ export const SeasonEditor = () => {
                 }
             }/>;
         } else {
-            return <ItemParamEditor key={uuidv4()} mode={mode} onSave={
+            return <ItemParamEditor key={uuidv4()} mode={mode} api={api} onSave={
                 (param: ParamItem, justCreated: boolean, mode: DataParamsModes) => {
                     const index = dataOrder(mode);
                     if (justCreated) {
@@ -143,6 +145,7 @@ export const SeasonEditor = () => {
 
     return (
         <div>
+            {contextHolder}
             <link rel="stylesheet"
                 href=
                 "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
