@@ -1,7 +1,7 @@
-import { Select } from "antd";
+import { Select, Space } from "antd";
 import { useEffect, useState } from "react";
 import { QualsTable } from "../components/QualsTable";
-import { addCompetitionData } from "../utils/firebase";
+import { addCompetitionData, addCompetitionDataPlayOff, addCompetitionDataPractice } from "../utils/firebase";
 import { getSelectedSeason } from "../utils/season-handler";
 import { Buffer } from 'buffer';
 
@@ -54,7 +54,7 @@ export const TimetableManager = () => {
     const { year: seasonYear, name: seasonName } = getSelectedSeason();
     const [events, setEvents] = useState<Events[]>([]);
     const [currentTournment, setCurrentTournment] = useState("didnt choose")
-
+    const [chosenTournmentLevel, setChosenTournmentLevel] = useState("practices")
     const frcEventsOptions = events.map((event) => {
         return <option key={event.code} value={event.code}>{event.name}</option>
     })
@@ -63,7 +63,7 @@ export const TimetableManager = () => {
             const israelCompetitionsUrl = `/frcapi/v3.0/${seasonYear}/events?districtCode=ISR`;
             const worldChampionshipUrl = `/frcapi/v3.0/${seasonYear}/events?tournamentType=Championship`;
             const tournementScheduleUrl = `/frcapi/v3.0/${seasonYear}/schedule/ISDE1?tournamentLevel=qual`;
-            
+
             const headers = new Headers();
             headers.append("If-Modified-Since", "");
             console.log(process.env.REACT_APP_FRC_API_TOKEN)
@@ -90,17 +90,31 @@ export const TimetableManager = () => {
     return (
         <div>
             <h1>Timetable Manager</h1>
-            <Select
-                onChange={async (value) => {
-                    await addCompetitionData(`${value}`, seasonYear)
-                    setCurrentTournment(`${value}`)
-                }}
-                defaultValue={{ value: "default", label: "please choose a competition" }}
-            >
-                {frcEventsOptions}
-            </Select>
+            <Space>
+                <Select
+                    onChange={async (value) => {
+                        await addCompetitionData(`${value}`, seasonYear)
+                        await addCompetitionDataPlayOff(`${value}`, seasonYear)
+                        await addCompetitionDataPractice(`${value}`, seasonYear)
+                        setCurrentTournment(`${value}`)
+                    }}
+                    defaultValue={{ value: "default", label: "please choose a competition" }}
+                >
+                    {frcEventsOptions}
+                </Select>
+                <Select
+                    onChange={(value) => {
+                        setChosenTournmentLevel("" + value)
+                    }}
+                    defaultValue={{ value: "Practices", label: "practices" }}
+                >
+                    <option key={"Practices"}>Practices</option>
+                    <option key={"Quals"}>Quals</option>
+                    <option key={"Playoffs"}>Playoffs</option>
+                </Select>
+            </Space>
 
-            <QualsTable seasonYear={seasonYear} tournament={currentTournment}/>
+            <QualsTable seasonYear={seasonYear} tournament={currentTournment} Tournmentlvl={chosenTournmentLevel} />
         </div>
     );
 };

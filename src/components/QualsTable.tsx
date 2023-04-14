@@ -1,16 +1,18 @@
-import { Button, Form, Select, Space, Spin, Table } from "antd";
+import { Button, Form, Input, InputNumber, Modal, Select, Space, Spin, Table } from "antd";
 import { StoreValue } from "antd/es/form/interface";
 import { Option } from "antd/es/mentions";
 import { ColumnsType } from "antd/es/table";
 import arrayShuffle from 'array-shuffle';
 import { useEffect, useState } from "react";
-import { getFieldValue, getquals, getScouters, updateData } from "../utils/firebase";
+import { addMatch, getFieldValue, getquals, getScouters, updateData } from "../utils/firebase";
 import { QualsFileUploader } from "./QualsFileUploader";
 import { QualsTableDataType, ScouterDataType } from "./types/TableDataTypes";
+import Search from "antd/es/input/Search";
 
 type QualTableProps = {
     seasonYear: string
     tournament: string
+    Tournmentlvl: string
 }
 
 
@@ -187,17 +189,64 @@ const columns: ColumnsType<QualsTableDataType> = [
 
 ];
 
-export const QualsTable = ({ seasonYear, tournament }: QualTableProps) => {
+export const QualsTable = ({ seasonYear, tournament, Tournmentlvl }: QualTableProps) => {
     const [data, setdata] = useState<QualsTableDataType[]>([]);
+    const [tournamentLevel, setTournamentLevel] = useState<string>("Practices")
     const [initialValues, setInitialValues] = useState<any>([]);
     const [isFinishedLoading, setIsFinishedLoading] = useState<boolean>(false)
     const [form] = Form.useForm<QualsTableDataType>();
+    const [newmatchform] = Form.useForm()
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [reLoadData, setReLoadData] = useState<boolean>(false)
     const seasonPath = `seasons/${seasonYear}`
     const tournementSubPath = `/competitions/${tournament}`
+    const workpls = Tournmentlvl
     const updateTable = () => {
         setReLoadData(!reLoadData)
     }
+
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleOk = async () => {
+        let firstteamnum = "" + newmatchform.getFieldValue("team1")
+        let secondteamnum = "" + newmatchform.getFieldValue("team2")
+        let thirdeamnum = "" + newmatchform.getFieldValue("team3")
+        let fourthteamnum = "" + newmatchform.getFieldValue("team4")
+        let fifthteamnum = "" + newmatchform.getFieldValue("team5")
+        let sixthteamnum = "" + newmatchform.getFieldValue("team6")
+        let teamnum = "" + newmatchform.getFieldValue("matchNum")
+        if (tournamentLevel == "Quals") {
+            teamnum = "Qual" + teamnum
+        } else if (tournamentLevel == "Playoffs") {
+            teamnum += "Match" + teamnum
+        } else if (tournamentLevel == "Practices") {
+            teamnum += "Practice" + teamnum
+        }
+        // switch (tournamentLevel) {
+        //     case "Quals": {
+        //         teamnum = "Qual" + teamnum
+        //     }
+        //     case "Playoffs": {
+        //         teamnum += "Match" + teamnum
+        //     }
+        //     case "Practices": {
+        //         teamnum += "Practice" + teamnum
+        //     }
+        // }
+        await addMatch(tournament, seasonYear, [firstteamnum, secondteamnum, thirdeamnum, fourthteamnum, fifthteamnum, sixthteamnum]
+            , tournamentLevel, teamnum)
+
+
+        setIsModalOpen(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
 
     const updateFirebase = async (qualsnum: string, scouterkeys: string[]) => {
         const filteredScouters = Object.assign({}, scouterkeys.map((scouter, index) => {
@@ -211,7 +260,7 @@ export const QualsTable = ({ seasonYear, tournament }: QualTableProps) => {
                 return [null, null, null]
             }
         }));
-        await updateData(`${seasonPath}${tournementSubPath}/Quals/${qualsnum}`, filteredScouters, true);
+        await updateData(`${seasonPath}${tournementSubPath}/${Tournmentlvl}/${qualsnum}`, filteredScouters, true);
     }
 
     const finishHandler = () => {
@@ -230,6 +279,23 @@ export const QualsTable = ({ seasonYear, tournament }: QualTableProps) => {
             [scouterKey]: valueToChane
         })
     }
+
+    const onSearch = (value: String) => {
+        function doesContain(qual: QualsTableDataType) {
+            let doesContain = false
+            qual.chosenScouters.forEach(scouter => {
+                let scouterFullName = scouter.firstname + " " + scouter.lastname
+                if (scouterFullName.toLowerCase().includes(value.toLowerCase())) {
+                    doesContain = true;
+                }
+            })
+            return doesContain;
+        }
+        let filteredData = data.filter(doesContain)
+        setdata(filteredData);
+
+    }
+
 
     const clickHandler = () => {
         let shuffledArray = arrayShuffle(data[0].allScouters)
@@ -255,10 +321,13 @@ export const QualsTable = ({ seasonYear, tournament }: QualTableProps) => {
                 let teamScouters = await getScouters(`${seasonPath}/scouting-teams/${team.fieldid}/scouters`)
                 scouters = scouters.concat(teamScouters)
             })
-            const matches = await getquals(`${seasonPath}${tournementSubPath}/Quals`)
+
+            let matches = await getquals(`${seasonPath}${tournementSubPath}/${Tournmentlvl}`)
             let tableData = matches.map((match) => {
                 return ({ key: match.qual, match: match.qual, chosenScouters: match.scouters, allScouters: scouters })
             })
+            console.log(tableData)
+            console.log(tableData[0].allScouters)
             tableData.sort((a, b) => parseInt(a.key.replace(/\D/g, '')) - parseInt(b.key.replace(/\D/g, '')))
             setdata(tableData)
             updateInitialValues(tableData)
@@ -281,7 +350,7 @@ export const QualsTable = ({ seasonYear, tournament }: QualTableProps) => {
         }
 
         getScoutes()
-    }, [tournementSubPath]);
+    }, [tournementSubPath, Tournmentlvl]);
 
     useEffect(() => {
         if (data.length !== 0) {
@@ -294,6 +363,7 @@ export const QualsTable = ({ seasonYear, tournament }: QualTableProps) => {
         <div>
             {isFinishedLoading
                 ? <>
+
                     <Form
                         form={form}
                         name="basic"
@@ -306,6 +376,60 @@ export const QualsTable = ({ seasonYear, tournament }: QualTableProps) => {
                                 <Button type="primary" htmlType="submit">
                                     Submit
                                 </Button>
+                                <Search placeholder="input search text" onSearch={onSearch} enterButton />
+                                <Button type="primary" onClick={showModal}> new match</Button>
+                                <Modal title="Basic Modal" open={isModalOpen} okText={"submit"} onOk={handleOk} onCancel={handleCancel}>
+                                    <Form
+                                        form={newmatchform}
+                                        name="newmatch"
+                                        autoComplete="off">
+                                        <Select
+                                            placeholder="please choose tournement level"
+                                            onChange={(value: string) => {
+                                                setTournamentLevel(value)
+                                            }}>
+
+                                            <Option value="Quals">Quals</Option>
+                                            <Option value="Practices">Practices</Option>
+                                            <Option value="Playoffs">Playoffs</Option>
+                                        </Select>
+                                        <Form.Item
+                                            name={"matchNum"}>
+                                            <Input placeholder="enter Match Number" />;
+                                        </Form.Item>
+                                        <p>please enter first team number</p>
+                                        <Form.Item
+                                            name={"team1"}>
+                                            <InputNumber />;
+                                        </Form.Item>
+                                        <p>please enter second team number</p>
+                                        <Form.Item
+                                            name={"team2"}>
+                                            <InputNumber />;
+                                        </Form.Item>
+                                        <p>please enter third team number</p>
+                                        <Form.Item
+                                            name={"team3"}>
+                                            <InputNumber />;
+                                        </Form.Item>
+                                        <p>please enter fourth team number</p>
+                                        <Form.Item
+                                            name={"team4"}>
+                                            <InputNumber />;
+                                        </Form.Item>
+                                        <p>please enter fifth team number</p>
+                                        <Form.Item
+                                            name={"team5"}>
+                                            <InputNumber />;
+                                        </Form.Item>
+                                        <p>please enter sixth team number</p>
+                                        <Form.Item
+                                            name={"team6"}>
+                                            <InputNumber />;
+                                        </Form.Item>
+                                    </Form>
+
+                                </Modal>
                             </Form.Item>
                             <Button onClick={clickHandler}>shuffle</Button>
                             <QualsFileUploader data={data} seasonPath={seasonPath} tournementSubPath={tournementSubPath} updateTable={updateTable} />

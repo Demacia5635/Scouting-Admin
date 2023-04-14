@@ -204,7 +204,7 @@ export async function getExistingCompetitions(seasonYear: string) {
 export async function addCompetitionData(eventCode: string, seasonYear: string) {
     const partialURL = `/frcapi/v3.0/${seasonYear}/schedule/`
     const eventNameURL = `/frcapi/v3.0/${seasonYear}/events?eventCode=${eventCode}`
-    
+
     const headers = new Headers();
     headers.append("If-Modified-Since", "");
     headers.set('Authorization', 'Basic ' + Buffer.from(process.env.REACT_APP_FRC_API_TOKEN!).toString('base64'));
@@ -241,4 +241,106 @@ export async function addCompetitionData(eventCode: string, seasonYear: string) 
         }
     })
     return true
+}
+export async function addCompetitionDataPlayOff(eventCode: string, seasonYear: string) {
+    const partialURL = `/frcapi/v3.0/${seasonYear}/schedule/`
+    const eventNameURL = `/frcapi/v3.0/${seasonYear}/events?eventCode=${eventCode}`
+
+    const headers = new Headers();
+    headers.append("If-Modified-Since", "");
+    headers.set('Authorization', 'Basic ' + Buffer.from(process.env.REACT_APP_FRC_API_TOKEN!).toString('base64'));
+    const requestOptions = {
+        method: 'GET',
+        headers: headers,
+        redirect: 'follow'
+    } as RequestInit;
+
+    const eventName = (await (await fetch(eventNameURL, requestOptions)).json()).Events[0].name
+    const responseSchedule = await (await fetch(partialURL + eventCode + "?tournamentLevel=Playoff", requestOptions)).text()
+    const dataSchedule: CompetitionSchedule = JSON.parse(responseSchedule)
+    if (dataSchedule.Schedule.length === 0) {
+        return false
+    }
+    await setDoc(doc(firestore, 'seasons', seasonYear, 'competitions', eventCode), { name: eventName })
+    dataSchedule.Schedule.forEach(async qual => {
+        const fbQual = await getDoc(doc(firestore, 'seasons', seasonYear, 'competitions', eventCode, 'Playoffs', `Match${qual.matchNumber}`))
+        if (!fbQual.exists()) {
+            await updateData(`seasons/${seasonYear}/competitions/${eventCode}/Playoffs/Match${qual.matchNumber}`, {
+                0: [null, null, null],
+                1: [null, null, null],
+                2: [null, null, null],
+                3: [null, null, null],
+                4: [null, null, null],
+                5: [null, null, null],
+                ['0-path']: (qual.teams[0].teamNumber + eventCode + seasonYear),
+                ['1-path']: (qual.teams[1].teamNumber + eventCode + seasonYear),
+                ['2-path']: (qual.teams[2].teamNumber + eventCode + seasonYear),
+                ['3-path']: (qual.teams[3].teamNumber + eventCode + seasonYear),
+                ['4-path']: (qual.teams[4].teamNumber + eventCode + seasonYear),
+                ['5-path']: (qual.teams[5].teamNumber + eventCode + seasonYear),
+            }, true)
+        }
+    })
+    return true
+}
+export async function addCompetitionDataPractice(eventCode: string, seasonYear: string) {
+    const partialURL = `/frcapi/v3.0/${seasonYear}/schedule/`
+    const eventNameURL = `/frcapi/v3.0/${seasonYear}/events?eventCode=${eventCode}`
+
+    const headers = new Headers();
+    headers.append("If-Modified-Since", "");
+    headers.set('Authorization', 'Basic ' + Buffer.from(process.env.REACT_APP_FRC_API_TOKEN!).toString('base64'));
+    const requestOptions = {
+        method: 'GET',
+        headers: headers,
+        redirect: 'follow'
+    } as RequestInit;
+
+    const eventName = (await (await fetch(eventNameURL, requestOptions)).json()).Events[0].name
+    const responseSchedule = await (await fetch(partialURL + eventCode + "?tournamentLevel=Playoff", requestOptions)).text()
+    const dataSchedule: CompetitionSchedule = JSON.parse(responseSchedule)
+    if (dataSchedule.Schedule.length === 0) {
+        return false
+    }
+    await setDoc(doc(firestore, 'seasons', seasonYear, 'competitions', eventCode), { name: eventName })
+    dataSchedule.Schedule.forEach(async qual => {
+        const fbQual = await getDoc(doc(firestore, 'seasons', seasonYear, 'competitions', eventCode, 'Practices', `Practice${qual.matchNumber}`))
+        if (!fbQual.exists()) {
+            await updateData(`seasons/${seasonYear}/competitions/${eventCode}/Practices/Practice${qual.matchNumber}`, {
+                0: [null, null, null],
+                1: [null, null, null],
+                2: [null, null, null],
+                3: [null, null, null],
+                4: [null, null, null],
+                5: [null, null, null],
+                ['0-path']: (qual.teams[0].teamNumber + eventCode + seasonYear),
+                ['1-path']: (qual.teams[1].teamNumber + eventCode + seasonYear),
+                ['2-path']: (qual.teams[2].teamNumber + eventCode + seasonYear),
+                ['3-path']: (qual.teams[3].teamNumber + eventCode + seasonYear),
+                ['4-path']: (qual.teams[4].teamNumber + eventCode + seasonYear),
+                ['5-path']: (qual.teams[5].teamNumber + eventCode + seasonYear),
+            }, true)
+        }
+    })
+    return true
+}
+export async function addMatch(eventCode: string, seasonYear: string, teams: string[], tournamentLevel: string, matchname: string) {
+    const fbQual = await getDoc(doc(firestore, 'seasons', seasonYear, 'competitions', eventCode, tournamentLevel, matchname))
+    if (!fbQual.exists()) {
+        await updateData(`seasons/${seasonYear}/competitions/${eventCode}/${tournamentLevel}/${matchname}`, {
+            0: [null, null, null],
+            1: [null, null, null],
+            2: [null, null, null],
+            3: [null, null, null],
+            4: [null, null, null],
+            5: [null, null, null],
+            ['0-path']: (teams[0] + eventCode + seasonYear),
+            ['1-path']: (teams[1] + eventCode + seasonYear),
+            ['2-path']: (teams[2] + eventCode + seasonYear),
+            ['3-path']: (teams[3] + eventCode + seasonYear),
+            ['4-path']: (teams[4] + eventCode + seasonYear),
+            ['5-path']: (teams[5] + eventCode + seasonYear),
+        }, true)
+    }
+
 }
