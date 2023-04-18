@@ -432,7 +432,7 @@ export const QualsTable = ({ seasonYear, tournament, Tournmentlvl }: QualTablePr
                                 </Modal>
                             </Form.Item>
                             <Button onClick={clickHandler}>shuffle</Button>
-                            <QualsFileUploader data={data} seasonPath={seasonPath} tournementSubPath={tournementSubPath} updateTable={updateTable} />
+                            <QualsFileUploader tournementLvl={Tournmentlvl} data={data} seasonPath={seasonPath} tournementSubPath={tournementSubPath} updateTable={updateTable} />
                         </Space>
                         <Table dataSource={data} columns={columns} />
                     </Form>

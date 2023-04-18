@@ -8,12 +8,13 @@ import { QualsTableDataType, ScouterDataType } from './types/TableDataTypes';
 type Props = {
     data: QualsTableDataType[]
     seasonPath: string
+    tournementLvl: string
     tournementSubPath: string
     updateTable: () => void
 }
 
 
-export const QualsFileUploader = ({ data, seasonPath, tournementSubPath, updateTable }: Props) => {
+export const QualsFileUploader = ({ data, seasonPath, tournementSubPath, updateTable, tournementLvl }: Props) => {
     type scouterFullName = {
         firstName: string
         lastName: string
@@ -96,7 +97,7 @@ export const QualsFileUploader = ({ data, seasonPath, tournementSubPath, updateT
                 return [null, null, null]
             }
         }));
-        await updateData(`${seasonPath}${tournementSubPath}/Quals/${qualsnum}`, filteredScouters, true);
+        await updateData(`${seasonPath}${tournementSubPath}/${tournementLvl}/${qualsnum}`, filteredScouters, true);
     }
 
     return (
