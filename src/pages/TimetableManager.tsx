@@ -61,7 +61,7 @@ export const TimetableManager = () => {
     useEffect(() => {
         async function getCompetitionData() {
             const israelCompetitionsUrl = `/frcapi/v3.0/${seasonYear}/events?districtCode=ISR`;
-            const worldChampionshipUrl = `/frcapi/v3.0/${seasonYear}/events?tournamentType=Championship`;
+            const worldChampionshipUrl = `/frcapi/v3.0/${seasonYear}/events?tournamentType=ChampionshipDivision`;
             const tournementScheduleUrl = `/frcapi/v3.0/${seasonYear}/schedule/ISDE1?tournamentLevel=qual`;
 
             const headers = new Headers();
@@ -79,7 +79,9 @@ export const TimetableManager = () => {
             const eventsfrc = data.Events
             const responseChamp = await (await fetch(worldChampionshipUrl, requestOptions)).text()
             const dataChamp: FRCEvents = JSON.parse(responseChamp)
-            eventsfrc.push(dataChamp.Events[0])
+            dataChamp.Events.forEach((event) => {
+                eventsfrc.push(event)
+            })
             setEvents(eventsfrc)
             const responseSchedule = await (await fetch(tournementScheduleUrl, requestOptions)).text()
             const dataSchedule: CompetitionSchedule = JSON.parse(responseSchedule)
