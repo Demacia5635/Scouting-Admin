@@ -1,10 +1,10 @@
-import { Button, Input, Space } from "antd";
+import { Button, Input, Space, notification } from "antd";
 import { ReactElement, useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { ItemParamEditor } from "../components/popups/ItemParamEditor";
 import { UsersManager } from "../components/UsersManager";
 import "../styles/editor/seasoneditor.css";
-import { getAllParams, setParamInFirebase } from "../utils/firebase";
+import { deleteParamInFirebase, getAllParams, setParamInFirebase } from "../utils/firebase";
 import { dataOrder, DataParamsModes, ParamItem } from "../utils/params/ParamItem";
 import { getSelectedSeason } from "../utils/season-handler";
 import { isUserAdmin } from "../utils/user-handler";
@@ -19,11 +19,13 @@ export const SeasonEditor = () => {
     const [mode, setMode] = useState(DataParamsModes.AUTONOMOUS);
     const [loadingData, setLoadingData] = useState(true);
     const [showLoading, setShowLoading] = useState('block');
+
+    const [api, contextHolder] = notification.useNotification();
     
     const createParamElement = (param: ParamItem | undefined, mode: DataParamsModes) => {
         if (mode === DataParamsModes.USERS) return <></>;
         if (param) {
-            return <ItemParamEditor key={uuidv4()} param={param} mode={mode} onSave={
+            return <ItemParamEditor key={uuidv4()} param={param} mode={mode} api={api} onSave={
                 (param: ParamItem, justCreated: boolean, mode: DataParamsModes) => {
                     const index = dataOrder(mode);
                     if (!justCreated) {
@@ -31,21 +33,7 @@ export const SeasonEditor = () => {
                             const newParams = prev[index];
                             const paramIndex = newParams.findIndex((paramItem) => paramItem.name === param.name);
                             newParams[paramIndex] = param;
-                            return prev;
-                        });
-                    }
-
-                    setParamInFirebase(param, mode, year);
-                }
-            }/>;
-        } else {
-            return <ItemParamEditor key={uuidv4()} mode={mode} onSave={
-                (param: ParamItem, justCreated: boolean, mode: DataParamsModes) => {
-                    const index = dataOrder(mode);
-                    if (justCreated) {
-                        setAllParams((prev) => {
-                            const newParams = prev[index];
-                            newParams.push(param);
+                            prev[index] = newParams.sort((a, b) => b.weight - a.weight);
                             return prev;
                         });
                         updateParams();
@@ -53,6 +41,39 @@ export const SeasonEditor = () => {
 
                     setParamInFirebase(param, mode, year);
                 }
+            }
+            onDelete={
+                async (param: ParamItem, mode: DataParamsModes) => {
+                    const index = dataOrder(mode);
+                    setAllParams((prev) => {
+                        const newParams = prev[index];
+                        const paramIndex = newParams.findIndex((paramItem) => paramItem.name === param.name);
+                        newParams.splice(paramIndex, 1);
+                        prev[index] = newParams.sort((a, b) => b.weight - a.weight);
+                        return prev;
+                    });
+                    await deleteParamInFirebase(param, mode, year)
+                    updateParams();
+                }
+            }/>;
+        } else {
+            return <ItemParamEditor key={uuidv4()} mode={mode} api={api} onSave={
+                (param: ParamItem, justCreated: boolean, mode: DataParamsModes) => {
+                    const index = dataOrder(mode);
+                    if (justCreated) {
+                        setAllParams((prev) => {
+                            const newParams = prev[index];
+                            newParams.push(param);
+                            prev[index] = newParams.sort((a, b) => b.weight - a.weight);
+                            return prev;
+                        });
+                        updateParams();
+                    }
+
+                    setParamInFirebase(param, mode, year);
+                }
+            } onDelete={
+                async (param: ParamItem, mode: DataParamsModes) => {}
             }/>;
         }
     }
@@ -124,6 +145,7 @@ export const SeasonEditor = () => {
 
     return (
         <div>
+            {contextHolder}
             <link rel="stylesheet"
                 href=
                 "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
